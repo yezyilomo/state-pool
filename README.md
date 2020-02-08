@@ -2,6 +2,7 @@
 React state management library based on global variables and react hooks.
 
 ## Architecture
+![Architecture Diagram](https://raw.githubusercontent.com/yezyilomo/state-pool/master/docs/images/architecture_diagram.png)
 
 ### State Flow
 1. Create a global state(which is technically a global variable)
@@ -52,17 +53,18 @@ ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 ```
 
 ## API
-### `createGlobalState`
-**state-pool** allows you to create global state with `createGlobalState`, `createGlobalState` accepts one argument which is the initial state. Here is how to use it
+### createGlobalState
+**state-pool** allows you to create global state with `createGlobalState`, it accepts one argument which is the initial state. Here is how to use it
 
 ```js
 const userName = createGlobalState("Yezy");
 ```
 
 **Note:** This should be used outside of your component.
+<br/>
 
 
-### `useGlobalState` hook
+### useGlobalState hook
 `useGlobalState` works just like `useState` hook but it accepts a global state object, For example if you have a global state like
 ```js
 const userName = createGlobalState("Yezy");
@@ -72,9 +74,10 @@ you can use `useGlobalState` hook to get global state in a functional component 
 ```js
 [name, setName] = useGlobalState(userName);
 ```
+<br/>
 
 
-### `useGlobalStateReducer` hook
+### useGlobalStateReducer hook
 `useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer  and a global state object, For example if you have a global state like
 ```js
 const userName = createGlobalState("Yezy");
@@ -90,15 +93,19 @@ function myReducer(state, action){
 
 [name, setName] = useGlobalStateReducer(myReducer, userName);
 ```
+<br/>
 
-### `setGlobalState`
+
+### setGlobalState
 `setGlobalState` is used to create global state and map it to a key so that you won't need to use global state object directly instead you use the key to get it, `setGlobalState` accepts a key(string) to map to a global state object which is going to be created, Here is how to use it
 
 ```js
 setGlobalState(key, initialState);
 ```
+<br/>
 
-### `getGlobalState`
+
+### getGlobalState
 `getGlobalState` is used to get a global state object by using a key, it accepts a key(string) and returns a global state object. `getGlobalState` is often used along with `setGlobalState` in key bases global state. Here is how to use it
 
 ```js
