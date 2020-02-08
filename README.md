@@ -61,7 +61,6 @@ const userName = createGlobalState("Yezy");
 ```
 
 **Note:** This should be used outside of your component.
-<br/>
 
 
 ### useGlobalState hook
@@ -74,7 +73,6 @@ you can use `useGlobalState` hook to get global state in a functional component 
 ```js
 [name, setName] = useGlobalState(userName);
 ```
-<br/>
 
 
 ### useGlobalStateReducer hook
@@ -93,7 +91,6 @@ function myReducer(state, action){
 
 [name, setName] = useGlobalStateReducer(myReducer, userName);
 ```
-<br/>
 
 
 ### setGlobalState
@@ -102,7 +99,6 @@ function myReducer(state, action){
 ```js
 setGlobalState(key, initialState);
 ```
-<br/>
 
 
 ### getGlobalState
