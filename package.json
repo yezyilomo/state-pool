@@ -1,0 +1,38 @@
+{
+    "name": "state-pool",
+    "version": "0.0.1",
+    "description": "React state management library based on global variables and react hooks.",
+    "license": "MIT",
+    "homepage": "https://github.com/yezyilomo/state-pool/blob/master/README.md",
+    "repository": "https://github.com/yezyilomo/state-pool",
+    "bugs": "https://github.com/yezyilomo/state-pool/issues",
+    "keywords": [
+        "state",
+        "immutable"
+    ],
+    "authors": [
+        "Yezileli Ilomo <yezileliilomo@hotmail.com> (https://github.com/yezyilomo)"
+    ],
+    "main": "src/index.js",
+    "files": [
+        "dist",
+        "lib",
+        "src"
+    ],
+    "scripts": {
+        "test": "jest"
+    },
+    "dependencies": {
+        "react": "^16.8.3"
+    },
+    "devDependencies": {
+        "@babel/preset-env": "^7.7.7",
+        "@babel/preset-react": "^7.7.4",
+        "@testing-library/react-hooks": "^3.2.1",
+        "babel-eslint": "^10.0.3",
+        "babel-jest": "^24.9.0",
+        "jest": "^24.9.0",
+        "react": "^16.9.0",
+        "react-test-renderer": "^16.12.0"
+    }
+}
