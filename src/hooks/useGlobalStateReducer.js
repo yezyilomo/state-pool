@@ -1,21 +1,26 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 
-function useGlobalStateReducer(reducer, globalState){
-    function updateGlobalState(action){
+function useGlobalStateReducer(reducer, globalState) {
+    function updateGlobalState(action) {
         let newState = reducer(globalState.value, action);
         globalState.update(newState);
     }
-    
-    const [ ,setState] = useState();
+
+    const [, setState] = useState();
     function reRender() {
         setState({});
     }
-    let component = {reRender};
+    let component = { reRender };
 
-    globalState.subscribe(component);
+    useEffect(() => {
+        globalState.subscribe(component);
+        return () => {
+            globalState.unsubscribe(component);
+        }
+    })
 
     return [globalState.value, updateGlobalState];
 }
 
-export {useGlobalStateReducer};
+export { useGlobalStateReducer };
