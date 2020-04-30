@@ -15,6 +15,10 @@ function GlobalState(initialValue){
     this.subscribe = function(component){
         this.subscribers.push(component);
     }
+
+    this.unsubscribe = function(component){
+        this.subscribers.filter(subscriber => component !== subscriber);
+    }
 }
 
 
