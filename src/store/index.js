@@ -3,8 +3,19 @@ var store = {};  // Global state container for key based state
 function GlobalState(initialValue) {
     this.value = initialValue;
 
-    this.update = function (newState) {
+    this.getValue = function () {
+        return this.value;
+    }
+
+    this.setValue = function (newState) {
         this.value = newState;
+        this.subscribers.forEach(subscriber => {
+            subscriber.reRender();
+        });
+    }
+
+    this.updateValue = function (oldState, updaterFunction) {
+        updaterFunction(oldState);
         this.subscribers.forEach(subscriber => {
             subscriber.reRender();
         });
