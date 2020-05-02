@@ -2,13 +2,9 @@ import { useState, useEffect } from 'react';
 
 
 function useGlobalStateReducer(reducer, globalState) {
-    function setGlobalState(action) {
+    function dispatch(action) {
         let newState = reducer(globalState.getValue(), action);
         globalState.setValue(newState);
-    }
-
-    function updateGlobalState(fn) {
-        globalState.updateValue(globalState.getValue(), fn);
     }
 
     const [, setState] = useState();
@@ -24,7 +20,7 @@ function useGlobalStateReducer(reducer, globalState) {
         }
     })
 
-    return [globalState.getValue(), setGlobalState, updateGlobalState];
+    return [globalState.getValue(), dispatch];
 }
 
 export { useGlobalStateReducer };

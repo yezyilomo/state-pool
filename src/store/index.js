@@ -8,14 +8,11 @@ function GlobalState(initialValue) {
     }
 
     this.setValue = function (newState) {
+        if (this.getValue() === newState) {
+            // No new update
+            return
+        }
         this.value = newState;
-        this.subscribers.forEach(subscriber => {
-            subscriber.reRender();
-        });
-    }
-
-    this.updateValue = function (oldState, updaterFunction) {
-        updaterFunction(oldState);
         this.subscribers.forEach(subscriber => {
             subscriber.reRender();
         });
