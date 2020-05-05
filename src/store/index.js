@@ -42,7 +42,7 @@ function createGlobalstate(initialValue) {
 }
 
 
-function setGlobalstate(key, initialValue) {
+function setGlobalState(key, initialValue) {
     // Create key based global state
     store[key] = createGlobalstate(initialValue);
 }
@@ -53,4 +53,4 @@ function getGlobalState(key) {
     return store[key];
 }
 
-export { createGlobalstate, setGlobalstate, getGlobalState };
+export { createGlobalstate, setGlobalState, getGlobalState };
