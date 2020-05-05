@@ -1,4 +1,4 @@
-var store = {};  // Global state container for key based state
+var store = null;  // Global state container for key based state
 
 function GlobalState(initialValue) {
     this.value = initialValue;
@@ -42,6 +42,12 @@ function createGlobalstate(initialValue) {
 }
 
 
+function initStore(initialGlobalState) {
+    // Initialize store(global state container)
+    store = initialGlobalState;
+}
+
+
 function setGlobalState(key, initialValue) {
     // Create key based global state
     store[key] = createGlobalstate(initialValue);
@@ -53,4 +59,4 @@ function getGlobalState(key) {
     return store[key];
 }
 
-export { createGlobalstate, setGlobalState, getGlobalState };
+export { createGlobalstate, initStore, setGlobalState, getGlobalState };

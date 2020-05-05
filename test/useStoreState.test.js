@@ -1,8 +1,9 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { setGlobalState, useStoreState } from '../src/';
+import { initStore, setGlobalState, useStoreState } from '../src/';
 
 
+initStore({});
 setGlobalState("count", 0);
 
 test('should update count', () => {
