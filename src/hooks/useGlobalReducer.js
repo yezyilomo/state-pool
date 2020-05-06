@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 
 
-function useGlobalStateReducer(reducer, globalState) {
+function useGlobalReducer(reducer, globalState) {
     function dispatch(action) {
         let newState = reducer(globalState.getValue(), action);
         globalState.setValue(newState);
@@ -23,4 +23,4 @@ function useGlobalStateReducer(reducer, globalState) {
     return [globalState.getValue(), dispatch];
 }
 
-export { useGlobalStateReducer };
+export { useGlobalReducer };

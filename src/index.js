@@ -1,12 +1,10 @@
-import {
-    createGlobalstate, initStore, setGlobalState, getGlobalState
-} from './store';
+import { createGlobalstate, store } from './store';
 import { 
-    useGlobalStateReducer, useGlobalState, useStoreState, useLocalState 
+    useGlobalReducer, useGlobal, useGlobalState, useLocalState 
 } from './hooks';
 
 
 export {
-    createGlobalstate, initStore, setGlobalState, getGlobalState, 
-    useGlobalStateReducer, useGlobalState, useStoreState, useLocalState
+    createGlobalstate, store, useGlobalReducer, useGlobal, 
+    useGlobalState, useLocalState
 };

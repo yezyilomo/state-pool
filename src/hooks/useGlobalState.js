@@ -1,20 +1,10 @@
-import produce from 'immer';
-import { useGlobalStateReducer } from './useGlobalStateReducer';
+import { store, Empty } from '../store';
+import { useGlobal } from './useGlobal';
 
 
-function useGlobalState(globalState) {
-    function reducer(state, newState) {
-        return newState;
-    }
-
-    const [state, setState] = useGlobalStateReducer(reducer, globalState);
-
-    function updateState(fn) {
-        let newState = produce(state, fn);
-        setState(newState);
-    }
-
-    return [state, setState, updateState];
+function useGlobalState(key, defaultValue = Empty) {
+    let globalState = store.getState(key, defaultValue);
+    return useGlobal(globalState);
 }
 
 export { useGlobalState };
