@@ -78,7 +78,7 @@ store.init({
 })
 
 function UserInfo(props){
-    const [user, updateUser] = useGlobalState("count");
+    const [user, updateUser] = useGlobalState("user");
 
     let updateName = (e) => {
         updateUser(user => {
@@ -90,7 +90,7 @@ function UserInfo(props){
         <div>
             Name: {user.name}
             <br/>
-            <input type="text" value={name} onChange={updateName}/>
+            <input type="text" value={user.name} onChange={updateName}/>
         </div>
     );
 }
@@ -144,7 +144,7 @@ function UserInfo(props){
         <div>
             Name: {user.name}
             <br/>
-            <input type="text" value={name} onChange={updateName}/>
+            <input type="text" value={user.name} onChange={updateName}/>
         </div>
     );
 }
@@ -160,7 +160,7 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 `store.init` is used to initialize the store, it accepts a single parameter which is the initial global state, Below is an example of how to use it
 
 ```js
-var initialGlobalState = {
+const initialGlobalState = {
     user: {
         name: "Yezy",
         age: 25,
@@ -192,7 +192,7 @@ store.setState("user", userState);
 `useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, updateState]` rather than `[state, setState]`, For example if you have a store setup like
 
 ```js
-var initialGlobalState = {
+const initialGlobalState = {
     user: {
         name: "Yezy",
         age: 25,
@@ -200,7 +200,7 @@ var initialGlobalState = {
     }
 }
 
-store.init(initialState);
+store.init(initialGlobalState);
 ```
 
 you can use `useGlobalState` hook to get global state in a functional component like
@@ -208,7 +208,7 @@ you can use `useGlobalState` hook to get global state in a functional component 
 [user, updateUser] = useGlobalState("user");
 ```
 
-Here `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state us user you can do 
+Here `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
 ```js
 updateUser(function(user){
     user.name = "Yezy Ilomo";
@@ -226,21 +226,17 @@ updateUser(function(user){
 })
 ```
 
-`useGlobalState` has the second optional argument. This argument is used to specify the default value if you want `useGlobalState` to create it if it doesn't find the global state for key you specified in the first argument. For example 
+`useGlobalState` has the second **optional** argument. This argument is used to specify the default value if you want `useGlobalState` to create it if it doesn't find the global state for the key you specified in the first argument. For example 
 
 ```js
 [user, updateUser] = useGlobalState("user", null);
 ```
-This means get me global state with the key `user` if you don't find it in the store, create and assign it the value `null`.
+This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
 
 ### useLocalState hook
-`useLocalState` works just like `useGlobalState` hook except it accepts initial state as the argument and it's used to manage state locally(within a functional component). Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). For example if you have a global state like
-```js
-const userName = createGlobalState("Yezy");
-```
+`useLocalState` works just like `useGlobalState` hook except it accepts initial state as the argument and it's used to manage state locally(within a functional component). Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). For example you can use `useLocalState` hook to manage local state in a functional component as below
 
-you can use `useLocalState` hook to manage local state in a functional component like
 ```js
 const initialUserState = {
     name: "Yezy",
@@ -250,7 +246,7 @@ const initialUserState = {
 [user, updateUser] = useLocalState(initialUserState);
 ```
 
-Just like in `useGlobalState`, `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state us user you can do 
+Just like in `useGlobalState`, `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
 ```js
 updateUser(function(user){
     user.name = "Yezy Ilomo";
@@ -268,18 +264,18 @@ updateUser(function(user){
 })
 ```
 
-
+<br/>
 ## Less used APIs
 You probably won't need to use these directly as they're mostly used intenally.
 
 ### store.getState
-`store.getState` is used to get a global state object by using a key, it accepts a key(string) and returns a global state object. `store.getState` is often used along with `store.setState` in key bases global state. Here is how to use it
+`store.getState` is used to get a global state object by using a key, it accepts a key(string) and returns a global state object. `store.getState` is often used along with `store.setState` in key based global state. Here is how to use it
 
 ```js
 const globalState = store.getState(key);
 ```
 
-Most times you will be using it to get a global state object to pass to `useGlobal` or `useGlobalReducer`. For example
+Most times it's used to get a global state object to pass to `useGlobal` or `useGlobalReducer`. For example
 
 ```js
 const globalState = store.getState(key);
