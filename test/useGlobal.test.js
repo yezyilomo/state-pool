@@ -1,17 +1,17 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { initStore, setGlobalState, useStoreState } from '../src/';
+import { useGlobal, createGlobalstate } from '../src/';
 
 
-initStore({});
-setGlobalState("count", 0);
+const count = createGlobalstate(0);
 
 test('should update count', () => {
-    const { result } = renderHook(() => useStoreState("count"))
+    const { result } = renderHook(() => useGlobal(count))
 
     act(() => {
-        result.current[1](1)
+        result.current[1](count => ++count)
     })
 
     expect(result.current[0]).toStrictEqual(1)
 })
+

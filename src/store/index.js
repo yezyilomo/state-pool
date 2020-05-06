@@ -1,5 +1,3 @@
-var store = null;  // Global state container for key based state
-
 function GlobalState(initialValue) {
     this.value = initialValue;
 
@@ -42,21 +40,34 @@ function createGlobalstate(initialValue) {
 }
 
 
-function initStore(initialGlobalState) {
-    // Initialize store(global state container)
-    store = initialGlobalState;
+function Empty() {
+
 }
 
 
-function setGlobalState(key, initialValue) {
-    // Create key based global state
-    store[key] = createGlobalstate(initialValue);
+function Store() {
+    this.value = null;  // Global state container for key based state
+
+    this.init = function (initialState) {
+        this.value = initialState;
+    }
+
+    this.setState = function (key, initialValue) {
+        // Create key based global state
+        this.value[key] = createGlobalstate(initialValue);
+    }
+
+    this.getState = function (key, defaultValue = Empty) {
+        // Get key based global state
+        if (this.value[key] === undefined && defaultValue !== Empty) {
+            // This is to avoid returning undefined
+            this.value[key] = createGlobalstate(defaultValue);
+        }
+        return this.value[key];
+    }
 }
 
+// Create store for key based global state
+var store = new Store();
 
-function getGlobalState(key) {
-    // Get key based global state
-    return store[key];
-}
-
-export { createGlobalstate, initStore, setGlobalState, getGlobalState };
+export { createGlobalstate, store, Empty };

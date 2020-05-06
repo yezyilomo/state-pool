@@ -1,12 +1,13 @@
-import produce from "immer";
-import { useReducer } from 'react';
+import produce from 'immer';
+import { useGlobalReducer } from './useGlobalReducer';
 
 
-function useLocalState(initialState) {
+function useGlobal(globalState) {
     function reducer(state, newState) {
         return newState;
     }
-    const [state, setState] = useReducer(reducer, initialState);
+
+    const [state, setState] = useGlobalReducer(reducer, globalState);
 
     function updateState(fn) {
         let newState = produce(state, fn);
@@ -16,4 +17,4 @@ function useLocalState(initialState) {
     return [state, updateState];
 }
 
-export { useLocalState };
+export { useGlobal };
