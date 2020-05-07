@@ -1,8 +1,8 @@
-import { store, Empty } from '../store';
+import { store } from '../store';
 import { useGlobal } from './useGlobal';
 
 
-function useGlobalState(key, defaultValue = Empty) {
+function useGlobalState(key, defaultValue) {
     let globalState = store.getState(key, defaultValue);
     return useGlobal(globalState);
 }
