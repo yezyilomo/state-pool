@@ -15,3 +15,14 @@ test('should update count', () => {
 
     expect(result.current[0]).toStrictEqual(1)
 })
+
+
+test('should create `age` global state with the given default value', () => {
+    const { result } = renderHook(() => useGlobalState("age", 18)) // Here 18 is the default value
+
+    act(() => {
+        result.current[1](age => age + 2)
+    })
+
+    expect(result.current[0]).toStrictEqual(20)
+})
