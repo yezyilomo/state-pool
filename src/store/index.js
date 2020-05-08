@@ -54,15 +54,28 @@ function Store() {
 
     this.getState = function (key, defaultValue) {
         // Get key based global state
-        if (this.value[key] === undefined && defaultValue !== undefined) {
-            // This is to avoid returning undefined
-            this.value[key] = createGlobalstate(defaultValue);
+        if (this.value[key] === undefined) {
+            // Global state if not found
+            if (defaultValue !== undefined) {
+                // Create a global state and assign a default value,
+                // This is to avoid returning undefined as  global state
+                this.value[key] = createGlobalstate(defaultValue);
+            }
+            else {
+                // Global state is not found and no default value is specified
+                let errorMsg = [
+                    `No global state with the key '${key}', `,
+                    `You are either trying to access a global `,
+                    `state which was not created or it was deleted.`
+                ];
+                throw TypeError(errorMsg.join(""));
+            }
         }
         return this.value[key];
     }
 }
 
 // Create store for key based global state
-var store = new Store();
+const store = new Store();
 
 export { createGlobalstate, store };
