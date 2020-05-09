@@ -9,9 +9,9 @@ React state management library based on global variables and react hooks.
 
 2. Subscribe a component(s) to a created global state
 
-3. If a component wants to update a global state, it sends an update request
+3. If a component wants to update a global state, it sends update request
 
-4. When a global state receives the update request, it performs the update and send update signal to all components subscribed to it for them to update themselves(re-render)
+4. When a global state receives update request, it performs the update and send update signal to all components subscribed to it for them to update themselves(re-render)
 
 
 ## Installing
@@ -265,6 +265,7 @@ updateUser(function(user){
 ```
 
 <br/>
+
 ## Less used APIs
 You probably won't need to use these directly as they're mostly used intenally.
 
