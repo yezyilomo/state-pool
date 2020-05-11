@@ -1,9 +1,10 @@
 import { useGlobal } from './useGlobal';
 import { useGlobalReducer } from './useGlobalReducer';
+import { useGlobalStateReducer } from './useGlobalStateReducer';
 import { useGlobalState } from './useGlobalState';
 import { useLocalState } from './useLocalState';
 
 
 export {
-    useGlobal, useGlobalReducer, useGlobalState, useLocalState
+    useGlobalReducer, useGlobalStateReducer, useGlobal, useGlobalState, useLocalState
 };
