@@ -264,6 +264,40 @@ updateUser(function(user){
 })
 ```
 
+
+### useGlobalStateReducer hook
+`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a key for the global state, For example if you have a store setup like
+
+```js
+const initialGlobalState = {
+    user: {
+        name: "Yezy",
+        age: 25,
+        email: "yezy@me.com"
+    }
+}
+
+store.init(initialGlobalState);
+```
+
+you can use `useGlobalStateReducer` hook to get global state in a functional component like
+```js
+function myReducer(state, action){
+    // This could be any reducer
+    // Do whatever you want to do here
+    return newState
+}
+
+[name, dispatch] = useGlobalStateReducer(myReducer, "user");
+```
+
+Just like `useGlobalState`, `useGlobalStateReducer` has the third **optional** argument. This argument is used to specify the default value if you want `useGlobalStateReducer` to create it if it doesn't find the global state for the key you specified in the second argument. For example 
+
+```js
+[user, dispatch] = useGlobalStateReducer(myReducer, "user", null);
+```
+This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
+
 <br/>
 
 ## Less used APIs
@@ -315,7 +349,7 @@ This is mostly used by `useGlobalState`.
 
 
 ### useGlobalReducer hook
-`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer  and a global state object, For example if you have a global state like
+`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer and a global state object, For example if you have a global state like
 ```js
 const userName = createGlobalState("Yezy");
 ```
@@ -328,8 +362,18 @@ function myReducer(state, action){
     return newState
 }
 
-[name, setName] = useGlobalReducer(myReducer, userName);
+[name, dispatch] = useGlobalReducer(myReducer, userName);
 ```
 **FYI:** `useGlobal` hook is made from `useGlobalReducer` hook.
+
+
+## Categorization of API for managing global state
+The API for managing global state is divided into two parts(Non key based and key based), Key based API is made by using Non key based API, so Non key based is the low level API. We encourage using high level API(key based API) but if you like nothing stops you from using lower level API(Non key based API), infact it's as simple as the key based API. Below is a table showing how these two APIs corresponds.
+
+| Non Key Based               | Key Based     |
+| ----------------------------|:-------------:|
+| createGlobalState           | store, store.init, store.setState, store.getState |
+| useGlobal                   | useGlobalState      |
+| useGlobalReducer            | useGlobalStateReducer     |
 
 Pretty cool, right?
