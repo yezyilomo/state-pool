@@ -1,5 +1,6 @@
 function GlobalState(initialValue) {
     this.value = initialValue;
+    this.subscribers = [];
 
     this.getValue = function () {
         return this.value;
@@ -12,24 +13,22 @@ function GlobalState(initialValue) {
         }
         this.value = newState;
         this.subscribers.forEach(subscriber => {
-            subscriber.reRender();
+            subscriber(this.value);
         });
     }
 
-    this.subscribers = [];
-
-    this.subscribe = function (component) {
-        if (this.subscribers.indexOf(component) > -1) {
+    this.subscribe = function (itemToSubscribe) {
+        if (this.subscribers.indexOf(itemToSubscribe) > -1) {
             // Already subsribed
             return
         }
         // Subscribe a component
-        this.subscribers.push(component);
+        this.subscribers.push(itemToSubscribe);
     }
 
-    this.unsubscribe = function (component) {
+    this.unsubscribe = function (itemToUnsubscribe) {
         this.subscribers = this.subscribers.filter(
-            subscriber => subscriber !== component
+            subscriber => subscriber !== itemToUnsubscribe
         );
     }
 }
@@ -41,25 +40,70 @@ function createGlobalstate(initialValue) {
 
 
 function Store() {
-    this.value = null;  // Global state container for key based state
+    this.value = {};  // Global state container for key based state
 
-    this.init = function (initialState) {
-        this.value = initialState;
+    this.subscribers = [];
+
+    this.init = function (initialState, persist=false) {
+        for(let key in initialState){
+            this.setState(key, initialState[key], persist);
+        }
     }
 
-    this.setState = function (key, initialValue) {
+    this.subscribe = function (itemToSubscribe) {
+        if (this.subscribers.indexOf(itemToSubscribe) > -1) {
+            // Already subsribed
+            return
+        }
+        // Subscribe a component
+        this.subscribers.push(itemToSubscribe);
+    }
+
+    this.unsubscribe = function (itemToUnsubscribe) {
+        this.subscribers = this.subscribers.filter(
+            subscriber => subscriber !== itemToUnsubscribe
+        );
+    }
+
+    this.onStoreUpdate = function(key, newValue){
+        this.subscribers.forEach(subscriber => {
+            subscriber(key, newValue);
+        });
+    }
+
+    this.setState = function (key, initialValue, persist=false) {
+        if (persist){
+            let savedState = window.localStorage.getItem(key);
+            if (savedState !== null){
+                initialValue = JSON.parse(savedState);
+            }
+            else{
+                window.localStorage.setItem(key, JSON.stringify(initialValue));
+            }
+        }
+
+        let onGlobalStateChange = (newValue) => {
+            // Note key & persist variables depends on the scope
+            this.onStoreUpdate(key, newValue);
+            if(persist){
+                window.localStorage.setItem(key, JSON.stringify(newValue));
+            }
+        }
+        onGlobalStateChange.bind(this);
+
         // Create key based global state
         this.value[key] = createGlobalstate(initialValue);
+        this.value[key].subscribe(onGlobalStateChange);
     }
 
-    this.getState = function (key, defaultValue) {
+    this.getState = function (key, defaultValue, persist=false) {
         // Get key based global state
         if (this.value[key] === undefined) {
             // Global state if not found
             if (defaultValue !== undefined) {
                 // Create a global state and assign a default value,
                 // This is to avoid returning undefined as  global state
-                this.value[key] = createGlobalstate(defaultValue);
+                this.setState(key, defaultValue, persist);
             }
             else {
                 // Global state is not found and no default value is specified

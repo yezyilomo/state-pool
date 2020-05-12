@@ -8,15 +8,15 @@ function useGlobalReducer(reducer, globalState) {
     }
 
     const [, setState] = useState();
-    function reRender() {
+
+    function reRender(newState) {
         setState({});
     }
-    let component = { reRender };
 
     useEffect(() => {
-        globalState.subscribe(component);
+        globalState.subscribe(reRender);
         return () => {
-            globalState.unsubscribe(component);
+            globalState.unsubscribe(reRender);
         }
     })
 
