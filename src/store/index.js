@@ -44,8 +44,10 @@ function Store() {
 
     this.subscribers = [];
 
-    this.init = function (initialState, persist=false) {
-        for(let key in initialState){
+    this.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME = 1000;  // Local storage update debounce time in ms
+
+    this.init = function (initialState, persist) {
+        for (let key in initialState) {
             this.setState(key, initialState[key], persist);
         }
     }
@@ -65,28 +67,65 @@ function Store() {
         );
     }
 
-    this.onStoreUpdate = function(key, newValue){
+    this.onStoreUpdate = function (key, newValue) {
         this.subscribers.forEach(subscriber => {
             subscriber(key, newValue);
         });
     }
 
-    this.setState = function (key, initialValue, persist=false) {
-        if (persist){
-            let savedState = window.localStorage.getItem(key);
-            if (savedState !== null){
-                initialValue = JSON.parse(savedState);
+    this.getStateFromLocalStorage = function (key) {
+        try {
+            const serializedState = window.localStorage.getItem(key);
+            if (serializedState === null) {
+                // No state saved
+                return undefined
             }
-            else{
-                window.localStorage.setItem(key, JSON.stringify(initialValue));
+            return JSON.parse(serializedState);
+        } catch (err) {
+            // Failed to load state
+            return undefined
+        }
+    }
+
+    this.saveStateToLocalStorage = function (key, state) {
+        try {
+            const serializedState = JSON.stringify(state);
+            window.localStorage.setItem(key, serializedState);
+        } catch {
+            // Ignore write errors
+        }
+    }
+
+    this.setState = function (key, initialValue, persist) {
+        if (persist) {
+            // Load state from localStorage
+            const savedState = this.getStateFromLocalStorage(key, initialValue);
+
+            if (savedState !== undefined) {
+                // Use savedState as the initialValue
+                initialValue = savedState;
+            }
+            else {
+                // No need to debounce this because it's executed only once
+                this.saveStateToLocalStorage(key, initialValue);
             }
         }
 
+        // Timer for debounce
+        let timerId = null;
+
         let onGlobalStateChange = (newValue) => {
-            // Note key & persist variables depends on the scope
+            // Note key, persist & timerId variables depends on the scope
             this.onStoreUpdate(key, newValue);
-            if(persist){
-                window.localStorage.setItem(key, JSON.stringify(newValue));
+
+            if (persist) {
+                // Debounce saving state to localStorage because `onGlobalStateChange`
+                // is called every time the store state changes. However, it should not
+                // be called too often because it triggers the expensive `JSON.stringify` operation.
+                clearTimeout(timerId);
+                timerId = setTimeout(() => {
+                    this.saveStateToLocalStorage(key, newValue);
+                }, this.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME);
             }
         }
         onGlobalStateChange.bind(this);
@@ -96,13 +135,13 @@ function Store() {
         this.value[key].subscribe(onGlobalStateChange);
     }
 
-    this.getState = function (key, defaultValue, persist=false) {
+    this.getState = function (key, defaultValue, persist) {
         // Get key based global state
         if (this.value[key] === undefined) {
             // Global state if not found
             if (defaultValue !== undefined) {
                 // Create a global state and assign a default value,
-                // This is to avoid returning undefined as  global state
+                // This is to avoid returning undefined as global state
                 this.setState(key, defaultValue, persist);
             }
             else {
