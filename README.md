@@ -154,10 +154,17 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 
 ## API
 ### store
-`store` is a container for key based global states. It provides few methods which are used to manage it as explained below
+`store` is a container for key based global states. It provides few methods which are used to manage global states as explained below
 
 ### store.init
-`store.init` is used to initialize the store, it accepts a single parameter which is the initial global state, Below is an example of how to use it
+`store.init` is used to initialize the store, it accepts one required parameter which is the initial global state and another optional parameter which is the flag to determine whether to save/persist state on localStorage or not.
+
+```js
+// Signature
+store.init(initialState: Object, persist: Boolean);
+```
+
+Below is an example of how to use it
 
 ```js
 const initialGlobalState = {
@@ -174,7 +181,14 @@ store.init(initialState);
 
 
 ### store.setState
-`store.setState` is used to create global state and map it to a key so that you won't need to use global state object directly instead you use the key to get it, `store.setState` accepts a key(string) to map to a global state object which is going to be created, Here is how to use it
+`store.setState` is used to create global state and map it to a key so that you won't need to use global state object directly instead you use the key to get it, `store.setState` takes two required parameters, a key(string) to map to a global state object and the inital state, In additon to those two parameters it takes a third optional parameter which is the flag to determine whether to save/persist state on localStorage or not.
+
+```js
+// Signature
+store.setState(key: String, initialState: Any, persist: Boolean)
+```
+
+Here is how to use it
 
 ```js
 // Must initialize the store first before using it
@@ -226,16 +240,30 @@ updateUser(function(user){
 })
 ```
 
-`useGlobalState` has the second **optional** argument. This argument is used to specify the default value if you want `useGlobalState` to create it if it doesn't find the global state for the key you specified in the first argument. For example 
+`useGlobalState` accepts the second **optional** argument which is used to specify the initial value if you want `useGlobalState` to create it if it doesn't find the global state for the key you specified in the first argument. For example 
 
 ```js
 [user, updateUser] = useGlobalState("user", null);
 ```
 This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
+In additional to the the initial value it takes a third **optional** parameter which is the flag to determine whether to save/persist state on localStorage or not if it's going to create one.
+
+```js
+// Signature
+useGlobalState(key: String, initialValue: Any, persist: Boolean)
+```
+
 
 ### useLocalState hook
-`useLocalState` works just like `useGlobalState` hook except it accepts initial state as the argument and it's used to manage state locally(within a functional component). Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). For example you can use `useLocalState` hook to manage local state in a functional component as below
+`useLocalState` works just like `useGlobalState` hook except it accepts initial state as the argument and it's used to manage state locally(within a functional component). Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). 
+
+```js
+// Signature
+useLocalState(initialState)
+```
+
+For example you can use `useLocalState` hook to manage local state in a functional component as below
 
 ```js
 const initialUserState = {
@@ -291,12 +319,19 @@ function myReducer(state, action){
 [name, dispatch] = useGlobalStateReducer(myReducer, "user");
 ```
 
-Just like `useGlobalState`, `useGlobalStateReducer` has the third **optional** argument. This argument is used to specify the default value if you want `useGlobalStateReducer` to create it if it doesn't find the global state for the key you specified in the second argument. For example 
+Just like `useGlobalState`, `useGlobalStateReducer` has a third **optional** argument. This argument is used to specify the initial value if you want `useGlobalStateReducer` to create it if it doesn't find the global state for the key you specified in the second argument. For example 
 
 ```js
 [user, dispatch] = useGlobalStateReducer(myReducer, "user", null);
 ```
 This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
+
+In additional to the the initial value it takes a forth **optional** parameter which is the flag to determine whether to save/persist state on localStorage or not if it's going to create one.
+
+```js
+// Signature
+useGlobalStateReducer(reducer: Function, key: String, initialValue: Any, persist: Boolean)
+```
 
 <br/>
 
@@ -304,7 +339,14 @@ This piece of code means get me the global state for the key `user` if you don't
 You probably won't need to use these directly as they're mostly used intenally.
 
 ### store.getState
-`store.getState` is used to get a global state object by using a key, it accepts a key(string) and returns a global state object. `store.getState` is often used along with `store.setState` in key based global state. Here is how to use it
+`store.getState` is used to get a global state object by using a key, it accepts one required parameter which is a key(string) and two optional parameters which are initialValue and persist. `store.getState` returns a global state object. `store.getState` is often used along with `store.setState` in key based global state.
+
+```js
+// Signature
+store.getState(key: String, initialValue: Any, persist: Boolean)
+```
+
+Here is how to use it
 
 ```js
 const globalState = store.getState(key);
@@ -326,7 +368,14 @@ const [state, setState] = useGlobalReducer(reducer, globalState);
 
 
 ### createGlobalState
-**state-pool** allows you to create global state object with `createGlobalState`, it accepts one argument which is the initial state. Here is how to use it
+**state-pool** allows you to create global state object with `createGlobalState`, it accepts one argument which is the initial state.
+
+```js
+// Signature
+createGlobalState(initialState: Any)
+```
+
+Here is how to use it
 
 ```js
 const userName = createGlobalState("Yezy");
@@ -336,7 +385,14 @@ const userName = createGlobalState("Yezy");
 
 
 ### useGlobal hook
-`useGlobal` works just like `useState` hook but it accepts a global state object, For example if you have a global state like
+`useGlobal` works just like `useState` hook but it accepts a global state object.
+
+```js
+// Signature
+useGlobal(globalState: Object)
+```
+
+For example if you have a global state like
 ```js
 const userName = createGlobalState("Yezy");
 ```
@@ -349,7 +405,14 @@ This is mostly used by `useGlobalState`.
 
 
 ### useGlobalReducer hook
-`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer and a global state object, For example if you have a global state like
+`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer and a global state object.
+
+```js
+// Signature
+useGlobalStateReducer(reducer: Function, key: String, initialValue: Any, persist: Boolean)
+```
+
+For example if you have a global state like
 ```js
 const userName = createGlobalState("Yezy");
 ```

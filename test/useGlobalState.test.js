@@ -17,8 +17,8 @@ test('should update count', () => {
 })
 
 
-test('should create `age` global state with the given default value', () => {
-    const { result } = renderHook(() => useGlobalState("age", 18)) // Here 18 is the default value
+test('should create `age` global state with the given initial value', () => {
+    const { result } = renderHook(() => useGlobalState("age", 18)) // Here 18 is the initial value
 
     act(() => {
         result.current[1](age => age + 2)
