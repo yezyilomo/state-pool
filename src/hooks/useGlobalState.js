@@ -2,8 +2,8 @@ import { store } from '../store';
 import { useGlobal } from './useGlobal';
 
 
-function useGlobalState(key, initialValue, persist) {
-    let globalState = store.getState(key, initialValue, persist);
+function useGlobalState(key, defaultValue, persist) {
+    let globalState = store.getState(key, defaultValue, persist);
     return useGlobal(globalState);
 }
 

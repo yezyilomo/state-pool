@@ -135,14 +135,14 @@ function Store() {
         this.value[key].subscribe(onGlobalStateChange);
     }
 
-    this.getState = function (key, initialValue, persist) {
+    this.getState = function (key, defaultValue, persist) {
         // Get key based global state
         if (this.value[key] === undefined) {
             // Global state if not found
-            if (initialValue !== undefined) {
+            if (defaultValue !== undefined) {
                 // Create a global state and assign initial value,
                 // This is to avoid returning undefined as global state
-                this.setState(key, initialValue, persist);
+                this.setState(key, defaultValue, persist);
             }
             else {
                 // Global state is not found and no initial value is specified
