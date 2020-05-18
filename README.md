@@ -195,7 +195,7 @@ const initialGlobalState = {
         rating: 5
     }
 }
-store.init(initialState);
+store.init(initialGlobalState);
 ```
 
 You could accomplish the same thing with `store.setState` as
@@ -216,7 +216,8 @@ store.setState("profile", profile);
 // As you see, we're setting each global state separately
 ```
 So the choice is yours.
-**Note:** Both `store.setState` and `store.init` should be used outside of the component, and usually you might want to initialized your store(by using either `store.setState` or `store.init`) before using it, to do so ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
+
+**Note:** Both `store.setState` and `store.init` should be used outside of the component, and usually you would want to initialized your store(by using either `store.setState` or `store.init`) before using it, to do so ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
 
 ### useGlobalState hook
 `useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, updateState]` rather than `[state, setState]`. In additional to the key parameter it accepts other two optinal perameters(`defaultValue` & `persist`) which are discussed later. 
@@ -288,7 +289,7 @@ const initialUserState = {
     age: 25,
     email: "yezy@me.com"
 }
-[user, updateUser] = useLocalState(initialUserState);
+const [user, updateUser] = useLocalState(initialUserState);
 ```
 
 Just like in `useGlobalState`, `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
@@ -339,13 +340,13 @@ function myReducer(state, action){
     return newState
 }
 
-[name, dispatch] = useGlobalStateReducer(myReducer, "user");
+const [name, dispatch] = useGlobalStateReducer(myReducer, "user");
 ```
 
 Just like `useGlobalState`, `useGlobalStateReducer` has a third **optional** argument. This argument is used to specify the default value if you want `useGlobalStateReducer` to create it if it doesn't find the global state for the key you specified in the second argument. For example 
 
 ```js
-[user, dispatch] = useGlobalStateReducer(myReducer, "user", null);
+const [user, dispatch] = useGlobalStateReducer(myReducer, "user", null);
 ```
 This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
@@ -363,7 +364,7 @@ store.setState(key: String, initialState: Any, persist: Boolean)
 store.init(initialGlobalStates: Object, persist: Boolean);
 ```
 
-Since `state-pool` allows you to create global state dynamically(at runtime), it also allows you to save those created state to localStorage if you want, that's why both `useGlobalState` and `useGlobalStateReducer` accepts `persist` parameter too which just like in `store.setState` and `store.init` it's used to tell `state-pool` whether to save your newly created state in local storage or not. i.e
+Since `state-pool` allows you to create global state dynamically(at runtime), it also allows you to save those created states to localStorage if you want, that's why both `useGlobalState` and `useGlobalStateReducer` accepts `persist` parameter too which just like in `store.setState` and `store.init` it's used to tell `state-pool` whether to save your newly created state in local storage or not. i.e
 
 ```js
 useGlobalState(key: String, defaultValue: Any, persist: Boolean)
@@ -381,7 +382,7 @@ This is the variable used to set debounce time for updating state to the localSt
 
 
 ## Low level APIs
-`state-pool` provides a low level API which you can use to add other features on top of it. You probably won't need to use these directly but if you do nothing stops you from doing that.
+`state-pool` provides a low level API which you can use to add other features on top of it. You probably won't need to use these directly but if you do nothing stops you from using it.
 
 ### store.getState
 `store.getState` is used to get a global state object by using a key, it accepts one required parameter which is a key(string) and two optional parameters which are `defaultValue` and `persist`. `store.getState` returns a global state object. `store.getState` is often used along with `store.setState` in key based global state.
