@@ -3,7 +3,6 @@ import { renderHook, act } from '@testing-library/react-hooks';
 import { store, useGlobalStateReducer } from '../src/';
 
 
-store.init({});
 store.setState("count", 0);
 
 test('should update count', () => {
@@ -22,7 +21,7 @@ test('should update count', () => {
 test('should create `age` global state with the given default value', () => {
     let reducer = (state, newState) => newState;
 
-    const { result } = renderHook(() => useGlobalStateReducer(reducer, "age", 18)) // Here 18 is the default value
+    const { result } = renderHook(() => useGlobalStateReducer(reducer, "age", {default: 18}));
 
     act(() => {
         result.current[1](result.current[0] + 2)
