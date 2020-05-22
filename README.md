@@ -422,10 +422,14 @@ function myReducer(state, action){
     return newState
 }
 
-const selector = (user) => user.name;
-const patcher = (user, name) => {user.name = name};
+function UserInfo(props){
+    const selector = (user) => user.name;
+    const patcher = (user, name) => {user.name = name};
+    
+    const [name, dispatch] = useGlobalStateReducer(myReducer, "user", {selector: selector, patcher: pather});
 
-const [name, dispatch] = useGlobalStateReducer(myReducer, "user", {selector: selector, patcher: pather});
+    // Other stuffs
+}
 ```
 
 
