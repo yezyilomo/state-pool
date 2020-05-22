@@ -1,16 +1,19 @@
 import { useState, useEffect } from 'react';
+import produce from 'immer';
 
 
-function useGlobalReducer(reducer, globalState) {
-    function dispatch(action) {
-        let newState = reducer(globalState.getValue(), action);
-        globalState.setValue(newState);
-    }
-
+function useGlobalReducer(reducer, globalState, {selector, patcher} = {}) {
     const [, setState] = useState();
+    const currentState = globalState.getValue();
 
     function reRender(newState) {
-        setState({});
+        if (selector && selector(currentState) === selector(newState)) {
+            // Do nothing because the selected state has not changed
+        }
+        else {
+            // re-render
+            setState({});
+        }
     }
 
     useEffect(() => {
@@ -20,7 +23,24 @@ function useGlobalReducer(reducer, globalState) {
         }
     })
 
-    return [globalState.getValue(), dispatch];
+    function dispatch(action) {
+        let newState = reducer(globalState.getValue(), action);
+        globalState.setValue(newState);
+    }
+
+    function patch(action) {
+        let nodeValue = reducer(selector(currentState), action);
+        let newState = produce(
+            currentState,
+            (draftCurrentState) => { return patcher(draftCurrentState, nodeValue); }
+        )
+        globalState.setValue(newState);
+    }
+
+    if (selector && patcher) {
+        return [selector(currentState), patch];
+    }
+    return [currentState, dispatch];
 }
 
 export { useGlobalReducer };

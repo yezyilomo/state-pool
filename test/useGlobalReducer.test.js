@@ -16,3 +16,22 @@ test('should update count', () => {
 
     expect(result.current[0]).toStrictEqual(1)
 })
+
+
+const user = createGlobalstate({ name: "Yezy", age: 20 });
+
+test('should update name', () => {
+    let reducer = (state, newState) => newState;
+
+    const selector = (user) => user.name;
+    const patcher = (user, name) => { user.name = name }
+
+    const { result } = renderHook(() => useGlobalReducer(reducer, user, { selector, patcher }))
+
+    act(() => {
+        result.current[1]("Yezy Ilomo")
+    })
+
+    expect(result.current[0]).toStrictEqual("Yezy Ilomo")
+})
+
