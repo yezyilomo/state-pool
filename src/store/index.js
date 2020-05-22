@@ -46,9 +46,9 @@ function Store() {
 
     this.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME = 1000;  // Local storage update debounce time in ms
 
-    this.init = function (initialState, persist) {
+    this.init = function (initialState, { persist } = {}) {
         for (let key in initialState) {
-            this.setState(key, initialState[key], persist);
+            this.setState(key, initialState[key], { persist });
         }
     }
 
@@ -96,7 +96,7 @@ function Store() {
         }
     }
 
-    this.setState = function (key, initialValue, persist) {
+    this.setState = function (key, initialValue, { persist } = {}) {
         if (persist) {
             // Load state from localStorage
             const savedState = this.getStateFromLocalStorage(key, initialValue);
@@ -135,14 +135,14 @@ function Store() {
         this.value[key].subscribe(onGlobalStateChange);
     }
 
-    this.getState = function (key, defaultValue, persist) {
+    this.getState = function (key, {default: defaultValue, persist} = {}) {
         // Get key based global state
         if (this.value[key] === undefined) {
             // Global state if not found
             if (defaultValue !== undefined) {
                 // Create a global state and assign initial value,
                 // This is to avoid returning undefined as global state
-                this.setState(key, defaultValue, persist);
+                this.setState(key, defaultValue, { persist: persist });
             }
             else {
                 // Global state is not found and no initial value is specified

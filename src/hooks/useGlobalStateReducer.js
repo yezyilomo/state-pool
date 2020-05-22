@@ -2,9 +2,9 @@ import { store } from '../store';
 import { useGlobalReducer } from './useGlobalReducer';
 
 
-function useGlobalStateReducer(reducer, key, defaultValue, persist) {
-    let globalState = store.getState(key, defaultValue, persist);
-    return useGlobalReducer(reducer, globalState);
+function useGlobalStateReducer(reducer, key, config = {}) {
+    let globalState = store.getState(key, config);
+    return useGlobalReducer(reducer, globalState, config);
 }
 
 
