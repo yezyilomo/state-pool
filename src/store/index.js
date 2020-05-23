@@ -114,7 +114,7 @@ function Store() {
         // Timer for debounce
         let timerId = null;
 
-        let onGlobalStateChange = (newValue) => {
+        const onGlobalStateChange = (newValue) => {
             // Note key, persist & timerId variables depends on the scope
             this.onStoreUpdate(key, newValue);
 
@@ -146,7 +146,7 @@ function Store() {
             }
             else {
                 // Global state is not found and no initial value is specified
-                let errorMsg = [
+                const errorMsg = [
                     `No global state with the key '${key}', `,
                     `You are either trying to access a global `,
                     `state which was not created or it was deleted.`

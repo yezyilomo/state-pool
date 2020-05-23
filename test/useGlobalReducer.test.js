@@ -6,7 +6,7 @@ import { useGlobalReducer, createGlobalstate } from '../src/';
 const count = createGlobalstate(0);
 
 test('should update count', () => {
-    let reducer = (state, newState) => newState;
+    const reducer = (state, newState) => newState;
 
     const { result } = renderHook(() => useGlobalReducer(reducer, count))
 
@@ -21,7 +21,7 @@ test('should update count', () => {
 const user = createGlobalstate({ name: "Yezy", age: 20 });
 
 test('should update name', () => {
-    let reducer = (state, newState) => newState;
+    const reducer = (state, newState) => newState;
 
     const selector = (user) => user.name;
     const patcher = (user, name) => { user.name = name }

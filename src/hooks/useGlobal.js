@@ -10,7 +10,7 @@ function useGlobal(globalState, config = {}) {
     const [state, setState] = useGlobalReducer(reducer, globalState, config);
 
     function updateState(fn) {
-        let newState = produce(state, fn);
+        const newState = produce(state, fn);
         setState(newState);
     }
 
