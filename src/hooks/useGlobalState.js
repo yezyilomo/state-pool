@@ -3,7 +3,7 @@ import { useGlobal } from './useGlobal';
 
 
 function useGlobalState(key, config = {}) {
-    let globalState = store.getState(key, config);
+    const globalState = store.getState(key, config);
     return useGlobal(globalState, config);
 }
 

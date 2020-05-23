@@ -6,7 +6,7 @@ import { store, useGlobalStateReducer } from '../src/';
 store.setState("count", 0);
 
 test('should update count', () => {
-    let reducer = (state, newState) => newState;
+    const reducer = (state, newState) => newState;
 
     const { result } = renderHook(() => useGlobalStateReducer(reducer, "count"))
 
@@ -19,7 +19,7 @@ test('should update count', () => {
 
 
 test('should create `age` global state with the given default value', () => {
-    let reducer = (state, newState) => newState;
+    const reducer = (state, newState) => newState;
 
     const { result } = renderHook(() => useGlobalStateReducer(reducer, "age", {default: 18}));
 

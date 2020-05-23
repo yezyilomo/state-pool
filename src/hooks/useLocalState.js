@@ -9,7 +9,7 @@ function useLocalState(initialState) {
     const [state, setState] = useReducer(reducer, initialState);
 
     function updateState(fn) {
-        let newState = produce(state, fn);
+        const newState = produce(state, fn);
         setState(newState);
     }
 

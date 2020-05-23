@@ -24,13 +24,13 @@ function useGlobalReducer(reducer, globalState, {selector, patcher} = {}) {
     })
 
     function dispatch(action) {
-        let newState = reducer(globalState.getValue(), action);
+        const newState = reducer(globalState.getValue(), action);
         globalState.setValue(newState);
     }
 
     function patch(action) {
-        let nodeValue = reducer(selector(currentState), action);
-        let newState = produce(
+        const nodeValue = reducer(selector(currentState), action);
+        const newState = produce(
             currentState,
             (draftCurrentState) => { return patcher(draftCurrentState, nodeValue); }
         )
