@@ -15,18 +15,6 @@ React state management library based on global variables and react hooks.
 
 
 ## Installing
-For now you can use this repository link because it's not yet published to npm
-```
-yarn add https://github.com/yezyilomo/state-pool
-```
-
-Or 
-
-```
-npm install https://github.com/yezyilomo/state-pool
-```
-
-For future use(When it's published to npm)
 ```
 yarn add state-pool
 ```
