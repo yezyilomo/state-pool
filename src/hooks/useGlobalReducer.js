@@ -29,6 +29,7 @@ function useGlobalReducer(reducer, globalState, {selector, patcher} = {}) {
     }
 
     function patch(action) {
+        // patch back changed node to the global state
         const nodeValue = reducer(selector(currentState), action);
         const newState = produce(
             currentState,
