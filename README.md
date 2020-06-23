@@ -33,7 +33,7 @@ import React from 'react';
 import {store, useGlobalState} from 'state-pool';
 
 
-store.setState("count": 0)
+store.setState("count", 0);
 
 function ClicksCounter(props){
     const [count, updateCount] = useGlobalState("count");
@@ -61,7 +61,7 @@ import React from 'react';
 import {store, useGlobalState} from 'state-pool';
 
 
-store.setState("user", {name: "Yezy", age: 25})
+store.setState("user", {name: "Yezy", age: 25});
 
 function UserInfo(props){
     const [user, updateUser] = useGlobalState("user");
