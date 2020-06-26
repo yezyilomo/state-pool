@@ -329,7 +329,7 @@ updateUser(function(user){
     user.age = 26;
 })
 ```
-Here also you can return new state instead of changing state i.e
+Here you can also return a new state instead of changing the current state i.e
 ```js
 updateUser(function(user){
     return {
