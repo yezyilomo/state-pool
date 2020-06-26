@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import produce from 'immer';
 
 
-function useGlobalReducer(reducer, globalState, {selector, patcher} = {}) {
+function useGlobalReducer(reducer, globalState, { selector, patcher } = {}) {
     const [, setState] = useState();
     const currentState = globalState.getValue();
 
@@ -38,8 +38,13 @@ function useGlobalReducer(reducer, globalState, {selector, patcher} = {}) {
         globalState.setValue(newState);
     }
 
-    if (selector && patcher) {
-        return [selector(currentState), patch];
+    if (selector) {
+        if (patcher) {
+            return [selector(currentState), patch];
+        }
+        else {
+            return [selector(currentState), dispatch];
+        }
     }
     return [currentState, dispatch];
 }
