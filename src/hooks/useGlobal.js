@@ -9,8 +9,14 @@ function useGlobal(globalState, config = {}) {
 
     const [state, setState] = useGlobalReducer(reducer, globalState, config);
 
+    let globalStateValue = state;
+
+    if (config.selector && !config.patcher) {
+        globalStateValue = globalState.getValue();
+    }
+
     function updateState(fn) {
-        const newState = produce(state, fn);
+        const newState = produce(globalStateValue, fn);
         setState(newState);
     }
 
