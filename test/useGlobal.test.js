@@ -34,3 +34,16 @@ test('should update name', () => {
 
 
 
+test('should update name without patcher', () => {
+    const selector = (user) => user.name;
+
+    const { result } = renderHook(() => useGlobal(user, { selector }))
+
+    act(() => {
+        result.current[1]((usr) => {usr.name = "Ilomo"})
+    })
+
+    expect(result.current[0]).toStrictEqual("Ilomo")
+})
+
+
