@@ -205,10 +205,10 @@ store.setState("profile", profile);
 ```
 So the choice is yours.
 
-**Note:** Both `store.setState` and `store.init` should be used outside of the component, and usually you would want to initialized your store(by using either `store.setState` or `store.init`) before using it, to do so ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
+**Note:** Both `store.setState` and `store.init` should be used outside of the component, and usually you would want to initialized your store(by using either `store.setState` or `store.init`) before using it, to do so, ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
 
 ### useGlobalState hook
-`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, updateState]` rather than `[state, setState]`. In additional to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
+`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, updateState]` rather than `[state, setState]`. In addition to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
 
 ```js
 // Signature
@@ -252,14 +252,14 @@ updateUser(function(user){
 })
 ```
 
-As stated earlier `useGlobalState` accepts the second **optional** parameter(configuration object), `default` configuration is used to specify the default value if you want `useGlobalState` to create it if it doesn't find the global state for the key you specified in the first argument. For example 
+As stated earlier `useGlobalState` accepts the second **optional** parameter(configuration object), `default` configuration is used to specify the default value if you want `useGlobalState` to create a global state if it doesn't find the one for the key specified in the first argument. For example 
 
 ```js
 const [user, updateUser] = useGlobalState("user", {default: null});
 ```
 This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
-Also in additional to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist state on localStorage or not if it's going to create one.
+Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist state on localStorage or not if it's going to create one.
 
 
 Other allowed configurations are `selector` & `patcher`. These configurations are used for specifying a way to select deeply nested state and update it.
@@ -341,7 +341,7 @@ updateUser(function(user){
 ```
 
 ### useGlobalStateReducer hook
-`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a key for the global state. In additional to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
+`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
 
 
 ```js
@@ -374,14 +374,14 @@ function myReducer(state, action){
 const [name, dispatch] = useGlobalStateReducer(myReducer, "user");
 ```
 
-As stated earlier `useGlobalStateReducer` has a third **optional** parameter(configuration object). `default` configuration is used to specify the default value if you want `useGlobalStateReducer` to create it if it doesn't find the global state for the key you specified in the first argument. For example 
+As stated earlier `useGlobalStateReducer` has a third **optional** parameter(configuration object). `default` configuration is used to specify the default value if you want `useGlobalStateReducer` to create a global state if it doesn't find the one for the key specified in the first argument. For example 
 
 ```js
 const [user, dispatch] = useGlobalStateReducer(myReducer, "user", {default: null});
 ```
 This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
-In additional to `default` configuration it has `persist` configuration which is the flag to determine whether to save/persist state on localStorage or not if it's going to create one.
+In addition to `default` configuration it has `persist` configuration which is the flag to determine whether to save/persist state on localStorage or not, if it's going to create one.
 
 Other allowed configurations are `selector` & `patcher`. These configurations are used for specifying a way to select deeply nested state and update it.
 
@@ -516,7 +516,7 @@ const [name, setName] = useGlobal(userName);
 This is mostly used by `useGlobalState`.
 
 ### useGlobalReducer hook
-`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer and a global state object. In additional to those two parameters it accepts another optional parameter which is the configuration object(available configurations are `selector` & `patcher`) just like in `useGlobal`. These configurations are used for specifying a way to select deeply nested state and update it.
+`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer and a global state object. In addition to those two parameters it accepts another optional parameter which is the configuration object(available configurations are `selector` & `patcher`) just like in `useGlobal`. These configurations are used for specifying a way to select deeply nested state and update it.
 
 ```js
 // Signature
