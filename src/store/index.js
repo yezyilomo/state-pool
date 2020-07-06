@@ -13,7 +13,13 @@ function GlobalState(initialValue) {
         }
         this.value = newState;
         this.subscribers.forEach(subscriber => {
-            subscriber(this.value);
+            subscriber.sendUpdateSignal(this.value);
+        });
+    }
+
+    this.delete = function () {
+        this.subscribers.forEach(subscriber => {
+            subscriber.sendDeleteSignal();
         });
     }
 
@@ -67,9 +73,9 @@ function Store() {
         );
     }
 
-    this.onStoreUpdate = function (key, newValue) {
+    this.onStoreUpdate = function (event) {
         this.subscribers.forEach(subscriber => {
-            subscriber(key, newValue);
+            subscriber(event);
         });
     }
 
@@ -96,6 +102,10 @@ function Store() {
         }
     }
 
+    this.deleteStateFromLocalStorage = function (key, state) {
+        return window.localStorage.removeItem(key);
+    }
+
     this.setState = function (key, initialValue, { persist } = {}) {
         if (persist) {
             // Load state from localStorage
@@ -116,7 +126,7 @@ function Store() {
 
         const onGlobalStateChange = (newValue) => {
             // Note key, persist & timerId variables depends on the scope
-            this.onStoreUpdate(key, newValue);
+            this.onStoreUpdate({key: key, action: 'update', value: newValue });
 
             if (persist) {
                 // Debounce saving state to localStorage because `onGlobalStateChange`
@@ -130,9 +140,22 @@ function Store() {
         }
         onGlobalStateChange.bind(this);
 
+        const onGlobalStateDelete = () => {
+            if (persist) {
+                // Delete state from localStorage
+                this.deleteStateFromLocalStorage(key);
+            }
+        }
+        onGlobalStateDelete.bind(this);
+    
+        const observer = {
+            sendUpdateSignal: onGlobalStateChange,
+            sendDeleteSignal: onGlobalStateDelete
+        }
+
         // Create key based global state
         this.value[key] = createGlobalstate(initialValue);
-        this.value[key].subscribe(onGlobalStateChange);
+        this.value[key].subscribe(observer);
     }
 
     this.getState = function (key, {default: defaultValue, persist} = {}) {
@@ -155,6 +178,63 @@ function Store() {
             }
         }
         return this.value[key];
+    }
+
+    this.clear = function (fn) {
+        // Copty store
+        const storeCopy = this.value;
+
+        // Clear store
+        this.value = {};
+        
+        if(fn) {
+            // Run store re-initialization
+            fn();
+        }
+
+        for (let key in storeCopy) {
+            // Notify subscribers to store that global state is removed
+            this.onStoreUpdate({key: key, action: 'delete'});
+
+            // Get global state to remove
+            let globalState = storeCopy[key];
+
+            // Rerender all components
+            globalState.delete()
+        }
+    }
+
+    this.remove = function (globalStatekey, fn) {
+
+        let keys = globalStatekey;
+        if (typeof globalStatekey === 'string') {
+            keys = [globalStatekey];
+        }
+
+        const globalStatesToRemove = {};
+        keys.forEach(key => {
+            // Copy global state to remove from state
+            globalStatesToRemove[key] = this.getState(key);
+
+            // Remove global state from store
+            delete this.value[key];
+        });
+
+        if(fn) {
+            // Run global state re-initialization
+            fn();
+        }
+
+        for (let key in globalStatesToRemove) {
+            // Notify subscribers to store that global state is removed
+            this.onStoreUpdate({key: key, action: 'delete'});
+
+            // Get global state to delete
+            let globalState = globalStatesToRemove[key];
+
+            // Rerender all components
+            globalState.delete()
+        }
     }
 }
 
