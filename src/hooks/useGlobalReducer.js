@@ -6,7 +6,7 @@ function useGlobalReducer(reducer, globalState, { selector, patcher } = {}) {
     const [, setState] = useState();
     const currentState = globalState.getValue();
 
-    function reRender(newState) {
+    function sendUpdateSignal(newState) {
         if (selector && selector(currentState) === selector(newState)) {
             // Do nothing because the selected state has not changed
         }
@@ -16,10 +16,19 @@ function useGlobalReducer(reducer, globalState, { selector, patcher } = {}) {
         }
     }
 
+    function sendDeleteSignal() {
+        setState({});
+    }
+
+    const observer = {
+        sendUpdateSignal: sendUpdateSignal,
+        sendDeleteSignal: sendDeleteSignal
+    }
+
     useEffect(() => {
-        globalState.subscribe(reRender);
+        globalState.subscribe(observer);
         return () => {
-            globalState.unsubscribe(reRender);
+            globalState.unsubscribe(observer);
         }
     })
 
