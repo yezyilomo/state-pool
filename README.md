@@ -287,7 +287,7 @@ function UserName(props){
     const selector = (user) => user.name;  // Subscribe to user.name only
     const patcher = (user, name) => {user.name = name};  // Update user.name
 
-    const [name, updateName] = useGlobalState(myReducer, "user", {selector: selector, patcher: pather});
+    const [name, updateName] = useGlobalState("user", {selector: selector, patcher: pather});
 
     let handleNameChange = (e) => {
         updateName(name => e.target.value);
@@ -447,6 +447,124 @@ What's even better about `state-pool` is that you get the freedom to choose what
 ### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME(in milliseconds)
 This is the variable used to set debounce time for updating state to the localStorage when global state changes. `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the localStorage. Therefore this variable is used to control that, The default value is 1000 ms which is equal to 1 second. You can set your values if you don't want to use the default one.
 <br/>
+
+### store.remove
+This is used to remove a global state from store if you don't need it anymore or you want to reload/reset it. It accepts a global state key or a list of keys to remove and a function to run after removing global state(s) and before components subscribed to removed global state(s) rerenders.
+
+```js
+// Signature
+store.remove(key: String/[String], fn: Function)
+```
+
+Below is an example showing how to use it
+
+```js
+// Example 1.
+import React from 'react';
+import {store, useGlobalState} from 'state-pool';
+
+
+function initializeStore(){
+    store.setState("count", 0);
+}
+
+initializeStore();
+
+function ClicksCounter(props){
+    const [count, updateCount] = useGlobalState("count");
+
+    let incrementCount = (e) => {
+        updateCount(count => count+1)
+    }
+
+    let resetCounter = (e) => {
+        store.remove("count", initializeStore)
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+            <button onClick={resetCounter}>Reset</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+
+From the code above, when you click `Reset` button `store.remove` will remove `count` global state and create it again by executing `initializeStore`.
+
+
+**NOTE:** If we had more than one state to delete we could do
+
+```js
+store.remove([key1, key2, key3, ...], initializeStore);
+```
+
+### store.clear
+This is used to clear the entire store if you don't need the global states in it anymore or you want to reload/reset all global states. It accepts a function to run after clearing the store and before components subscribed to all global states in it rerenders.
+
+```js
+// Signature
+store.clear(fn: Function)
+```
+
+Below is an example showing how to use it
+
+```js
+// Example 2.
+import React from 'react';
+import {store, useGlobalState} from 'state-pool';
+
+
+function initializeStore(){
+    const initialGlobalState = {
+        user: {
+            name: "Yezy",
+            age: 25,
+            email: "yezy@me.com"
+        },
+        profile: {
+            url: "https://yezyilomo.com",
+            rating: 5
+        }
+    }
+    store.init(initialGlobalState);
+}
+
+initializeStore();
+
+function UserInfo(props){
+    const [user, updateUser] = useGlobalState("user");
+
+    let updateName = (e) => {
+        updateUser(user => {
+            user.name = e.target.value;
+        });
+    }
+
+    let resetStore = (e) => {
+        store.clear(initializeStore);
+    }
+
+    return (
+        <div>
+            Name: {user.name}
+            <br/>
+            <input type="text" value={user.name} onChange={updateName}/>
+             <button onClick={resetStore}>Reset Store</button>
+        </div>
+    );
+}
+
+ReactDOM.render(UserInfo, document.querySelector("#root"));
+```
+From the code above, when you click `Reset Store` button `store.clear` will remove all global states from the store and create them again by executing `initializeStore`. This might come in handy when you need to clear all data when user logs out of the application.
+
+
+**NOTE:** both `store.remove` and `store.clear` when executed causes all components subscribed to global states which are removed to rerender.
 
 
 ## Low level APIs
