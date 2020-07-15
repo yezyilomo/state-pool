@@ -1,6 +1,6 @@
 {
     "name": "state-pool",
-    "version": "0.2.0",
+    "version": "0.2.1",
     "description": "React state management library based on global variables and react hooks.",
     "license": "MIT",
     "homepage": "https://github.com/yezyilomo/state-pool/blob/master/README.md",
