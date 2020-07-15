@@ -1,23 +1,30 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import produce from 'immer';
 
 
 function useGlobalReducer(reducer, globalState, { selector, patcher } = {}) {
     const [, setState] = useState();
+    const isMounted = useRef(false);
     const currentState = globalState.getValue();
+
+    function reRender() {
+        // re-render if the component is mounted
+        if (isMounted.current) {
+            setState({});
+        }
+    }
 
     function sendUpdateSignal(newState) {
         if (selector && selector(currentState) === selector(newState)) {
             // Do nothing because the selected state has not changed
         }
         else {
-            // re-render
-            setState({});
+            reRender();
         }
     }
 
     function sendDeleteSignal() {
-        setState({});
+        reRender();
     }
 
     const observer = {
@@ -27,8 +34,10 @@ function useGlobalReducer(reducer, globalState, { selector, patcher } = {}) {
 
     useEffect(() => {
         globalState.subscribe(observer);
+        isMounted.current = true;
         return () => {
             globalState.unsubscribe(observer);
+            isMounted.current = false;
         }
     })
 
