@@ -16,6 +16,17 @@ test('should update count', () => {
 })
 
 
+test('should set count', () => {
+    const { result } = renderHook(() => useGlobal(count))
+
+    act(() => {
+        result.current[2](5)
+    })
+
+    expect(result.current[0]).toStrictEqual(5)
+})
+
+
 
 const user = createGlobalstate({ name: "Yezy", age: 20 });
 
@@ -47,3 +58,15 @@ test('should update name without patcher', () => {
 })
 
 
+test('should set name', () => {
+    const selector = (user) => user.name;
+    const patcher = (user, name) => { user.name = name }
+
+    const { result } = renderHook(() => useGlobal(user, { selector, patcher }))
+
+    act(() => {
+        result.current[2]("Ilomo Yezy")
+    })
+
+    expect(result.current[0]).toStrictEqual("Ilomo Yezy")
+})

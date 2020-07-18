@@ -20,7 +20,7 @@ function useGlobal(globalState, config = {}) {
         setState(newState);
     }
 
-    return [state, updateState];
+    return [state, updateState, setState];
 }
 
 export { useGlobal };
