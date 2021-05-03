@@ -25,7 +25,7 @@ function GlobalState(initialValue) {
 
     this.subscribe = function (itemToSubscribe) {
         if (this.subscribers.indexOf(itemToSubscribe) > -1) {
-            // Already subsribed
+            // Already subscribed
             return
         }
         // Subscribe a component
@@ -46,7 +46,7 @@ function createGlobalstate(initialValue) {
 
 
 function Store() {
-    this.value = {};  // Global state container for key based state
+    this.value = {};  // Global state container for key based states
 
     this.subscribers = [];
 
@@ -60,7 +60,7 @@ function Store() {
 
     this.subscribe = function (itemToSubscribe) {
         if (this.subscribers.indexOf(itemToSubscribe) > -1) {
-            // Already subsribed
+            // Already subscribed
             return
         }
         // Subscribe a component
@@ -160,9 +160,8 @@ function Store() {
 
     this.getState = function (key, {default: defaultValue, persist} = {}) {
         // Get key based global state
-        if (this.value[key] === undefined) {
-            // Global state if not found
-            if (defaultValue !== undefined) {
+        if (this.value[key] === undefined) {  // Global state is not found
+            if (defaultValue !== undefined) {  // Default value is not found
                 // Create a global state and assign initial value,
                 // This is to avoid returning undefined as global state
                 this.setState(key, defaultValue, { persist: persist });
