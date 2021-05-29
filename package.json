@@ -1,6 +1,6 @@
 {
     "name": "state-pool",
-    "version": "0.3.1",
+    "version": "0.3.2",
     "description": "React state management library based on global variables and react hooks.",
     "license": "MIT",
     "homepage": "https://github.com/yezyilomo/state-pool/blob/master/README.md",
@@ -23,17 +23,17 @@
         "test": "jest"
     },
     "dependencies": {
-        "immer": "^8.0.1",
-        "react": "^16.8.3"
+        "immer": ">=6.0.3",
+        "react": ">=16.8.3"
     },
     "devDependencies": {
-        "@babel/preset-env": "^7.7.7",
-        "@babel/preset-react": "^7.7.4",
-        "@testing-library/react-hooks": "^3.2.1",
-        "babel-eslint": "^10.0.3",
-        "babel-jest": "^24.9.0",
-        "jest": "^24.9.0",
-        "react": "^16.9.0",
-        "react-test-renderer": "^16.12.0"
+        "@babel/preset-env": ">=7.7.7",
+        "@babel/preset-react": ">=7.7.4",
+        "@testing-library/react-hooks": ">=3.2.1",
+        "babel-eslint": ">=10.0.3",
+        "babel-jest": ">=24.9.0",
+        "jest": ">=24.9.0",
+        "react": ">=16.8.3",
+        "react-test-renderer": ">=16.12.0"
     }
 }
