@@ -9,13 +9,13 @@ test('should remove `count` global state and re-initialize it with value 10', ()
     const hook1 = renderHook(() => useGlobalState("count"))
 
     act(() => {
-        hook1.result.current[1](count => 1)
+        hook1.result.current[2](count => 1)
     })
 
     const hook2 = renderHook(() => useGlobalState("age", {default: 18}));
 
     act(() => {
-        hook2.result.current[1](age => age + 2)
+        hook2.result.current[2](age => age + 2)
     })
 
     act(() => {

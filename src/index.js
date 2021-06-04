@@ -1,10 +1,13 @@
 import { createGlobalstate, store } from './store';
 import { 
-    useGlobalReducer, useGlobalStateReducer, useGlobal, useGlobalState, useLocalState 
+    useGlobalReducer, useGlobal,  // Non key based API(Low level API)
+    useGlobalStateReducer, useGlobalState,  // Key based API(High level API)
+    useLocalState
 } from './hooks';
 
 
 export {
-    createGlobalstate, store, useGlobalReducer, useGlobalStateReducer, useGlobal, 
-    useGlobalState, useLocalState
+    createGlobalstate, useGlobalReducer, useGlobal,  // Non key based API(Low level API)
+    store, useGlobalStateReducer, useGlobalState,  // Key based API(High level API)
+    useLocalState
 };
