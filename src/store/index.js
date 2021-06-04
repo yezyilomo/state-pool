@@ -52,12 +52,6 @@ function Store() {
 
     this.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME = 1000;  // Local storage update debounce time in ms
 
-    this.init = function (initialState, { persist } = {}) {
-        for (let key in initialState) {
-            this.setState(key, initialState[key], { persist });
-        }
-    }
-
     this.subscribe = function (itemToSubscribe) {
         if (this.subscribers.indexOf(itemToSubscribe) > -1) {
             // Already subscribed
