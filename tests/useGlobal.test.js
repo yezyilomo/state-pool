@@ -9,7 +9,7 @@ test('should update count', () => {
     const { result } = renderHook(() => useGlobal(count))
 
     act(() => {
-        result.current[1](count => ++count)
+        result.current[2](count => ++count)
     })
 
     expect(result.current[0]).toStrictEqual(1)
@@ -20,7 +20,7 @@ test('should set count', () => {
     const { result } = renderHook(() => useGlobal(count))
 
     act(() => {
-        result.current[2](5)
+        result.current[1](5)
     })
 
     expect(result.current[0]).toStrictEqual(5)
@@ -37,7 +37,7 @@ test('should update name', () => {
     const { result } = renderHook(() => useGlobal(user, { selector, patcher }))
 
     act(() => {
-        result.current[1]((name) => "Yezy Ilomo")
+        result.current[2]((name) => "Yezy Ilomo")
     })
 
     expect(result.current[0]).toStrictEqual("Yezy Ilomo")
@@ -51,7 +51,7 @@ test('should update name without patcher', () => {
     const { result } = renderHook(() => useGlobal(user, { selector }))
 
     act(() => {
-        result.current[1]((usr) => {usr.name = "Ilomo"})
+        result.current[2]((usr) => {usr.name = "Ilomo"})
     })
 
     expect(result.current[0]).toStrictEqual("Ilomo")
@@ -65,7 +65,7 @@ test('should set name', () => {
     const { result } = renderHook(() => useGlobal(user, { selector, patcher }))
 
     act(() => {
-        result.current[2]("Ilomo Yezy")
+        result.current[1]("Ilomo Yezy")
     })
 
     expect(result.current[0]).toStrictEqual("Ilomo Yezy")
