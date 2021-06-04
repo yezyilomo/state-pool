@@ -13,7 +13,7 @@ function useLocalState(initialState) {
         setState(newState);
     }
 
-    return [state, updateState, setState];
+    return [state, setState, updateState];
 }
 
 export { useLocalState };
