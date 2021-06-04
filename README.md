@@ -36,7 +36,7 @@ import {store, useGlobalState} from 'state-pool';
 store.setState("count", 0);
 
 function ClicksCounter(props){
-    const [count, updateCount, setCount] = useGlobalState("count");
+    const [count, setCount, updateCount] = useGlobalState("count");
 
     let incrementCount = (e) => {
         setCount(count+1)
@@ -64,7 +64,7 @@ import {store, useGlobalState} from 'state-pool';
 store.setState("user", {name: "Yezy", age: 25});
 
 function UserInfo(props){
-    const [user, updateUser, setUser] = useGlobalState("user");
+    const [user, setUser, updateUser] = useGlobalState("user");
 
     let updateName = (e) => {
         updateUser(user => {
@@ -92,7 +92,7 @@ import {useLocalState} from 'state-pool';
 
 
 function ClicksCounter(props){
-    const [count, updateCount, setCount] = useLocalState(0);
+    const [count, setCount, updateCount] = useLocalState(0);
 
     let incrementCount = (e) => {
         setCount(count+1)
@@ -118,7 +118,7 @@ import {useLocalState} from 'state-pool';
 
 
 function UserInfo(props){
-    const [user, updateUser, setUser] = useLocalState({name: "Yezy", age: 25});
+    const [user, setUser, updateUser] = useLocalState({name: "Yezy", age: 25});
 
     let updateName = (e) => {
         updateUser(user => {
@@ -140,7 +140,7 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 
 ## API
 ### store
-`store` is a container for key based global states. It provides few methods which are used to manage global states as explained below
+Store is a container for key based global states. Store provides few methods which are used to manage global states as explained below
 
 ### store.setState
 `store.setState` is used to create global state and map it to a key so that you won't need to use global state object directly instead you use the key to get it, `store.setState` takes two required parameters, a key(string) to map to a global state object and the inital state, In additon to those two parameters it takes a third optional parameter which is the configuration object. `persist` is the only available config which is the flag to determine whether to save/persist state on localStorage or not.
@@ -208,7 +208,7 @@ So the choice is yours.
 **Note:** Both `store.setState` and `store.init` should be used outside of the component, and usually you would want to initialized your store(by using either `store.setState` or `store.init`) before using it, to do so, ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
 
 ### useGlobalState hook
-`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, updateState, setState]` rather than `[state, setState]`. In addition to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
+`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
 
 ```js
 // Signature
@@ -231,7 +231,7 @@ store.init(initialGlobalState);
 
 you can use `useGlobalState` hook to get global state in a functional component like
 ```js
-const [user, updateUser, setUser] = useGlobalState("user");
+const [user, setUser, updateUser] = useGlobalState("user");
 ```
 
 Here `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
@@ -260,7 +260,7 @@ setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 As stated earlier `useGlobalState` accepts the second **optional** parameter(configuration object), `default` configuration is used to specify the default value if you want `useGlobalState` to create a global state if it doesn't find the one for the key specified in the first argument. For example 
 
 ```js
-const [user, updateUser] = useGlobalState("user", {default: null});
+const [user, setUser, updateUser] = useGlobalState("user", {default: null});
 ```
 This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
@@ -292,7 +292,7 @@ function UserName(props){
     const selector = (user) => user.name;  // Subscribe to user.name only
     const patcher = (user, name) => {user.name = name};  // Update user.name
 
-    const [name, updateName, setName] = useGlobalState("user", {selector: selector, patcher: pather});
+    const [name, setName, updateName] = useGlobalState("user", {selector: selector, patcher: pather});
 
     let handleNameChange = (e) => {
         setName(e.target.value);
@@ -325,7 +325,7 @@ const initialUserState = {
     age: 25,
     email: "yezy@me.com"
 }
-const [user, updateUser, setUser] = useLocalState(initialUserState);
+const [user, setUser, updateUser] = useLocalState(initialUserState);
 ```
 
 Just like in `useGlobalState`, `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
@@ -482,7 +482,7 @@ function initializeStore(){
 initializeStore();
 
 function ClicksCounter(props){
-    const [count, updateCount, setCount] = useGlobalState("count");
+    const [count, setCount, updateCount] = useGlobalState("count");
 
     let incrementCount = (e) => {
         setCount(count+1);
@@ -548,7 +548,7 @@ function initializeStore(){
 initializeStore();
 
 function UserInfo(props){
-    const [user, updateUser] = useGlobalState("user");
+    const [user, setUser, updateUser] = useGlobalState("user");
 
     let updateName = (e) => {
         updateUser(user => {
@@ -599,7 +599,7 @@ Most times it's used to get a global state object to pass to `useGlobal` or `use
 
 ```js
 const globalState = store.getState(key);
-const [state, updateState, setState] = useGlobal(globalState);
+const [state, setState, updateState] = useGlobal(globalState);
 ```
 
 Or
@@ -640,7 +640,7 @@ const userName = createGlobalState("Yezy");
 
 you can use `useGlobal` hook to get global state in a functional component like
 ```js
-const [name, updateName, setName] = useGlobal(userName);
+const [name, setName, updateName] = useGlobal(userName);
 ```
 This is mostly used by `useGlobalState`.
 
@@ -673,7 +673,7 @@ const [name, dispatch] = useGlobalReducer(myReducer, userName);
 ## Categorization of API for managing global state
 The API for managing global state is divided into two parts(Non key based and key based), Key based API is made by using Non key based API, so Non key based is the low level API. We encourage using high level API(key based API) but if you like nothing stops you from using lower level API(Non key based API), infact it's as simple as the key based API. Below is a table showing how these two APIs corresponds.
 
-| Non Key Based               | Key Based     |
+| Non Key Based API           | Key Based API |
 | ----------------------------|:-------------:|
 | createGlobalState           | store, store.init, store.setState, store.getState |
 | useGlobal                   | useGlobalState, store.subscribe |
