@@ -161,10 +161,10 @@ const userState = {
 store.setState("user", userState);
 ```
 
-**Note:** `store.setState` should be used outside of the component, and usually you would want to initialized your store(by using `store.setState`) before using it, to do so, ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
+**Note:** `store.setState` should be used outside of the component, and normally you would want to initialized your store(by using `store.setState`) before using it, to do so, ensure it's done before calling `ReactDOM.render` in order to load state before the application starts.
 
 ### useGlobalState hook
-`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
+`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
 
 ```js
 // Signature
@@ -304,7 +304,7 @@ setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 ```
 
 ### useGlobalStateReducer hook
-`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, these are discussed in detail later.
+`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, which will be discussed in detail later.
 
 
 ```js
