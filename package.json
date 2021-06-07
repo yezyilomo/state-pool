@@ -23,7 +23,9 @@
         "test": "jest"
     },
     "dependencies": {
-        "immer": ">=6.0.3",
+        "immer": ">=6.0.3"
+    },
+    "peerDependencies": {
         "react": ">=16.8.3"
     },
     "devDependencies": {
