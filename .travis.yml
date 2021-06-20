@@ -1,8 +1,0 @@
-language: node_js
-node_js: node
-cache: npm
-script:
-  - npm test
-
-notifications:
-    email: false
