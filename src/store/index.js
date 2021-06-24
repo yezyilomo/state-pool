@@ -155,7 +155,7 @@ function Store() {
     this.getState = function (key, {default: defaultValue, persist} = {}) {
         // Get key based global state
         if (this.value[key] === undefined) {  // Global state is not found
-            if (defaultValue !== undefined) {  // Default value is not found
+            if (defaultValue !== undefined) {  // Default value is found
                 // Create a global state and assign initial value,
                 // This is to avoid returning undefined as global state
                 this.setState(key, defaultValue, { persist: persist });
@@ -174,7 +174,7 @@ function Store() {
     }
 
     this.clear = function (fn) {
-        // Copty store
+        // Copy store
         const storeCopy = this.value;
 
         // Clear store
