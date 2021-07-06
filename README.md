@@ -526,10 +526,6 @@ From the code above, when you click `Reset Store` button `store.clear` will remo
 
 **NOTE:** both `store.remove` and `store.clear` when executed causes all components subscribed to global states which are removed to rerender.
 
-
-## Low level APIs
-`state-pool` provides a low level API which you can use to add other features on top of it. You probably won't need to use these directly but if you do nothing stops you from doing so.
-
 ### store.getState
 `store.getState` is used to get a global state object by using a key, it accepts one required parameter which is a key(string) and another optional parameters which is the configuration object(available configurations are `default` and `persist`). `store.getState` returns a global state object. `store.getState` is often used along with `store.setState` in key based global state.
 
@@ -574,8 +570,8 @@ const userName = createGlobalState("Yezy");
 
 **Note:** This should be used outside of your component. It is mostly used by `store.setState` to create a global state object.
 
-### useGlobal hook
-`useGlobal` works just like `useState` hook but it accepts one required parameter which is the global state object and another optional parameter which is the configuration object(allowed configurations are `selector` & `patcher`). These configurations are used for specifying a way to select deeply nested state and update it.
+### useGlobalState hook with the first argument as GlobalState
+`useGlobalState` works just like `useState` hook but it accepts one required parameter which is the global state object and another optional parameter which is the configuration object(allowed configurations are `selector` & `patcher`). These configurations are used for specifying a way to select deeply nested state and update it.
 
 ```js
 // Signature
@@ -589,16 +585,15 @@ const userName = createGlobalState("Yezy");
 
 you can use `useGlobal` hook to get global state in a functional component like
 ```js
-const [name, setName, updateName] = useGlobal(userName);
+const [name, setName, updateName] = useGlobalState(userName);
 ```
-This is mostly used by `useGlobalState`.
 
-### useGlobalReducer hook
-`useGlobalReducer` works just like `useReducer` hook but it accepts a reducer and a global state object. In addition to those two parameters it accepts another optional parameter which is the configuration object(available configurations are `selector` & `patcher`) just like in `useGlobal`. These configurations are used for specifying a way to select deeply nested state and update it.
+### useGlobalStateReducer hook with the first argument as GlobalState
+`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a global state object. In addition to those two parameters it accepts another optional parameter which is the configuration object(available configurations are `selector` & `patcher`) just like in `useGlobalState`. These configurations are used for specifying a way to select deeply nested state and update it.
 
 ```js
 // Signature
-useGlobalReducer(reducer: Function, globalState: Object)
+useGlobalStateReducer(reducer: Function, globalState: Object)
 ```
 
 For example if you have a global state like
@@ -614,18 +609,8 @@ function myReducer(state, action){
     return newState
 }
 
-const [name, dispatch] = useGlobalReducer(myReducer, userName);
+const [name, dispatch] = useGlobalStateReducer(myReducer, userName);
 ```
-**FYI:** `useGlobal` hook is derived from `useGlobalReducer` hook.
-
-
-## Categorization of API for managing global state
-The API for managing global state is divided into two parts(Key based API and Non key based API), Key based API is derived from Non key based API, so Non key based is the low level API. We encourage using high level API(key based API) but if you like nothing stops you from using low level API(Non key based API), infact it's as simple as the key based API. Below is a table showing how these two APIs corresponds.
-
-| Non Key Based API           | Key Based API |
-| ----------------------------|:-------------:|
-| createGlobalState           | store, store.setState, store.getState |
-| useGlobal                   | useGlobalState, store.subscribe |
-| useGlobalReducer            | useGlobalStateReducer     |
+**FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook.
 
 Pretty cool, right?
