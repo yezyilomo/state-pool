@@ -28,7 +28,7 @@ function GlobalState(initialValue) {
             // Already subscribed
             return
         }
-        // Subscribe a component
+        // Subscribe a component to this global state
         this.subscribers.push(itemToSubscribe);
     }
 
@@ -46,7 +46,7 @@ function createGlobalstate(initialValue) {
 
 
 function Store() {
-    this.value = {};  // Global state container for key based states
+    this.value = {};  // Container for key based global states
 
     this.subscribers = [];
 
@@ -57,7 +57,7 @@ function Store() {
             // Already subscribed
             return
         }
-        // Subscribe a component
+        // Subscribe a component to this store
         this.subscribers.push(itemToSubscribe);
     }
 
@@ -156,14 +156,13 @@ function Store() {
         // Get key based global state
         if (this.value[key] === undefined) {  // Global state is not found
             if (defaultValue !== undefined) {  // Default value is found
-                // Create a global state and assign initial value,
-                // This is to avoid returning undefined as global state
+                // Create a global state and use defaultValue as the initial value
                 this.setState(key, defaultValue, { persist: persist });
             }
             else {
-                // Global state is not found and no initial value is specified
+                // Global state is not found and the default value is not specified
                 const errorMsg = [
-                    `No global state with the key '${key}', `,
+                    `There is no global state with the key '${key}', `,
                     `You are either trying to access a global `,
                     `state which was not created or it was deleted.`
                 ];
@@ -186,7 +185,7 @@ function Store() {
         }
 
         for (let key in storeCopy) {
-            // Notify subscribers to store that global state is removed
+            // Notify subscribers to a store that a global state has been removed
             this.onStoreUpdate({key: key, action: 'delete'});
 
             // Get global state to remove
@@ -206,10 +205,10 @@ function Store() {
 
         const globalStatesToRemove = {};
         keys.forEach(key => {
-            // Copy global state to remove from state
+            // Copy global state to remove from a store
             globalStatesToRemove[key] = this.getState(key);
 
-            // Remove global state from store
+            // Remove global state from a store
             delete this.value[key];
         });
 
@@ -219,7 +218,7 @@ function Store() {
         }
 
         for (let key in globalStatesToRemove) {
-            // Notify subscribers to store that global state is removed
+            // Notify subscribers to a store that a global state has been removed
             this.onStoreUpdate({key: key, action: 'delete'});
 
             // Get global state to delete

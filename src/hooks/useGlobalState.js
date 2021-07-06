@@ -1,10 +1,31 @@
+import produce from 'immer';
 import { store } from '../store';
-import { useGlobal } from './useGlobal';
+import { useGlobalStateReducer } from './useGlobalStateReducer';
 
 
-function useGlobalState(key, config = {}) {
-    const globalState = store.getState(key, config);
-    return useGlobal(globalState, config);
+function useGlobalState(globalState, config = {}) {
+    if (typeof globalState === 'string') {
+        globalState = store.getState(globalState, config);
+    }
+
+    function reducer(state, newState) {
+        return newState;
+    }
+
+    const [state, setState] = useGlobalStateReducer(reducer, globalState, config);
+
+    let globalStateValue = state;
+
+    if (config.selector && !config.patcher) {
+        globalStateValue = globalState.getValue();
+    }
+
+    function updateState(fn) {
+        const newState = produce(globalStateValue, fn);
+        setState(newState);
+    }
+
+    return [state, setState, updateState];
 }
 
 export { useGlobalState };
