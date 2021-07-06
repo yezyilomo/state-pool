@@ -1,12 +1,12 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useGlobal, createGlobalstate } from '../src/';
+import { useGlobalState, createGlobalstate } from '../src/';
 
 
 const count = createGlobalstate(0);
 
 test('should update count', () => {
-    const { result } = renderHook(() => useGlobal(count))
+    const { result } = renderHook(() => useGlobalState(count))
 
     act(() => {
         result.current[2](count => ++count)
@@ -17,7 +17,7 @@ test('should update count', () => {
 
 
 test('should set count', () => {
-    const { result } = renderHook(() => useGlobal(count))
+    const { result } = renderHook(() => useGlobalState(count))
 
     act(() => {
         result.current[1](5)
@@ -34,7 +34,7 @@ test('should update name', () => {
     const selector = (user) => user.name;
     const patcher = (user, name) => { user.name = name }
 
-    const { result } = renderHook(() => useGlobal(user, { selector, patcher }))
+    const { result } = renderHook(() => useGlobalState(user, { selector, patcher }))
 
     act(() => {
         result.current[2]((name) => "Yezy Ilomo")
@@ -48,7 +48,7 @@ test('should update name', () => {
 test('should update name without patcher', () => {
     const selector = (user) => user.name;
 
-    const { result } = renderHook(() => useGlobal(user, { selector }))
+    const { result } = renderHook(() => useGlobalState(user, { selector }))
 
     act(() => {
         result.current[2]((usr) => {usr.name = "Ilomo"})
@@ -62,7 +62,7 @@ test('should set name', () => {
     const selector = (user) => user.name;
     const patcher = (user, name) => { user.name = name }
 
-    const { result } = renderHook(() => useGlobal(user, { selector, patcher }))
+    const { result } = renderHook(() => useGlobalState(user, { selector, patcher }))
 
     act(() => {
         result.current[1]("Ilomo Yezy")

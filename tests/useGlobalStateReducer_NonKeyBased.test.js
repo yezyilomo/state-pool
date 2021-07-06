@@ -1,6 +1,6 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { useGlobalReducer, createGlobalstate } from '../src/';
+import { useGlobalStateReducer, createGlobalstate } from '../src/';
 
 
 const count = createGlobalstate(0);
@@ -8,7 +8,7 @@ const count = createGlobalstate(0);
 test('should update count', () => {
     const reducer = (state, newState) => newState;
 
-    const { result } = renderHook(() => useGlobalReducer(reducer, count))
+    const { result } = renderHook(() => useGlobalStateReducer(reducer, count))
 
     act(() => {
         result.current[1](1)
@@ -26,7 +26,7 @@ test('should update name', () => {
     const selector = (user) => user.name;
     const patcher = (user, name) => { user.name = name }
 
-    const { result } = renderHook(() => useGlobalReducer(reducer, user, { selector, patcher }))
+    const { result } = renderHook(() => useGlobalStateReducer(reducer, user, { selector, patcher }))
 
     act(() => {
         result.current[1]("Yezy Ilomo")
