@@ -1,7 +1,7 @@
 # State Pool
 React state management library based on global variables and react hooks.
 
-Features 
+**Features & Advantages**
 - Simple, familiar and very minimal core API but powerful
 - Built-in state persistence
 - Has a very steep learning curve because it works just like react state hooks
