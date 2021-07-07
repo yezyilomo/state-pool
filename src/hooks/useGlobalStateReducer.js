@@ -42,11 +42,12 @@ function useGlobalStateReducer(reducer, globalState, config = {}) {
     useEffect(() => {
         globalState.subscribe(observer);
         isMounted.current = true;
+
         return () => {
             globalState.unsubscribe(observer);
             isMounted.current = false;
         }
-    })
+    }, [])
 
     function dispatch(action) {
         const newState = reducer(globalState.getValue(), action);
