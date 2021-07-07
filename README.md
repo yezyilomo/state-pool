@@ -26,16 +26,23 @@ npm install state-pool
 ```
 
 ## Getting Started
-### Using Global State
+### Managing Global State
+Using **state-pool** to manage global state is very simple, all you need to do is
+1. Create a global state by using either `createGlobalState` or `store.setState`
+2. Use your global state in a component through `useGlobalState` or `useGlobalStateReducer` hooks
+
+These two steps summarises pretty much everything you need to use **state-pool**. Below are few examples showing how to manage global states with **state-pool**.
+
 ```js
 // Example 1.
 import React from 'react';
 import {store, useGlobalState} from 'state-pool';
 
 
-store.setState("count", 0);
+store.setState("count", 0);  // Create "count" global state
 
 function ClicksCounter(props){
+    // Use "count" global state
     const [count, setCount, updateCount] = useGlobalState("count");
 
     let incrementCount = (e) => {
@@ -54,6 +61,7 @@ function ClicksCounter(props){
 ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 ```
 
+<br/>
 
 ```js
 // Example 2.
@@ -84,7 +92,9 @@ function UserInfo(props){
 ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
 
-### Using Local State
+### Managing Local State
+You can manage local state with **state-pool** too. **state-pool** is shipped with `useLocalState` hook which is equivalent to `useState` with improved way to update state(especially nested ones). Below are few examples showing how to manage local state with **state-pool**.
+
 ```js
 // Example 1.
 import React from 'react';
@@ -110,6 +120,7 @@ function ClicksCounter(props){
 ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 ```
 
+<br/>
 
 ```js
 // Example 2.
@@ -139,8 +150,26 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
 
 ## API
+### createGlobalState
+**state-pool** allows you to create global state object with `createGlobalState`, it accepts one argument which is the initial value.
+
+```js
+// Signature
+createGlobalState(initialValue: Any)
+```
+
+Here is how to use it
+
+```js
+const userName = createGlobalState("Yezy");
+```
+
+**Note:** This should be used outside of your component.
+
+
 ### store
-Store is a container for key based global states. Store provides few methods which are used to manage global states as explained below
+Store is a container for key based global states. Store provides few methods which are used to manage global states including `store.setState`, `store.getState`, `store.remove` and `store.clear`.
+
 
 ### store.setState
 `store.setState` is used to create global state and map it to a key so that you won't need to use a global state object directly instead you use the key to get it, `store.setState` takes two required parameters, a key(string) to map to a global state object and the initial state, In addition to those two parameters it takes a third optional parameter which is the configuration object. `persist` is the only available config which is the flag to determine whether to save/persist state on localStorage or not.
@@ -163,15 +192,16 @@ store.setState("user", userState);
 
 **Note:** `store.setState` should be used outside of the component, and normally you would want to initialize your store(by using `store.setState`) before using it, to do so, ensure it's done before calling `ReactDOM.render` in order to load states before the application starts.
 
+
 ### useGlobalState hook
-`useGlobalState` works just like `useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
+`useGlobalState` works just like `useState` hook but it accepts a global state or a key for the global state(for key based global state) and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the global state or key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
 
 ```js
 // Signature
-useGlobalState(key: String, {default: Any, persist: Boolean, selector: Function, patcher: Function})
+useGlobalState(globalState|key: GlobalState|String, {default: Any, persist: Boolean, selector: Function, patcher: Function})
 ```
 
-For example if you have a store setup like
+Below is an example showing how to use `useGlobalState` hook
 
 ```js
 const initialGlobalState = {
@@ -180,21 +210,38 @@ const initialGlobalState = {
     email: "yezy@me.com"
 }
 
-store.setState("user": initialGlobalState);
+let user = createGlobalState(initialGlobalState);
+
+function Component(props){
+    const [user, setUser, updateUser] = useGlobalState(user);
+    // Other stuff ...
+}
 ```
 
-you can use `useGlobalState` hook to get global state in a functional component like
+Or for the case of key based global state
 ```js
-const [user, setUser, updateUser] = useGlobalState("user");
+const initialGlobalState = {
+    name: "Yezy",
+    age: 25,
+    email: "yezy@me.com"
+}
+
+store.setState("user": initialGlobalState);
+
+function Component(props){
+    const [user, setUser, updateUser] = useGlobalState("user");
+}
 ```
 
-Here `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
+Here `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any value on user you can do 
+
 ```js
 updateUser(function(user){
     user.name = "Yezy Ilomo";
     user.age = 26;
 })
 ```
+
 You can also return new state instead of changing state i.e
 ```js
 updateUser(function(user){
@@ -218,12 +265,14 @@ As stated earlier `useGlobalState` accepts a second **optional** parameter which
 ```js
 const [user, setUser, updateUser] = useGlobalState("user", {default: null});
 ```
-This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
-Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist state on localStorage or not if it's going to create one.
+This piece of code means get the global state for the key `user` if it's not available in a store, create one and assign it the value `null`.
 
 
-Other allowed configurations are `selector` & `patcher`. These configurations are used for specifying a way to select deeply nested state and update it.
+Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on localStorage or not if `useGlobalState` is going to create global state dynamically.
+
+
+Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
 
 
 `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
@@ -232,6 +281,39 @@ Other allowed configurations are `selector` & `patcher`. These configurations ar
 `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 
 Example.
+```js
+const initialGlobalState = {
+    name: "Yezy",
+    age: 25,
+    email: "yezy@me.com"
+}
+
+let user = createGlobalState(initialGlobalState);
+
+
+function UserName(props){
+    const selector = (user) => user.name;  // Subscribe to user.name only
+    const patcher = (user, name) => {user.name = name};  // Update user.name
+
+    const [name, setName, updateName] = useGlobalState(user, {selector: selector, patcher: pather});
+
+    let handleNameChange = (e) => {
+        setName(e.target.value);
+        // updateName(name => e.target.value);  You can do this if you like to use `updatName`
+    }
+
+    return (
+        <div>
+            Name: {name}
+            <br/>
+            <input type="text" value={name} onChange={handleNameChange}/>
+        </div>
+    );
+}
+```
+
+
+Or for the case of key based global state
 ```js
 const initialGlobalState = {
     name: "Yezy",
@@ -263,23 +345,28 @@ function UserName(props){
 }
 ```
 
+
 ### useLocalState hook
-`useLocalState` works just like `useGlobalState` hook except it accepts initial state as the argument and it's used to manage state locally(within a functional component). Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). 
+`useLocalState` works just like `useGlobalState` hook except it accepts initial value as the argument and it's used to manage local states. Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). 
 
 ```js
 // Signature
 useLocalState(initialState)
 ```
 
-For example you can use `useLocalState` hook to manage local state in a functional component as below
+For example you can use `useLocalState` hook to manage local state in a functional component as shown below
 
 ```js
-const initialUserState = {
-    name: "Yezy",
-    age: 25,
-    email: "yezy@me.com"
+function Component(props){
+    const initialUserState = {
+        name: "Yezy",
+        age: 25,
+        email: "yezy@me.com"
+    }
+    const [user, setUser, updateUser] = useLocalState(initialUserState);
+
+    // Other stuff ...
 }
-const [user, setUser, updateUser] = useLocalState(initialUserState);
 ```
 
 Just like in `useGlobalState`, `updateUser` is a higher order function which accepts another function for updating user as an argument(this another functions takes user(old state) as the argument). So to update any state on user you can do 
@@ -305,16 +392,41 @@ Or you can just use `setUser` instead of `updateUser` i.e
 setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 ```
 
+
 ### useGlobalStateReducer hook
-`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, which will be discussed in detail later.
+`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a global state or key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, which will be discussed in detail later.
 
 
 ```js
 // Signature
-useGlobalStateReducer(reducer: Function, key: String, {default: Any, persist: Boolean, selector: Function, patcher: Function})
+useGlobalStateReducer(reducer: Function, globalState|key: GlobalState|String, {default: Any, persist: Boolean, selector: Function, patcher: Function})
 ```
 
-For example if you have a store setup like
+Below is an example showing how to use `useGlobalStateReducer`
+
+```js
+const initialGlobalState = {
+    name: "Yezy",
+    age: 25,
+    email: "yezy@me.com"
+}
+
+let user = createGlobalState(initialGlobalState);
+
+function myReducer(state, action){
+    // This could be any reducer
+    // Do whatever you want to do here
+    return newState
+}
+
+function Component(props){
+    const [name, dispatch] = useGlobalStateReducer(myReducer, "user");
+    
+    // Other stuff ...
+}
+```
+
+Or for the case of key based global state
 
 ```js
 const initialGlobalState = {
@@ -324,17 +436,18 @@ const initialGlobalState = {
 }
 
 store.setState("user": initialGlobalState);
-```
 
-you can use `useGlobalStateReducer` hook to get global state in a functional component like
-```js
 function myReducer(state, action){
     // This could be any reducer
     // Do whatever you want to do here
     return newState
 }
 
-const [name, dispatch] = useGlobalStateReducer(myReducer, "user");
+function Component(props){
+    const [name, dispatch] = useGlobalStateReducer(myReducer, "user");
+
+    // Other stuff ...
+}
 ```
 
 As stated earlier `useGlobalStateReducer` has a third **optional** parameter which is a configuration object, available configurations are:
@@ -344,11 +457,14 @@ As stated earlier `useGlobalStateReducer` has a third **optional** parameter whi
 ```js
 const [user, dispatch] = useGlobalStateReducer(myReducer, "user", {default: null});
 ```
-This piece of code means get me the global state for the key `user` if you don't find it in the store, create and assign it the value `null`.
 
-In addition to `default` configuration it has `persist` configuration which is the flag to determine whether to save/persist state on localStorage or not, if it's going to create one.
+This piece of code means get the global state for the key `user` if it's not available in a store, create one and assign it the value `null`.
 
-Other allowed configurations are `selector` & `patcher`. These configurations are used for specifying a way to select deeply nested state and update it.
+
+Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on localStorage or not if `useGlobalState` is going to create global state dynamically.
+
+
+Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
 
 
 `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
@@ -357,6 +473,34 @@ Other allowed configurations are `selector` & `patcher`. These configurations ar
 `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 
 Example.
+```js
+const initialGlobalState = {
+    name: "Yezy",
+    age: 25,
+    email: "yezy@me.com"
+}
+
+let user = createGlobalState(initialGlobalState);
+
+
+function myReducer(state, action){
+    // This could be any reducer
+    // Do whatever you want to do here
+    return newState
+}
+
+function UserInfo(props){
+    const selector = (user) => user.name;
+    const patcher = (user, name) => {user.name = name};
+    
+    const [name, dispatch] = useGlobalStateReducer(myReducer, user, {selector: selector, patcher: pather});
+
+    // Other stuffs
+}
+```
+
+Or for the case of key based global states 
+
 ```js
 const initialGlobalState = {
     name: "Yezy",
@@ -383,29 +527,8 @@ function UserInfo(props){
 }
 ```
 
+**FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook.
 
-## State Persistence
-Saving/persisting global states in localStorage with `state-pool` is very easy, all you need to do is tell `state-pool` to save your state in localStorage by using `persist` configuration when creating your global state, no need to worry about updating or loading it, `state-pool` has already handled that for you so that you can focus on using your states. As discussed before `store.setState` accept an optional parameter(configuration object) with `persist` configuration which is used to tell `state-pool` whether to save your state in local storage or not. i.e
-
-```js
-store.setState(key: String, initialState: Any, {persist: Boolean})
-```
-
-Since `state-pool` allows you to create global state dynamically, it also allows you to save those created states to localStorage if you want, that's why both `useGlobalState` and `useGlobalStateReducer` accepts `persist` configuration too which just like in `store.setState` it's used to tell `state-pool` whether to save your newly created state in local storage or not. i.e
-
-```js
-useGlobalState(key: String, {defaultValue: Any, persist: Boolean})
-```
-
-```js
-useGlobalStateReducer(reducer: Function, key: String, {defaultValue: Any, persist: Boolean})
-```
-By default the value of `persist` in all cases is `false`(which means it doesn't save global state to the local storage), so if you want to activate it, set it to be `true`.
-What's even better about `state-pool` is that you get the freedom to choose what to save on localStorage and what's not to. With `state-pool` you don't need to save the whole store in local storage.
-
-### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME(in milliseconds)
-This is the variable used to set debounce time for updating state to the localStorage when global state changes. `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the localStorage. Therefore this variable is used to control that, The default value is 1000 ms which is equal to 1 second. You can set your values if you don't want to use the default one.
-<br/>
 
 ### store.remove
 This is used to remove a global state from store if you don't need it anymore or you want to reload/reset it. It accepts a global state key or a list of keys to remove and a function to run after removing global state(s). Note the function runs before components subscribed to removed global state(s) re-renders.
@@ -554,63 +677,28 @@ const globalState = store.getState(key);
 const [state, dispatch] = useGlobalReducer(reducer, globalState);
 ```
 
-### createGlobalState
-**state-pool** allows you to create global state object with `createGlobalState`, it accepts one argument which is the initial state.
+
+## State Persistence
+Saving/persisting global states in localStorage with `state-pool` is very easy, all you need to do is tell `state-pool` to save your state in localStorage by using `persist` configuration when creating your global state, no need to worry about updating or loading it, `state-pool` has already handled that for you so that you can focus on using your states. As discussed before `store.setState` accept an optional parameter(configuration object) with `persist` configuration which is used to tell `state-pool` whether to save your state in local storage or not. i.e
 
 ```js
-// Signature
-createGlobalState(initialState: Any)
+store.setState(key: String, initialState: Any, {persist: Boolean})
 ```
 
-Here is how to use it
+Since `state-pool` allows you to create global state dynamically, it also allows you to save those created states to localStorage if you want, that's why both `useGlobalState` and `useGlobalStateReducer` accepts `persist` configuration too which just like in `store.setState` it's used to tell `state-pool` whether to save your newly created state in local storage or not. i.e
 
 ```js
-const userName = createGlobalState("Yezy");
+useGlobalState(key: String, {defaultValue: Any, persist: Boolean})
 ```
-
-**Note:** This should be used outside of your component. It is mostly used by `store.setState` to create a global state object.
-
-### useGlobalState hook with the first argument as GlobalState
-`useGlobalState` works just like `useState` hook but it accepts one required parameter which is the global state object and another optional parameter which is the configuration object(allowed configurations are `selector` & `patcher`). These configurations are used for specifying a way to select deeply nested state and update it.
 
 ```js
-// Signature
-useGlobal(globalState: Object, {selector: Function, patcher: Function})
+useGlobalStateReducer(reducer: Function, key: String, {defaultValue: Any, persist: Boolean})
 ```
+By default the value of `persist` in all cases is `false`(which means it doesn't save global state to the local storage), so if you want to activate it, set it to be `true`.
+What's even better about `state-pool` is that you get the freedom to choose what to save on localStorage and what's not to. With `state-pool` you don't need to save the whole store in local storage.
 
-For example if you have a global state like
-```js
-const userName = createGlobalState("Yezy");
-```
-
-you can use `useGlobal` hook to get global state in a functional component like
-```js
-const [name, setName, updateName] = useGlobalState(userName);
-```
-
-### useGlobalStateReducer hook with the first argument as GlobalState
-`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a global state object. In addition to those two parameters it accepts another optional parameter which is the configuration object(available configurations are `selector` & `patcher`) just like in `useGlobalState`. These configurations are used for specifying a way to select deeply nested state and update it.
-
-```js
-// Signature
-useGlobalStateReducer(reducer: Function, globalState: Object)
-```
-
-For example if you have a global state like
-```js
-const userName = createGlobalState("Yezy");
-```
-
-you can use `useGlobalReducer` hook to get global state in a functional component like
-```js
-function myReducer(state, action){
-    // This could be any reducer
-    // Do whatever you want to do here
-    return newState
-}
-
-const [name, dispatch] = useGlobalStateReducer(myReducer, userName);
-```
-**FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook.
+### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME(in milliseconds)
+This is the variable used to set debounce time for updating state to the localStorage when global state changes. `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the localStorage. Therefore this variable is used to control that, The default value is 1000 ms which is equal to 1 second. You can set your values if you don't want to use the default one.
+<br/>
 
 Pretty cool, right?
