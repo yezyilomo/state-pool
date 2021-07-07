@@ -1,8 +1,12 @@
-# state-pool
+# State Pool
 React state management library based on global variables and react hooks.
 
-## Architecture
+<br/>
+
+## Architectural Diagram
 ![Architecture Diagram](https://raw.githubusercontent.com/yezyilomo/state-pool/master/docs/images/architecture_diagram.png)
+
+<br/>
 
 ### State Flow
 1. Create a global state(which is technically a global variable)
@@ -13,6 +17,7 @@ React state management library based on global variables and react hooks.
 
 4. When a global state receives update request, it performs the update and send update signal to all components subscribed to it for them to update themselves(re-render)
 
+<br/>
 
 ## Installing
 ```
@@ -24,6 +29,8 @@ Or
 ```
 npm install state-pool
 ```
+
+<br/>
 
 ## Getting Started
 ### Managing Global State
@@ -94,6 +101,8 @@ function UserInfo(props){
 ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
 
+<br/>
+
 ### Managing Local State
 **state-pool**  allows you to manage local states too, it is shipped with `useLocalState` hook which is equivalent to `useState` with improved way to update state(especially nested ones).
 
@@ -153,6 +162,8 @@ function UserInfo(props){
 ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
 
+<br/>
+
 ## API
 ### createGlobalState
 **state-pool** allows you to create global state object with `createGlobalState`, it accepts one argument which is the initial value.
@@ -198,6 +209,7 @@ store.setState("user", userState);
 
 **Note:** `store.setState` should be used outside of the component, and normally you would want to initialize your store(by using `store.setState`) before using it, to do so, ensure it's done before calling `ReactDOM.render` in order to load states before the application starts.
 
+<br/>
 
 ### useGlobalState hook
 `useGlobalState` works just like `useState` hook but it accepts a global state or a key for the global state(for key based global state) and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the global state or key parameter it accepts another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
@@ -265,6 +277,7 @@ setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 ```
 
 <br/>
+
 As stated earlier `useGlobalState` accepts a second **optional** parameter which is a configuration object, available configurations are:
 
 `default` - This is used to specify the default value if you want `useGlobalState` to create a global state if it doesn't find the one for the key specified in the first argument. For example 
@@ -352,6 +365,7 @@ function UserName(props){
 }
 ```
 
+<br/>
 
 ### useLocalState hook
 `useLocalState` works just like `useGlobalState` hook except it accepts initial value as the argument and it's used to manage local states. Basically `useLocalState` is equivalent to `useState` with improved way to update state(especially nested ones). 
@@ -399,6 +413,7 @@ Or you can just use `setUser` instead of `updateUser` i.e
 setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 ```
 
+<br/>
 
 ### useGlobalStateReducer hook
 `useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a global state or key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`.
@@ -536,6 +551,7 @@ function UserInfo(props){
 
 **FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook.
 
+<br/>
 
 ### store.remove
 This is used to remove a global state from store if you don't need it anymore or you want to reload/reset it. It accepts a global state key or a list of keys to remove and a function to run after removing such global state(s). Note the function runs before components subscribed to removed global state(s) re-renders.
@@ -591,6 +607,8 @@ From the code above, when you click `Reset` button `store.remove` will remove `c
 ```js
 store.remove([key1, key2, key3, ...], initializeStore);
 ```
+
+<br/>
 
 ### store.clear
 This is used to clear the entire store if you don't need the global states in it anymore or you want to reload/reset all global states. It accepts a function to run after clearing the store. Note the function runs before components subscribed to all global states in a store rerenders.
@@ -656,6 +674,8 @@ From the code above, when you click `Reset Store` button `store.clear` will remo
 
 **NOTE:** both `store.remove` and `store.clear` when executed causes all components subscribed to global states which are removed to rerender.
 
+<br/>
+
 ### store.getState
 `store.getState` is used to get a global state object by using a key, it accepts one required parameter which is a key(string) and another optional parameters which is the configuration object(available configurations are `default` and `persist`). `store.getState` returns a global state object. `store.getState` is often used along with `store.setState` in key based global state.
 
@@ -684,6 +704,7 @@ const globalState = store.getState(key);
 const [state, dispatch] = useGlobalStateReducer(reducer, globalState);
 ```
 
+<br/>
 
 ## State Persistence
 Sometimes you might want to save your global states in local storage probably because you might not want to lose them when the application is closed(i.e you want to retain them when the application starts).
@@ -709,6 +730,7 @@ useGlobalStateReducer(reducer: Function, key: String, {defaultValue: Any, persis
 
 By default the value of `persist` in all cases is `false`(which means it doesn't save global states to the local storage), so if you want to activate it, set it to be `true`. What's even better about **state-pool** is that you get the freedom to choose what to save in local storage and what's not to, so you don't need to save the whole store in local storage.
 
+<br/>
 
 ### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME(in milliseconds)
 When storing state to local storage, `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the local storage.
