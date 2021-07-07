@@ -28,10 +28,12 @@ npm install state-pool
 ## Getting Started
 ### Managing Global State
 Using **state-pool** to manage global state is very simple, all you need to do is
-1. Create a global state by using either `createGlobalState` or `store.setState`
+1. Create a global state by using either `createGlobalState` or `store.setState`(for key based global states)
 2. Use your global state in a component through `useGlobalState` or `useGlobalStateReducer` hooks
 
-These two steps summarises pretty much everything you need to use **state-pool**. Below are few examples showing how to manage global states with **state-pool**.
+These two steps summarises pretty much everything you need to use **state-pool**.
+
+Below are few examples showing how to manage global states with **state-pool**.
 
 ```js
 // Example 1.
@@ -93,7 +95,9 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
 
 ### Managing Local State
-You can manage local state with **state-pool** too. **state-pool** is shipped with `useLocalState` hook which is equivalent to `useState` with improved way to update state(especially nested ones). Below are few examples showing how to manage local state with **state-pool**.
+**state-pool**  allows you to manage local states too, it is shipped with `useLocalState` hook which is equivalent to `useState` with improved way to update state(especially nested ones).
+
+Below are few examples showing how to manage local states with **state-pool**.
 
 ```js
 // Example 1.
@@ -164,15 +168,17 @@ Here is how to use it
 const userName = createGlobalState("Yezy");
 ```
 
-**Note:** This should be used outside of your component.
+**Note:** This should be used outside of react component.
 
+<br/>
 
 ### store
-Store is a container for key based global states. Store provides few methods which are used to manage global states including `store.setState`, `store.getState`, `store.remove` and `store.clear`.
+Store is a container for key based global states. Store provides few methods which are used to manage key based global states including `store.setState`, `store.getState`, `store.remove` and `store.clear`.
 
+<br/>
 
 ### store.setState
-`store.setState` is used to create global state and map it to a key so that you won't need to use a global state object directly instead you use the key to get it, `store.setState` takes two required parameters, a key(string) to map to a global state object and the initial state, In addition to those two parameters it takes a third optional parameter which is the configuration object. `persist` is the only available config which is the flag to determine whether to save/persist state on localStorage or not.
+This is used to create a global state and map it to a key so that you won't need to use a global state object directly, instead you use the key to get it. `store.setState` takes two required parameters, a key(string) to map to a global state object and the initial value, In addition to those two parameters it takes a third optional parameter which is the configuration object. `persist` is the only available config which is the flag to determine whether to save/persist state in localStorage or not.
 
 ```js
 // Signature
@@ -218,7 +224,7 @@ function Component(props){
 }
 ```
 
-Or for the case of key based global state
+Or for the case of key based global states
 ```js
 const initialGlobalState = {
     name: "Yezy",
@@ -242,7 +248,7 @@ updateUser(function(user){
 })
 ```
 
-You can also return new state instead of changing state i.e
+You can also return a new state instead of changing it i.e
 ```js
 updateUser(function(user){
     return {
@@ -258,6 +264,7 @@ Or you can just use `setUser` instead of `updateUser` i.e
 setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 ```
 
+<br/>
 As stated earlier `useGlobalState` accepts a second **optional** parameter which is a configuration object, available configurations are:
 
 `default` - This is used to specify the default value if you want `useGlobalState` to create a global state if it doesn't find the one for the key specified in the first argument. For example 
@@ -269,7 +276,7 @@ const [user, setUser, updateUser] = useGlobalState("user", {default: null});
 This piece of code means get the global state for the key `user` if it's not available in a store, create one and assign it the value `null`.
 
 
-Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on localStorage or not if `useGlobalState` is going to create global state dynamically.
+Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state in localStorage or not if `useGlobalState` is going to create one dynamically.
 
 
 Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
@@ -394,7 +401,7 @@ setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 
 
 ### useGlobalStateReducer hook
-`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a global state or key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`, which will be discussed in detail later.
+`useGlobalStateReducer` works just like `useReducer` hook but it accepts a reducer and a global state or key for the global state. In addition to the two parameters mentioned it accepts other optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher`.
 
 
 ```js
@@ -461,7 +468,7 @@ const [user, dispatch] = useGlobalStateReducer(myReducer, "user", {default: null
 This piece of code means get the global state for the key `user` if it's not available in a store, create one and assign it the value `null`.
 
 
-Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on localStorage or not if `useGlobalState` is going to create global state dynamically.
+Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on localStorage or not if `useGlobalState` is going to create one dynamically.
 
 
 Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
@@ -531,7 +538,7 @@ function UserInfo(props){
 
 
 ### store.remove
-This is used to remove a global state from store if you don't need it anymore or you want to reload/reset it. It accepts a global state key or a list of keys to remove and a function to run after removing global state(s). Note the function runs before components subscribed to removed global state(s) re-renders.
+This is used to remove a global state from store if you don't need it anymore or you want to reload/reset it. It accepts a global state key or a list of keys to remove and a function to run after removing such global state(s). Note the function runs before components subscribed to removed global state(s) re-renders.
 
 ```js
 // Signature
@@ -663,42 +670,50 @@ Here is how to use it
 const globalState = store.getState(key);
 ```
 
-Most of time it's used to get a global state object to pass to `useGlobal` or `useGlobalReducer`. For example
+Most of time it's used to get a global state object from a store to pass to `useGlobalState` or `useGlobalStateReducer`. For example
 
 ```js
 const globalState = store.getState(key);
-const [state, setState, updateState] = useGlobal(globalState);
+const [state, setState, updateState] = useGlobalState(globalState);
 ```
 
 Or
 
 ```js
 const globalState = store.getState(key);
-const [state, dispatch] = useGlobalReducer(reducer, globalState);
+const [state, dispatch] = useGlobalStateReducer(reducer, globalState);
 ```
 
 
 ## State Persistence
-Saving/persisting global states in localStorage with `state-pool` is very easy, all you need to do is tell `state-pool` to save your state in localStorage by using `persist` configuration when creating your global state, no need to worry about updating or loading it, `state-pool` has already handled that for you so that you can focus on using your states. As discussed before `store.setState` accept an optional parameter(configuration object) with `persist` configuration which is used to tell `state-pool` whether to save your state in local storage or not. i.e
+Sometimes you might want to save your global states in local storage probably because you might not want to lose them when the application is closed(i.e you want to retain them when the application starts).
+
+**State Pool** makes it very easy to save your global states in local storage, all you need to do is use `persist` configuration to tell **state-pool** to save your global state in local storage when creating your global state.
+
+No need to worry about updating or loading your global states, **state-pool** has already handled that for you so that you can focus on using your states.
+
+`store.setState` accept a third optional parameter which is the configuration object, `persist` is a configuration which is used to tell **state-pool** whether to save your state in local storage or not. i.e
 
 ```js
 store.setState(key: String, initialState: Any, {persist: Boolean})
 ```
 
-Since `state-pool` allows you to create global state dynamically, it also allows you to save those created states to localStorage if you want, that's why both `useGlobalState` and `useGlobalStateReducer` accepts `persist` configuration too which just like in `store.setState` it's used to tell `state-pool` whether to save your newly created state in local storage or not. i.e
+Since **state-pool** allows you to create global state dynamically, it also allows you to save those newly created states in local storage if you want, that's why both `useGlobalState` and `useGlobalStateReducer` accepts persist configuration too which just like in `store.setState` it's used to tell **state-pool** whether to save your newly created state in local storage or not. i.e
 
 ```js
 useGlobalState(key: String, {defaultValue: Any, persist: Boolean})
 ```
-
 ```js
 useGlobalStateReducer(reducer: Function, key: String, {defaultValue: Any, persist: Boolean})
 ```
-By default the value of `persist` in all cases is `false`(which means it doesn't save global state to the local storage), so if you want to activate it, set it to be `true`.
-What's even better about `state-pool` is that you get the freedom to choose what to save on localStorage and what's not to. With `state-pool` you don't need to save the whole store in local storage.
+
+By default the value of `persist` in all cases is `false`(which means it doesn't save global states to the local storage), so if you want to activate it, set it to be `true`. What's even better about **state-pool** is that you get the freedom to choose what to save in local storage and what's not to, so you don't need to save the whole store in local storage.
+
 
 ### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME(in milliseconds)
-This is the variable used to set debounce time for updating state to the localStorage when global state changes. `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the localStorage. Therefore this variable is used to control that, The default value is 1000 ms which is equal to 1 second. You can set your values if you don't want to use the default one.
+When storing state to local storage, `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the local storage.
+
+Knowing this **state-pool** comes with `store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME` which is the variable used to control debounce time for updating state to the local storage when global state changes. The default value is 1000 ms which is equal to 1 second. You can set your values if you don't want to use the default one.
 <br/>
 
 Pretty cool, right?
