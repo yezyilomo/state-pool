@@ -1,6 +1,15 @@
 # State Pool
 React state management library based on global variables and react hooks.
 
+Features 
+- Simple, familiar and very minimal core API but powerful
+- Built-in state persistence
+- Has a very steep learning curve because it works just like react state hooks
+- Support selecting deeply nested state
+- Support creating global state dynamically
+- Support both key based and non-key based global state
+- States are stored as global variables(They can be used anywhere)
+
 <br/>
 
 ## Architectural Diagram
@@ -564,7 +573,6 @@ store.remove(key: String/[String], fn: Function)
 Below is an example showing how to use it
 
 ```js
-// Example 1.
 import React from 'react';
 import {store, useGlobalState} from 'state-pool';
 
@@ -621,7 +629,6 @@ store.clear(fn: Function)
 Below is an example showing how to use it
 
 ```js
-// Example 2.
 import React from 'react';
 import {store, useGlobalState} from 'state-pool';
 
@@ -732,7 +739,7 @@ By default the value of `persist` in all cases is `false`(which means it doesn't
 
 <br/>
 
-### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME(in milliseconds)
+### store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME
 When storing state to local storage, `localStorage.setItem` should not be called too often because it triggers the expensive `JSON.stringify` operation to serialize global state in order to save it to the local storage.
 
 Knowing this **state-pool** comes with `store.LOCAL_STORAGE_UPDATE_DEBOUNCE_TIME` which is the variable used to control debounce time for updating state to the local storage when global state changes. The default value is 1000 ms which is equal to 1 second. You can set your values if you don't want to use the default one.
