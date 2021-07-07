@@ -8,7 +8,7 @@ React state management library based on global variables and react hooks.
 - Support selecting deeply nested state
 - Support creating global state dynamically
 - Support both key based and non-key based global state
-- States are stored as global variables(They can be used anywhere)
+- States are stored as global variables(Can be used anywhere)
 
 <br/>
 
