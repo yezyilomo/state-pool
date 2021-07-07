@@ -4,7 +4,7 @@ React state management library based on global variables and react hooks.
 **Features & Advantages**
 - Simple, familiar and very minimal core API but powerful
 - Built-in state persistence
-- Has a very steep learning curve because it works just like react state hooks
+- Has a very shallow learning curve because it works just like react state hooks
 - Support selecting deeply nested state
 - Support creating global state dynamically
 - Support both key based and non-key based global state
