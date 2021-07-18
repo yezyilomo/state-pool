@@ -1,6 +1,7 @@
 {
     "name": "state-pool",
-    "version": "0.6.0-alpha.0",
+    "private": true,
+    "version": "0.6.0-alpha.10",
     "description": "React state management library based on global variables and react hooks.",
     "license": "MIT",
     "homepage": "https://github.com/yezyilomo/state-pool/blob/master/README.md",
@@ -16,10 +17,7 @@
     "main": "index.js",
     "module": "esm/index.js",
     "types": "index.d.ts",
-    "files": [
-        "src",
-        "dist"
-    ],
+    "files": ["**"],
     "sideEffects": false,
     "scripts": {
         "prebuild": "shx rm -rf dist",
@@ -27,7 +25,7 @@
         "postbuild": "npm run copy",
         "test": "shx rm -rf dist && tsc && jest ./dist/test && shx rm -rf dist",
         "copy": "shx mkdir dist/esm && shx cp -r dist/src/* dist/esm && shx mv dist/src/* dist && shx rm -rf dist/{src,tests} && shx cp package.json README.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.scripts=undefined;\"",
-        "prepublishOnly": "npm run build"
+        "publish:dist": "npm run build && cd dist && npm publish"
     },
     "exports": {
         "./package.json": "./package.json",
