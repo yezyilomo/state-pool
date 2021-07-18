@@ -1,0 +1,28 @@
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "module": "commonjs",
+        "allowJs": true,
+        "outDir": "dist",
+        "strict": false,
+        "jsx": "preserve",
+        "declaration": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node",
+        "baseUrl": ".",
+        "paths": {
+          "state-pool": [
+            "./src/index.ts"
+          ]
+        }
+    },
+    
+    "include": [
+        "src/**/*",
+        "tests/**/*"
+    ],
+    "exclude": [
+        "node_modules",
+        "dist"
+    ]
+}

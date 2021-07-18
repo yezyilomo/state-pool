@@ -1,6 +1,6 @@
 {
     "name": "state-pool",
-    "version": "0.5.0",
+    "version": "0.6.0-alpha.0",
     "description": "React state management library based on global variables and react hooks.",
     "license": "MIT",
     "homepage": "https://github.com/yezyilomo/state-pool/blob/master/README.md",
@@ -13,14 +13,30 @@
     "authors": [
         "Yezileli Ilomo <yezileliilomo@hotmail.com> (https://github.com/yezyilomo)"
     ],
-    "main": "src/index.js",
+    "main": "index.js",
+    "module": "esm/index.js",
+    "types": "index.d.ts",
     "files": [
-        "dist",
-        "lib",
-        "src"
+        "src",
+        "dist"
     ],
+    "sideEffects": false,
     "scripts": {
-        "test": "jest"
+        "prebuild": "shx rm -rf dist",
+        "build": "tsc",
+        "postbuild": "npm run copy",
+        "test": "shx rm -rf dist && tsc && jest ./dist/test && shx rm -rf dist",
+        "copy": "shx mkdir dist/esm && shx cp -r dist/src/* dist/esm && shx mv dist/src/* dist && shx rm -rf dist/{src,tests} && shx cp package.json README.md LICENSE dist && json -I -f dist/package.json -e \"this.private=false; this.devDependencies=undefined; this.scripts=undefined;\"",
+        "prepublishOnly": "npm run build"
+    },
+    "exports": {
+        "./package.json": "./package.json",
+        ".": {
+            "types": "./index.d.ts",
+            "module": "./esm/index.js",
+            "import": "./esm/index.js",
+            "default": "./index.js"
+        }
     },
     "dependencies": {
         "immer": ">=6.0.3"
@@ -35,7 +51,10 @@
         "babel-eslint": ">=10.0.3",
         "babel-jest": ">=24.9.0",
         "jest": ">=24.9.0",
+        "json": "^11.0.0",
         "react": ">=16.8.3",
-        "react-test-renderer": ">=16.12.0"
+        "react-test-renderer": ">=16.12.0",
+        "shx": "^0.3.3",
+        "typescript": "^4.3.5"
     }
 }

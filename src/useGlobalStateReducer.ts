@@ -1,16 +1,36 @@
-import { useState, useEffect, useRef } from 'react';
 import produce from 'immer';
-import { store } from '../store';
+
+import { useState, useEffect, useRef } from 'react';
+import { GlobalState } from './GlobalState';
+import { store } from './GlobalStateStore';
 
 
-function useGlobalStateReducer(reducer, globalState, config = {}) {
+type Reducer = (currentState: any, newState: any) => any
+type Config = {
+    default?: any,
+    selector?: (state: any) => any,
+    patcher?: (state: any, selectedState: any) => any,
+    persist: boolean
+}
+
+function useGlobalStateReducer(
+    reducer: Reducer,
+    globalState: string | GlobalState,
+    config: Config = { persist: true }
+): [any, (action: any) => any] {
+
+    let _globalState: GlobalState;
+
     if (typeof globalState === 'string') {
-        globalState = store.getState(globalState, config);
+        _globalState = store.getState(globalState, config);
+    }
+    else {
+        _globalState = globalState;
     }
 
-    const [, setState] = useState();
+    const [, setState]: [any, any] = useState();
     const isMounted = useRef(false);
-    const currentState = globalState.getValue();
+    const currentState = _globalState.getValue();
     const selector = config.selector;
     const patcher = config.patcher;
 
@@ -21,7 +41,7 @@ function useGlobalStateReducer(reducer, globalState, config = {}) {
         }
     }
 
-    function sendUpdateSignal(newState) {
+    function sendUpdateSignal(newState: any) {
         if (selector && selector(currentState) === selector(newState)) {
             // Do nothing because the selected state has not changed
         }
@@ -40,28 +60,28 @@ function useGlobalStateReducer(reducer, globalState, config = {}) {
     }
 
     useEffect(() => {
-        globalState.subscribe(observer);
+        _globalState.subscribe(observer);
         isMounted.current = true;
 
         return () => {
-            globalState.unsubscribe(observer);
+            _globalState.unsubscribe(observer);
             isMounted.current = false;
         }
     }, [])
 
-    function dispatch(action) {
-        const newState = reducer(globalState.getValue(), action);
-        globalState.setValue(newState);
+    function dispatch(action: any) {
+        const newState = reducer(_globalState.getValue(), action);
+        _globalState.setValue(newState);
     }
 
-    function patch(action) {
+    function patch(action: any) {
         // patch back changed node to the global state
         const nodeValue = reducer(selector(currentState), action);
         const newState = produce(
             currentState,
-            (draftCurrentState) => { return patcher(draftCurrentState, nodeValue); }
+            (draftCurrentState: any) => { return patcher(draftCurrentState, nodeValue); }
         )
-        globalState.setValue(newState);
+        _globalState.setValue(newState);
     }
 
     if (selector) {
