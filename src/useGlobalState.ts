@@ -1,14 +1,25 @@
 import produce from 'immer';
-import { store } from '../store';
+import { GlobalState } from './GlobalState';
+import { store } from './GlobalStateStore';
 import { useGlobalStateReducer } from './useGlobalStateReducer';
 
 
-function useGlobalState(globalState, config = {}) {
+type Config = {
+    default?: any,
+    selector?: (state: any) => any,
+    patcher?: (state: any, selectedState: any) => any,
+    persist: boolean
+}
+
+function useGlobalState(
+    globalState: string | GlobalState,
+    config: Config = { persist: true }
+): [any, (value: any) => any, (state: any) => any] {
     if (typeof globalState === 'string') {
         globalState = store.getState(globalState, config);
     }
 
-    function reducer(state, newState) {
+    function reducer(currentState: any, newState: any) {
         return newState;
     }
 
@@ -20,7 +31,7 @@ function useGlobalState(globalState, config = {}) {
         globalStateValue = globalState.getValue();
     }
 
-    function updateState(fn) {
+    function updateState(fn: (oldState: any) => void) {
         const newState = produce(globalStateValue, fn);
         setState(newState);
     }
