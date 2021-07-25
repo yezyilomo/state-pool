@@ -31,7 +31,7 @@ function useGlobalState(
         globalStateValue = globalState.getValue();
     }
 
-    function updateState(fn: (oldState: any) => void) {
+    function updateState(fn: (oldState: any) => any) {
         const newState = produce(globalStateValue, fn);
         setState(newState);
     }

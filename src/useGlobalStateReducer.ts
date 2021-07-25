@@ -79,7 +79,9 @@ function useGlobalStateReducer(
         const nodeValue = reducer(selector(currentState), action);
         const newState = produce(
             currentState,
-            (draftCurrentState: any) => { return patcher(draftCurrentState, nodeValue); }
+            (draftCurrentState: any) => {
+                return patcher(draftCurrentState, nodeValue);
+            }
         )
         _globalState.setValue(newState);
     }
