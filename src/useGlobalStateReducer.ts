@@ -1,39 +1,32 @@
-import produce from 'immer';
-
 import { useState, useEffect, useRef } from 'react';
 import { GlobalState } from './GlobalState';
-import { store } from './GlobalStateStore';
 
 
-type Reducer = (currentState: any, newState: any) => any
+type Reducer = (state: any, action: any) => any
+
 type Config = {
-    default?: any,
     selector?: (state: any) => any,
-    patcher?: (state: any, selectedState: any) => any,
-    persist: boolean
+    patcher?: (state: any, selectedStateValue: any) => any
 }
 
-function useGlobalStateReducer(
+type ReturnType<ValueType> = [
+    state: ValueType,
+    dispatch: (action: any) => any
+]
+
+function useGlobalStateReducer<ValueType=any>(
     reducer: Reducer,
-    globalState: string | GlobalState,
-    config: Config = { persist: true }
-): [any, (action: any) => any] {
-
-    let _globalState: GlobalState;
-
-    if (typeof globalState === 'string') {
-        _globalState = store.getState(globalState, config);
-    }
-    else {
-        _globalState = globalState;
-    }
-
-    const [, setState]: [any, any] = useState();
+    globalState: GlobalState<any>,
+    config: Config = {}
+): ReturnType<ValueType> {
+    const [, setState] = useState(null);
     const isMounted = useRef(false);
-    const currentState = _globalState.getValue();
+
     const selector = config.selector;
     const patcher = config.patcher;
 
+    const currentState: ValueType = globalState.getValue<ValueType>(selector);
+    
     function reRender() {
         // re-render if the component is mounted
         if (isMounted.current) {
@@ -41,8 +34,8 @@ function useGlobalStateReducer(
         }
     }
 
-    function sendUpdateSignal(newState: any) {
-        if (selector && selector(currentState) === selector(newState)) {
+    function observer(newState: any) {
+        if (currentState === newState) {
             // Do nothing because the selected state has not changed
         }
         else {
@@ -50,51 +43,30 @@ function useGlobalStateReducer(
         }
     }
 
-    function sendDeleteSignal() {
-        reRender();
-    }
-
-    const observer = {
-        sendUpdateSignal: sendUpdateSignal,
-        sendDeleteSignal: sendDeleteSignal
+    const subscription = {
+        observer: observer,
+        selector: selector ?
+            selector :
+            (state) => state,  // Select the whole global state if selector is not specified
+        reRender: reRender
     }
 
     useEffect(() => {
-        _globalState.subscribe(observer);
+        const unsubscribe = globalState.subscribe(subscription);
         isMounted.current = true;
 
         return () => {
-            _globalState.unsubscribe(observer);
+            unsubscribe();
             isMounted.current = false;
         }
     }, [])
 
     function dispatch(action: any) {
-        const newState = reducer(_globalState.getValue(), action);
-        _globalState.setValue(newState);
+        const newState = reducer(currentState, action);
+        globalState.updateValue(oldState => newState, patcher, selector);
     }
 
-    function patch(action: any) {
-        // patch back changed node to the global state
-        const nodeValue = reducer(selector(currentState), action);
-        const newState = produce(
-            currentState,
-            (draftCurrentState: any) => {
-                return patcher(draftCurrentState, nodeValue);
-            }
-        )
-        _globalState.setValue(newState);
-    }
-
-    if (selector) {
-        if (patcher) {
-            return [selector(currentState), patch];
-        }
-        else {
-            return [selector(currentState), dispatch];
-        }
-    }
-    return [currentState, dispatch];
+    return [currentState, dispatch]
 }
 
 export { useGlobalStateReducer };

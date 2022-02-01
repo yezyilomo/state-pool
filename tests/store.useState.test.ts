@@ -1,12 +1,13 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { store, useGlobalState } from '../src/';
+import { createStore } from '../src/';
 
 
+const store = createStore();
 store.setState("count", 0);
 
 test('should update count', () => {
-    const { result } = renderHook(() => useGlobalState("count"))
+    const { result } = renderHook(() => store.useState("count"))
 
     act(() => {
         result.current[2](count => 1)
@@ -17,7 +18,7 @@ test('should update count', () => {
 
 
 test('should create `age` global state with the given default value', () => {
-    const { result } = renderHook(() => useGlobalState("age", {default: 18}));
+    const { result } = renderHook(() => store.useState("age", {default: 18}));
 
     act(() => {
         result.current[2](age => age + 2)
