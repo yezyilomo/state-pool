@@ -66,7 +66,7 @@ Below are few examples showing how to use **state-pool** to manage global states
 ```js
 // Example 1.
 import React from 'react';
-import {createStore} from 'state-pool';
+import { createStore } from 'state-pool';
 
 
 const store = createStore();  // Create store for storing our global state
@@ -97,7 +97,7 @@ ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 ```js
 // Example 2.
 import React from 'react';
-import {createStore} from 'state-pool';
+import { createStore } from 'state-pool';
 
 
 const store = createStore();  // Create store for storing our global state
@@ -299,19 +299,21 @@ function Component(props){
 
 As stated earlier `store.useReducer` has a third optional parameter which is a configuration object, available configurations are:
 
-`default` - This is used to specify the default value if you want `store.useReducer` to create a global state if it doesn't find the one for the key specified in the first argument. For example
+- `default` - This is used to specify the default value if you want `store.useReducer` to create a global state if it doesn't find the one for the key specified in the first argument. For example
 
-const [user, dispatch] = store.useReducer(myReducer, "user", {default: null});
+  ```js
+  const [user, dispatch] = store.useReducer(myReducer, "user", {default: null});
+  ```
 
-This piece of code means get the global state for the key `user` if it's not available in a store, create one and assign it the value null.
-
-Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on your preferred storage or not if `store.useReducer` is going to create one dynamically.
+  This piece of code means get the global state for the key `user` if it's not available in a store, create one and assign it the value null.
+  
+- Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state on your preferred storage or not if `store.useReducer` is going to create one dynamically.
 
 Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
 
-`selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
+- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
 
-`patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
+- `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 Example.
 
 ```js
@@ -410,7 +412,7 @@ Below is an example showing how to use it
 
 ```js
 import React from 'react';
-import {createStore} from 'state-pool';
+import { createStore } from 'state-pool';
 
 
 const store = createStore();
@@ -463,7 +465,7 @@ Below is an example showing how to use it
 
 ```js
 import React from 'react';
-import {createStore} from 'state-pool';
+import { createStore } from 'state-pool';
 
 
 const store = createStore();
@@ -650,7 +652,7 @@ const userName = createGlobalState("Yezy");
 
 ```js
 // Signature
-useGlobalState(globalState|key: GlobalState|String, {selector: Function, patcher: Function})
+useGlobalState(globalState: GlobalState, {selector: Function, patcher: Function})
 ```
 
 Below is an example showing how to use `useGlobalState` hook
@@ -700,10 +702,10 @@ setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 As stated earlier `useGlobalState` accepts a second **optional** parameter which is a configuration object, available configurations are `selector` & `patcher`, these are used for specifying a way to select deeply nested state and update it.
 
 
-`selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
+- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
 
 
-`patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
+- `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 
 Example.
 ```js
@@ -745,7 +747,7 @@ function UserName(props){
 
 ```js
 // Signature
-useGlobalStateReducer(reducer: Function, globalState|key: GlobalState|String, {selector: Function, patcher: Function})
+useGlobalStateReducer(reducer: Function, globalState: GlobalState, {selector: Function, patcher: Function})
 ```
 
 Below is an example showing how to use `useGlobalStateReducer`
@@ -775,10 +777,10 @@ function Component(props){
 As stated earlier `useGlobalStateReducer` has a third **optional** parameter which is a configuration object, available configurations are `selector` & `patcher`, these are used for specifying a way to select deeply nested state and update it.
 
 
-`selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
+- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
 
 
-`patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
+- `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 
 Example.
 ```js
