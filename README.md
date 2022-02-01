@@ -166,7 +166,10 @@ store.setState("user", userState);
 
 ```js
 // Signature
-store.useState(key: string, {default: any, persist: boolean, selector: function, patcher: function})
+store.useState(
+    key: String,
+    {default: Any, persist: Boolean, selector: Function, patcher: Function}
+)
 ```
 
 Below is an example showing how to use `store.useState` hook
@@ -270,7 +273,11 @@ function UserName(props){
 
 ```js
 // Signature
-store.useReducer(reducer: function, key: string, {default: any, persist: boolean, selector: function, patcher: function })
+store.useReducer(
+    reducer: Function,
+    key: String,
+    {default: Any, persist: Boolean, selector: Function, patcher: Function}
+)
 ```
 
 Below is an example showing how to use
@@ -405,7 +412,7 @@ This is used to remove a global state from store if you don't need it anymore or
 
 ```js
 // Signature
-store.remove(key: String/[String], fn: Function)
+store.remove(key: String, fn: Function)
 ```
 
 Below is an example showing how to use it
@@ -557,7 +564,7 @@ store.useState(key: String, {defaultValue: Any, persist: Boolean})
 ```
 
 ```js
-store.useReducer(reducer: function, key: String, {defaultValue: Any, persist: Boolean})
+store.useReducer(reducer: Function, key: String, {defaultValue: Any, persist: Boolean})
 ```
 
 By default the value of `persist` in all cases is false(which means it doesn't save global states to a permanent storage), so if you want to activate it, set it to be true.
@@ -747,7 +754,11 @@ function UserName(props){
 
 ```js
 // Signature
-useGlobalStateReducer(reducer: Function, globalState: GlobalState, {selector: Function, patcher: Function})
+useGlobalStateReducer(
+    reducer: Function,
+    globalState: GlobalState,
+    {selector: Function, patcher: Function}
+)
 ```
 
 Below is an example showing how to use `useGlobalStateReducer`
