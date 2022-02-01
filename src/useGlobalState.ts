@@ -1,39 +1,32 @@
-import produce from 'immer';
 import { GlobalState } from './GlobalState';
-import { store } from './GlobalStateStore';
 import { useGlobalStateReducer } from './useGlobalStateReducer';
 
 
 type Config = {
-    default?: any,
     selector?: (state: any) => any,
-    patcher?: (state: any, selectedState: any) => any,
-    persist: boolean
+    patcher?: (state: any, selectedStateValue: any) => any
 }
 
-function useGlobalState(
-    globalState: string | GlobalState,
-    config: Config = { persist: true }
-): [any, (value: any) => any, (state: any) => any] {
-    if (typeof globalState === 'string') {
-        globalState = store.getState(globalState, config);
-    }
+type ReturnType<ValueType> = [
+    state: ValueType,
+    setState: (state: any) => any,
+    updateState: (
+        updater: (currentState: any) => any
+    ) => any
+]
 
+function useGlobalState<ValueType>(
+    globalState: GlobalState<any>,
+    config: Config = {},
+): ReturnType<ValueType> {
     function reducer(currentState: any, newState: any) {
         return newState;
     }
 
-    const [state, setState] = useGlobalStateReducer(reducer, globalState, config);
+    const [state, setState] = useGlobalStateReducer<ValueType>(reducer, globalState, config);
 
-    let globalStateValue = state;
-
-    if (config.selector && !config.patcher) {
-        globalStateValue = globalState.getValue();
-    }
-
-    function updateState(fn: (oldState: any) => any) {
-        const newState = produce(globalStateValue, fn);
-        setState(newState);
+    function updateState(updater: (currentState: any) => any) {
+        globalState.updateValue(updater, config.patcher, config.selector);
     }
 
     return [state, setState, updateState];

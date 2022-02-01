@@ -8,7 +8,7 @@ const count = createGlobalstate(0);
 test('should update count', () => {
     const reducer = (state, newState) => newState;
 
-    const { result } = renderHook(() => useGlobalStateReducer(reducer, count))
+    const { result } = renderHook(() => useGlobalStateReducer(reducer, count));
 
     act(() => {
         result.current[1](1)
