@@ -231,37 +231,37 @@ Other allowed configurations are `selector` & `patcher`. These are used for spec
 
 - `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 
-Example.
-```js
-const initialGlobalState = {
-    name: "Yezy",
-    age: 25,
-    email: "yezy@me.com"
-}
-
-store.setState("user": initialGlobalState);
-
-
-function UserName(props){
-    const selector = (user) => user.name;  // Subscribe to user.name only
-    const patcher = (user, name) => {user.name = name};  // Update user.name
-
-    const [name, setName, updateName] = store.useState("user", {selector: selector, patcher: patcher});
-
-    let handleNameChange = (e) => {
-        setName(e.target.value);
-        // updateName(name => e.target.value);  You can do this if you like to use `updatName`
-    }
-
-    return (
-        <div>
-            Name: {name}
-            <br/>
-            <input type="text" value={name} onChange={handleNameChange}/>
-        </div>
-    );
-}
-```
+  Example.
+  ```js
+  const initialGlobalState = {
+      name: "Yezy",
+      age: 25,
+      email: "yezy@me.com"
+  }
+  
+  store.setState("user": initialGlobalState);
+  
+  
+  function UserName(props){
+      const selector = (user) => user.name;  // Subscribe to user.name only
+      const patcher = (user, name) => {user.name = name};  // Update user.name
+  
+      const [name, setName, updateName] = store.useState("user", {selector: selector, patcher: patcher});
+  
+      let handleNameChange = (e) => {
+          setName(e.target.value);
+          // updateName(name => e.target.value);  You can do this if you like to use `updatName`
+      }
+  
+      return (
+          <div>
+              Name: {name}
+              <br/>
+              <input type="text" value={name} onChange={handleNameChange}/>
+          </div>
+      );
+  }
+  ```
 
 <br/>
 
@@ -318,33 +318,33 @@ Other allowed configurations are `selector` & `patcher`. These are used for spec
 - `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
 
 - `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
-Example.
-
-```js
-const initialGlobalState = {
-    name: "Yezy",
-    age: 25,
-    email: "yezy@me.com"
-}
-
-store.setState("user": initialGlobalState);
-
-
-function myReducer(state, action){
-    // This could be any reducer
-    // Do whatever you want to do here
-    return newState
-}
-
-function UserInfo(props){
-    const selector = (user) => user.name;
-    const patcher = (user, name) => {user.name = name};
-    
-    const [name, dispatch] = store.useReducer(myReducer, "user", {selector: selector, patcher: patcher});
-
-    // Other stuff
-}
-```
+  Example.
+  
+  ```js
+  const initialGlobalState = {
+      name: "Yezy",
+      age: 25,
+      email: "yezy@me.com"
+  }
+  
+  store.setState("user": initialGlobalState);
+  
+  
+  function myReducer(state, action){
+      // This could be any reducer
+      // Do whatever you want to do here
+      return newState
+  }
+  
+  function UserInfo(props){
+      const selector = (user) => user.name;
+      const patcher = (user, name) => {user.name = name};
+      
+      const [name, dispatch] = store.useReducer(myReducer, "user", {selector: selector, patcher: patcher});
+  
+      // Other stuff
+  }
+  ```
 <br/>
 
 ### store.getState
@@ -530,7 +530,7 @@ Sometimes you might want to save your global states in a permanent storage proba
 
 When telling **state-pool**  how to save global state to a permanent storage we need to implement four functions which are 
 
-1. `saveState`: This is for saving your global state to your preferred permanent storage, it should accept a `key` as the first parameter and `value` as the second parameter. This function is called automatically when `store.setState` is executed and when the  global state changes
+1. `saveState`: This is for saving your global state to your preferred permanent storage, it should accept a `key` as the first parameter, `value` as the second parameter and `isInitialSet` as the third parameter, the third parameter is boolean which tells if the state is being saved for the first time(initial set) or it's just an update. This function is called automatically when `store.setState` is executed and when the  global state changes
 2. `loadState`: This is used for loading state from your preferred permanent storage, it should accept a `key` as the only parameter. This function is called when `store.setState` is executed and need initial value for the global state
 3. `removeState`: This is used for removing state from a permanent storage, it should accept a `key` as the only parameter. This function is called when `store.remove` is executed
 4. `clear`: This is used for clearing an entire permanent storage, it doesn’t accept any parameter. This function is called when `store.clear` is executed.
@@ -539,7 +539,7 @@ Now the way to implement these is by calling `store.persist` and pass them as sh
 
 ```js
 store.persist({
-    saveState: function(key, value){/*your code to save state */},
+    saveState: function(key, value, isInitialSet){/*your code to save state */},
     loadState: function(key){/*your code to load state */},
     removeState: function(key){/*your code to remove state */},
     clear: function(){/*your code to clear storage */}
@@ -629,16 +629,18 @@ store.persist({
 
 ```
 
+**Note:** When you set `PERSIST_ENTIRE_STORE = true`, by default **state-pool** will be persisting all your global state to the permanent storage unless you explicitly specify `persist = false` when setting your global state.
 <br/>
 
 
 ## Using state pool without a store(Low level core API)
 Managing global states by organizing them in a single store works great but not everyone likes it, some prefer not having a single central container for all global states. State pool allows you to create as many stores as you want and use them anywhere in your application, it doesn't enforce having a single store.
 
-State pool is not built around the concept of store, it has its own API from which a store is implemented. In **state-pool** a store is nothing but a container for your global states, it's more like a variable which hold your global states, so you can have as many of these variables as you want.
+**State pool** is not built around the concept of store, it has its own API from which a store is implemented. In **state-pool** a store is nothing but a container for global states, it's more like a variable which hold global states, so you can have as many of these variables as you want.
 
-Since **state-pool**'s core API is not built around the concept of store, this means you can still use it to manage global states without using a store, **state-pool** doesn't care where you store your global state as long as you can access them, for-instance I could choose to store my global state in a global variable and it would still work just fine. Here is an example
+Since **state-pool**'s core API is not built around the concept of store, this means you can use it to manage global states without using a store. **state-pool** doesn't care where you store your global state as long as you can access them, for-instance I could choose to store my global state in a global variable and it would still work just fine.
 
+Here is an example
 ```js
 // Managing state without using a store
 import React from 'react';
@@ -697,7 +699,7 @@ Some of the methods available in global state object are `getValue`, `updateValu
 - `updateValue`: This is used to update the value of a global state
   ```js
   // Signature
-  globalState.updateValue(updater: Function, config: {selector, patcher});
+  globalState.updateValue(updater: Function, config?: {selector, patcher});
   ```
 - `subscribe`: This is used to listen to all changes from a global state
   ```js
