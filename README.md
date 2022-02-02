@@ -7,9 +7,8 @@
 
 React state management library based on global variables and react hooks.
 
-**Features & Advantages**
-- Simple, familiar and very minimal core API but powerful
-- Very flexible API, almost everything is customizable
+## Features & Advantages
+- Simple, familiar, flexible and very minimal core API but powerful
 - Built-in support for state persistence
 - Very easy to learn because its API is very similar to react state hook's API
 - Support selecting deeply nested state
@@ -17,10 +16,8 @@ React state management library based on global variables and react hooks.
 - Can be used outside react components
 - Support both key based and non-key based global state
 - States are stored as global variables(Can be used anywhere)
-- Typescript support
 - Doesn't wrap your app in context providers
-- You can create as many stores as you want
-- Very organized API, You can do literally everything by importing just one part of this library
+- Very organized API, You can do literally everything with a single import
 
 <br/>
 
@@ -30,13 +27,13 @@ React state management library based on global variables and react hooks.
 <br/>
 
 ### State Flow
-1. Create a global state(which is technically a global variable)
+1. Create a global state
 
 2. Subscribe a component(s) to a created global state
 
 3. If a component wants to update a global state, it sends update request
 
-4. When a global state receives update request, it performs the update and send update signal to all components subscribed to it for them to update themselves(re-render)
+4. When a global state receives update request, it performs the update and send signal to all components subscribed to it for them to update themselves(re-render)
 
 <br/>
 
@@ -56,7 +53,7 @@ npm install state-pool
 ## Getting Started
 Using **state-pool** to manage global state is very simple, all you need to do is
 1. Create a store(which is basically a container for your global state)
-1. Create/Set a global state by using `store.setState`
+1. Create/set a global state by using `store.setState`
 2. Use your global state in your component through `store.useState` hooks
 
 These three steps summarises pretty much everything you need to use **state-pool**.
@@ -216,8 +213,8 @@ Or you can just use `setUser` instead of `updateUser` i.e
 setUser({name: "Yezy Ilomo", age: 26, email: "yezy@me.com"});
 ```
 
-As stated earlier store.useState accepts a second optional parameter which is a configuration object, available configurations are:
-- `default` - This is used to specify the default value if you want store.useState` to create a global state if it doesn't find the one for the key specified in the first argument. For example
+As stated earlier `store.useState` accepts a second optional parameter which is a configuration object, available configurations are:
+- `default` - This is used to specify the default value if you want `store.useState` to create a global state if it doesn't find the one for the key specified in the first argument. For example
 
   ```js
   const [user, setUser, updateUser] = store.useState("user", {default: null});
@@ -226,8 +223,8 @@ As stated earlier store.useState accepts a second optional parameter which is a 
   This piece of code means get the global state for the key user if it's not available in a store, create one and assign it the value `null`.
 
 - Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state in your preferred storage or not. Here persist configuration is only used if `store.useState` is going to create global state dynamically.
-
 <br/>
+
 Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
 
 - `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
@@ -280,7 +277,7 @@ store.useReducer(
 )
 ```
 
-Below is an example showing how to use
+Below is an example showing how to use `store.useReducer` hook
 
 ```js
 const initialGlobalState = {
@@ -535,7 +532,7 @@ When telling **state-pool**  how to save global state to a permanent storage we 
 
 1. `saveState`: This is for saving your global state to your preferred permanent storage, it should accept a `key` as the first parameter and `value` as the second parameter. This function is called automatically when `store.setState` is executed and when the  global state changes
 2. `loadState`: This is used for loading state from your preferred permanent storage, it should accept a `key` as the only parameter. This function is called when `store.setState` is executed and need initial value for the global state
-3. `removeState’: This is used for removing state from a permanent storage, it should accept a `key` as the only parameter. This function is called when `store.remove` is executed
+3. `removeState`: This is used for removing state from a permanent storage, it should accept a `key` as the only parameter. This function is called when `store.remove` is executed
 4. `clear`: This is used for clearing an entire permanent storage, it doesn’t accept any parameter. This function is called when `store.clear` is executed.
 
 Now the way to implement these is by calling `store.persist` and pass them as shown below 
@@ -635,9 +632,47 @@ store.persist({
 <br/>
 
 
-## Low level API(Non key based API)
+## Using state pool without a store(Low level core API)
+Managing global states by organizing them in a single store works great but not everyone likes it, some prefer not having a single central container for all global states. State pool allows you to create as many stores as you want and use them anywhere in your application, it doesn't enforce having a single store.
+
+State pool is not built around the concept of store, it has its own API from which a store is implemented. In **state-pool** a store is nothing but a container for your global states, it's more like a variable which hold your global states, so you can have as many of these variables as you want.
+
+Since **state-pool**'s core API is not built around the concept of store, this means you can still use it to manage global states without using a store, **state-pool** doesn't care where you store your global state as long as you can access them, for-instance I could choose to store my global state in a global variable and it would still work just fine. Here is an example
+
+```js
+// Managing state without using a store
+import React from 'react';
+import { createGlobalState, useGlobalState } from 'state-pool';
+
+
+const count = createGlobalState(0);  // Create global state and initialize it with 0
+
+function ClicksCounter(props){
+    // Use count global state
+    const [count, setCount, updateCount] = useGlobalState(count);
+
+    const incrementCount = (e) => {
+        setCount(count+1);
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+
+<br/>
+
+Now let's explore the low level core API of **state-pool**
+
 ### createGlobalState
-**state-pool** allows you to create global state object with `createGlobalState`, it accepts one argument which is the initial value.
+This is the basic unit of **state-pool**, it's a function which is used to create a global state object, it accepts one parameter which is the initial value.
 
 ```js
 // Signature
@@ -647,15 +682,52 @@ createGlobalState(initialValue: Any)
 Here is how to use it
 
 ```js
+import { createGlobalState } from 'state-pool';
+
 const userName = createGlobalState("Yezy");
 ```
 
-**Note:** This should be used outside of react component.
+Some of the methods available in global state object are `getValue`, `updateValue` and `subscribe`
+
+- `getValue`: This is used to get the value of a global state
+  ```js
+  // Signature
+  globalState.getValue(selector?: Function);
+  ```
+- `updateValue`: This is used to update the value of a global state
+  ```js
+  // Signature
+  globalState.updateValue(updater: Function, config: {selector, patcher});
+  ```
+- `subscribe`: This is used to listen to all changes from a global state
+  ```js
+  // Signature
+  globalState.subscribe(observer: Function | Subscription: {observer, selector});
+  ```
+
+Below is an example showing all of them in action
+```js
+import { createGlobalState } from 'state-pool';
+
+const count = createGlobalState(0);
+
+count.getValue()  // This will give 0
+
+count.updateValue(val => val+1)  // This will increment the value of count
+
+const unsubscribe = count.subscribe(val => console.log(val))  // This will print whenever count change
+
+unsubscribe()  // This will unsubscribe the observer above
+```
+
+**Note:** This should be used outside of react component. 
+
+**FYI:** `createGlobalState` is used to implement `store.setState` API.
 
 <br/>
 
 ### useGlobalState hook
-`useGlobalState` works just like `useState` hook but it accepts a global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the global state or key parameter it accepts another optional parameter which is the config object, available configurations are `selector` & `patcher`, these will be discussed in detail later.
+This hook works just like `React.useState` hook but it accepts a global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the global state parameter it accepts another optional parameter which is the config object, available configurations are `selector` & `patcher`, these will be discussed in detail later.
 
 ```js
 // Signature
@@ -665,6 +737,10 @@ useGlobalState(globalState: GlobalState, {selector: Function, patcher: Function}
 Below is an example showing how to use `useGlobalState` hook
 
 ```js
+import React from 'react';
+import { createGlobalState, useGlobalState } from 'state-pool';
+
+
 const initialGlobalState = {
     name: "Yezy",
     age: 25,
@@ -746,6 +822,8 @@ function UserName(props){
 }
 ```
 
+**FYI:** `useGlobalState` is used to implement `store.useState` hook.
+
 <br/>
 
 ### useGlobalStateReducer hook
@@ -820,8 +898,45 @@ function UserInfo(props){
 }
 ```
 
-**FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook.
-
+**FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook, also this hook is used to implement `store.useReducer`.
 <br/>
+
+
+## Typing state
+All state related functions support implicity and explicity typing 
+
+```ts
+store.setState<number>('count', 0);
+
+store.useState<number>('count');
+
+store.useReducer<number>(reducer, 'count');
+
+// For none key based
+const count = createGlobalState<number>(0);
+
+useGlobalState<number>(count);
+
+useGlobalStateReducer<number>(reducer, count);
+
+
+// Typing with selector
+store.setState<{name: string, age: number}>('user', {name: 'Yezy', age: 25});
+
+store.useState<string>('user', {selector: user => user.name});
+store.useState<number>('age', {selector: user => user.age});
+
+store.useReducer<string>(reducer, 'user', {selector: user => user.name});
+store.useReducer<number>(reducer, 'user', {selector: user => user.age});
+
+// For none key based
+const user = createGlobalState<{name: string, age: number}>({name: 'Yezy', age: 25});
+
+useGlobalState<string>(user, {selector: user => user.name});
+useGlobalState<number>(user, {selector: user => user.age});
+
+useGlobalStateReducer<string>(reducer, user, {selector: user => user.name});
+useGlobalStateReducer<number>(reducer, user, {selector: user => user.age});
+```
 
 Pretty cool, right?

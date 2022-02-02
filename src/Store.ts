@@ -65,7 +65,7 @@ class Store {
         this.persistentStorage = new PersistentStorage();
     }
 
-    subscribe(observer: Observer) {
+    subscribe(observer: Observer): () => void {
         if (this.subscriptions.indexOf(observer) === -1) {
             // Subscribe a component to this store
             this.subscriptions.push(observer);
@@ -80,13 +80,13 @@ class Store {
         return unsubscribe
     }
 
-    onStoreUpdate(event: Event) {
+    onStoreUpdate(event: Event): void {
         this.subscriptions.forEach(subscription => {
             subscription(event);
         });
     }
 
-    persist(config: PersistenceConfig) {
+    persist(config: PersistenceConfig): void {
         if (config.saveState) {
             PersistentStorage.prototype.saveState = config.saveState;
         }
@@ -101,11 +101,11 @@ class Store {
         }
     }
 
-    setState<ValueType>(
+    setState<T>(
         key: string,
-        initialValue: ValueType,
+        initialValue: T,
         { persist }: { persist?: boolean } = { }
-    ) {
+    ): void {
 
         const shouldPersist: boolean = persist === undefined ?
             this.persistentStorage.SHOULD_PERSIST_BY_DEFAULT : persist;
@@ -135,7 +135,7 @@ class Store {
         }
 
         // Create global state
-        const globalState: GlobalState<ValueType> = createGlobalstate<ValueType>(initialValue);
+        const globalState: GlobalState<T> = createGlobalstate<T>(initialValue);
         globalState.persist = shouldPersist;
         globalState.subscribe({
             observer: onGlobalStateChange,
@@ -145,16 +145,16 @@ class Store {
         this.value.set(key, globalState);
     }
 
-    getState<ValueType>(
+    getState<T>(
         key: string,
-        config: { default?: ValueType, persist?: boolean } = { }
+        config: { default?: T, persist?: boolean } = { }
     ): GlobalState<any> {
         const defaultValue: any = config.default;
         // Get key based global state
         if (!this.value.has(key)) {  // Global state is not found
             if (defaultValue !== undefined) {  // Default value is found
                 // Create a global state and use defaultValue as the initial value
-                this.setState<ValueType>(key, defaultValue, { persist: config.persist });
+                this.setState<T>(key, defaultValue, { persist: config.persist });
             }
             else {
                 // Global state is not found and the default value is not specified
@@ -169,7 +169,7 @@ class Store {
         return this.value.get(key);
     }
 
-    clear(fn?: () => void) {
+    clear(fn?: () => void): void {
         // Copy store
         const storeCopy = this.value;
 
@@ -195,7 +195,7 @@ class Store {
         })
     }
 
-    remove(globalStatekey: string | string[], fn?: () => void) {
+    remove(globalStatekey: string | string[], fn?: () => void): void {
         let keys: string[] = [];
         if (typeof globalStatekey === 'string') {
             keys = [globalStatekey];
@@ -233,14 +233,14 @@ class Store {
         })
     }
 
-    useState<VT=any, T=any>(key: string, config: Config<T> = {}) {
+    useState<ST=any, T=any>(key: string, config: Config<T> = {}) {
         const globalState: GlobalState<T> = this.getState<T>(key, config);
-        return useGlobalState<VT>(globalState, config);
+        return useGlobalState<ST>(globalState, config);
     }
 
-    useReducer<VT=any, T=any>(reducer: Reducer, key: string, config: Config<T> = {}) {
+    useReducer<ST=any, T=any>(reducer: Reducer, key: string, config: Config<T> = {}) {
         const globalState: GlobalState<T> = this.getState<T>(key, config);
-        return useGlobalStateReducer<VT>(reducer, globalState, config);
+        return useGlobalStateReducer<ST>(reducer, globalState, config);
     }
 }
 

@@ -9,23 +9,20 @@ type Config = {
     patcher?: (state: any, selectedStateValue: any) => any
 }
 
-type ReturnType<ValueType> = [
-    state: ValueType,
+type ReturnType<T> = [
+    state: T,
     dispatch: (action: any) => any
 ]
 
-function useGlobalStateReducer<ValueType=any>(
+function useGlobalStateReducer<T=any>(
     reducer: Reducer,
     globalState: GlobalState<any>,
     config: Config = {}
-): ReturnType<ValueType> {
+): ReturnType<T> {
     const [, setState] = useState(null);
     const isMounted = useRef(false);
 
-    const selector = config.selector;
-    const patcher = config.patcher;
-
-    const currentState: ValueType = globalState.getValue<ValueType>(selector);
+    const currentState: T = globalState.getValue<T>(config.selector);
     
     function reRender() {
         // re-render if the component is mounted
@@ -45,8 +42,8 @@ function useGlobalStateReducer<ValueType=any>(
 
     const subscription = {
         observer: observer,
-        selector: selector ?
-            selector :
+        selector: config.selector ?
+            config.selector :
             (state) => state,  // Select the whole global state if selector is not specified
         reRender: reRender
     }
@@ -63,7 +60,7 @@ function useGlobalStateReducer<ValueType=any>(
 
     function dispatch(action: any) {
         const newState = reducer(currentState, action);
-        globalState.updateValue(oldState => newState, patcher, selector);
+        globalState.updateValue(oldState => newState, config);
     }
 
     return [currentState, dispatch]
