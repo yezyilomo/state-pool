@@ -4,6 +4,7 @@ import produce from "immer";
 type Observer = (value: any) => void
 type Selector<T> = (state: any) => T
 type Patcher = (state: any, selectedStateValue: any) => any
+type Config = {patcher?: Patcher, selector?: Selector<any>}
 type Updater = (state: any) => any
 
 type Subscription = {
@@ -13,25 +14,25 @@ type Subscription = {
 }
 
 
-class GlobalState<ValueType> {
-    value: ValueType;
+class GlobalState<T> {
+    value: T;
     subscriptions: Array<Subscription>;
     persist: boolean;
 
-    constructor(initialValue: ValueType) {
+    constructor(initialValue: T) {
         this.value = initialValue;
         this.subscriptions = [];
         this.persist = false;
     }
 
-    getValue<SelectedValueType>(selector?: Selector<SelectedValueType>): ValueType| SelectedValueType {
+    getValue<ST>(selector?: Selector<ST>): T| ST {
         if (selector) {
             return selector(this.value);
         }
         return this.value;
     }
 
-    refresh() {
+    refresh(): void {
         this.subscriptions.forEach(subscription => {
             if (subscription.reRender) {
                 subscription.reRender();
@@ -39,7 +40,10 @@ class GlobalState<ValueType> {
         });
     }
 
-    updateValue(updater: Updater, patcher?: Patcher, selector?: Selector<any>) {
+    updateValue(updater: Updater, config: Config = {}): void {
+        const selector = config.selector;
+        const patcher = config.patcher;
+
         const oldState = this.value;
 
         let newState;
@@ -75,7 +79,7 @@ class GlobalState<ValueType> {
         }
     }
 
-    subscribe(itemToSubscribe: Subscription | Observer) {
+    subscribe(itemToSubscribe: Subscription | Observer): () => void {
         let _itemToSubscribe: Subscription;
         if (Object.prototype.toString.call(itemToSubscribe) === '[object Function]') {
             _itemToSubscribe = {
@@ -103,8 +107,8 @@ class GlobalState<ValueType> {
 }
 
 
-function createGlobalstate<ValueType>(initialValue: ValueType): GlobalState<ValueType> {
-    return new GlobalState<ValueType>(initialValue);
+function createGlobalstate<T>(initialValue: T): GlobalState<T> {
+    return new GlobalState<T>(initialValue);
 }
 
 export { GlobalState, createGlobalstate };
