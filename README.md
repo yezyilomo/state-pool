@@ -386,6 +386,7 @@ store.getState(key).subscribe({
 })
 ```
 With this observer function will only be called when the selected state changes
+
 <br/>
 
 ### store.remove
@@ -622,8 +623,8 @@ store.persist({
 ```
 
 **Note:** When you set `PERSIST_ENTIRE_STORE = true`, **state-pool** will be persisting all your global states to the permanent storage by default unless you explicitly specify `persist = false` when initializing your global state.
-<br/>
 
+<br/>
 
 ## Using state pool without a store(Low level core API)
 Managing global states by organizing them in a single store works great but not everyone likes it, some prefer not having a single central container for all global states. State pool allows you to create as many stores as you want and use them anywhere in your application, it doesn't enforce having a single store.
@@ -852,8 +853,8 @@ function UserInfo(props){
 ```
 
 **FYI:** `useGlobalState` hook is derived from `useGlobalStateReducer` hook, also this hook is used to implement `store.useReducer`.
-<br/>
 
+<br/>
 
 ## Typing state
 All state related functions support implicity and explicity typing 
