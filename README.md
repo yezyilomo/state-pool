@@ -1,9 +1,9 @@
 # State Pool
 
 ![Build Status](https://github.com/yezyilomo/state-pool/actions/workflows/node.js.yml/badge.svg?branch=master)
-[![Build Size](https://img.shields.io/bundlephobia/minzip/state-pool?label=bundle-size&style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=state-pool)
-[![Version](https://img.shields.io/npm/v/state-pool?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/state-pool)
-[![Downloads](https://img.shields.io/npm/dt/state-pool.svg?style=flat&colorA=000000&colorB=000000)](https://www.npmjs.com/package/state-pool)
+[![Build Size](https://img.shields.io/bundlephobia/minzip/state-pool?label=bundle-size&style=flat)](https://bundlephobia.com/result?p=state-pool)
+[![Version](https://img.shields.io/npm/v/state-pool?style=flat)](https://www.npmjs.com/package/state-pool)
+[![Downloads](https://img.shields.io/npm/dt/state-pool.svg?style=flat)](https://www.npmjs.com/package/state-pool)
 
 React state management library based on global variables and react hooks.
 
