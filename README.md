@@ -516,7 +516,7 @@ Sometimes you might want to save your global states in a permanent storage proba
 When telling **state-pool**  how to save global state to a permanent storage we need to implement four functions which are 
 
 1. `saveState`: This is for saving your global state to your preferred permanent storage, it should accept a `key` as the first parameter, `value` as the second parameter and `isInitialSet` as the third parameter, the third parameter is boolean which tells if the state is being saved for the first time(initial set) or it's just an update. This function is called automatically when `store.setState` is executed and when the  global state changes
-2. `loadState`: This is used for loading state from your preferred permanent storage, it should accept a `key` as the only parameter. This function is called when `store.setState` is executed and need initial value for the global state
+2. `loadState`: This is used for loading state from your preferred permanent storage, it should accept a `key` as the only parameter. This function is called when `store.setState` needs an initial value from your storage to populate a global state
 3. `removeState`: This is used for removing state from a permanent storage, it should accept a `key` as the only parameter. This function is called when `store.remove` is executed
 4. `clear`: This is used for clearing an entire permanent storage, it doesn’t accept any parameter. This function is called when `store.clear` is executed.
 
