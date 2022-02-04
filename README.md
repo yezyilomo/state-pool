@@ -71,7 +71,7 @@ store.setState("count", 0);  // Create "count" global state and add it to the st
 
 function ClicksCounter(props){
     // Use "count" global state
-    const [count, setCount, updateCount] = store.useState("count");
+    const [count, setCount] = store.useState("count");
 
     const incrementCount = (e) => {
         setCount(count+1)
@@ -246,11 +246,10 @@ Other allowed configurations are `selector` & `patcher`. These are used for spec
       const selector = (user) => user.name;  // Subscribe to user.name only
       const patcher = (user, name) => {user.name = name};  // Update user.name
   
-      const [name, setName, updateName] = store.useState("user", {selector: selector, patcher: patcher});
+      const [name, setName] = store.useState("user", {selector: selector, patcher: patcher});
   
       let handleNameChange = (e) => {
           setName(e.target.value);
-          // updateName(name => e.target.value);  You can do this if you like to use `updatName`
       }
   
       return (
@@ -324,7 +323,7 @@ function UserInfo(props){
     const selector = (user) => user.name;
     const patcher = (user, name) => {user.name = name};
     
-    const [name, dispatch] = store.useReducer(myReducer, "user", {selector: selector, patcher: patcher});
+    const [name, dispatch] = store.useReducer(myReducer, "user", {selector, patcher});
 
     // Other stuff
 }
@@ -352,7 +351,7 @@ If you want to listen to changes in a store you can subscribe to it by using `st
 
 ```js
 // Subscribe to store changes
-const unsubscribe = store.subscribe(function({key: String, value: Any}){
+const unsubscribe = store.subscribe(function(key: String, value: Any){
     // key is the key for a global state that has changed 
     // value is the new value of a global state
 })
@@ -366,7 +365,7 @@ If you want to subscribe to a single global state you can use
 ```js
 // Subscribe to store changes
 const unsubscribe = store.getState(key).subscribe(function(value){
-    // value is the new value of a global state 
+    // value is the new value of a global state
 })
 
 // You can unsubscribe by calling the result
@@ -554,7 +553,8 @@ store.useState(
 store.useReducer(
     reducer: Function,
     key: String,
-    config?: {default: Any, persist: Boolean, ...otherConfigs})
+    config?: {default: Any, persist: Boolean, ...otherConfigs}
+)
 ```
 
 By default the value of `persist` in all cases is false(which means it doesn't save global states to a permanent storage), so if you want to activate it, you have to set it to be true.
@@ -710,7 +710,8 @@ count.getValue()  // This will give 0
 
 count.updateValue(val => val+1)  // This will increment the value of count
 
-const unsubscribe = count.subscribe(val => console.log(val))  // This will print whenever count change
+// This will print whenever count change
+const unsubscribe = count.subscribe(val => console.log(val)) 
 
 unsubscribe()  // This will unsubscribe the observer above
 ```
@@ -766,11 +767,10 @@ function UserName(props){
     const selector = (user) => user.name;  // Subscribe to user.name only
     const patcher = (user, name) => {user.name = name};  // Update user.name
 
-    const [name, setName, updateName] = useGlobalState(user, {selector: selector, patcher: patcher});
+    const [name, setName] = useGlobalState(user, {selector: selector, patcher: patcher});
 
     const handleNameChange = (e) => {
         setName(e.target.value);
-        // updateName(name => e.target.value);  You can do this if you like to use `updatName`
     }
 
     return (
@@ -846,7 +846,7 @@ function UserInfo(props){
     const selector = (user) => user.name;
     const patcher = (user, name) => {user.name = name};
     
-    const [name, dispatch] = useGlobalStateReducer(myReducer, user, {selector: selector, patcher: patcher});
+    const [name, dispatch] = useGlobalStateReducer(myReducer, user, {selector, patcher});
 
     // Other stuffs
 }

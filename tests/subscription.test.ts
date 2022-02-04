@@ -13,10 +13,10 @@ test('should update testVal1 & testVal2 through subscribers', () => {
     const { result } = renderHook(() => store.useState("count"))
 
     act(() => {
-        store.subscribe((event) => {
+        store.subscribe((key, value) => {
             testVal1 = 1
         })
-        store.getState("count").subscribe((val) => {
+        store.getState("count").subscribe((value) => {
             testVal2 = 2
         })
         result.current[2](count => 1)

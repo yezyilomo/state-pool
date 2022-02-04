@@ -4,8 +4,7 @@ import { useGlobalStateReducer } from './useGlobalStateReducer';
 
 
 type Reducer = (state: any, action: any) => any
-type Event = { key: string, value: any }
-type Observer = (event: Event) => void
+type Observer = (key: string, value: any) => void
 type Config<T> = {
     default?: T,
     selector?: (state: any) => any,
@@ -80,9 +79,9 @@ class Store {
         return unsubscribe
     }
 
-    onStoreUpdate(event: Event): void {
+    onStoreUpdate(key: string, value: any): void {
         this.subscriptions.forEach(subscription => {
-            subscription(event);
+            subscription(key, value);
         });
     }
 
@@ -127,7 +126,7 @@ class Store {
         const onGlobalStateChange = (newValue: any) => {
             // Note key, persist & timerId variables depends on the scope
 
-            this.onStoreUpdate({ key: key, value: newValue });
+            this.onStoreUpdate(key, newValue);
 
             if (shouldPersist) {
                 this.persistentStorage.saveState(key, newValue, false);
@@ -188,7 +187,7 @@ class Store {
             // Notify subscribers to a store that a global state has been removed
             if (this.value.has(key)) {
                 const newGlobalState = this.getState(key);
-                this.onStoreUpdate({ key: key, value: newGlobalState.getValue() });
+                this.onStoreUpdate(key, newGlobalState.getValue());
             }
             // Rerender all components using this global state
             oldState.refresh();
@@ -225,7 +224,7 @@ class Store {
             // Notify subscribers to a store that a global state has been removed
             if (this.value.has(key)) {
                 const newGlobalState = this.getState(key);
-                this.onStoreUpdate({ key: key, value: newGlobalState.getValue() });
+                this.onStoreUpdate(key, newGlobalState.getValue());
             }
 
             // Rerender all components depending on this global state
