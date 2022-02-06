@@ -25,7 +25,7 @@ class GlobalState<T> {
         this.persist = false;
     }
 
-    getValue<ST>(selector?: Selector<ST>): T| ST {
+    getValue<ST>(selector?: Selector<ST>): T | ST {
         if (selector) {
             return selector(this.value);
         }
