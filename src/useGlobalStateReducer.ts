@@ -23,7 +23,7 @@ function useGlobalStateReducer<T=any>(
     const isMounted = useRef(false);
 
     const currentState: T = globalState.getValue<T>(config.selector);
-    
+
     function reRender() {
         // re-render if the component is mounted
         if (isMounted.current) {
@@ -33,7 +33,7 @@ function useGlobalStateReducer<T=any>(
 
     function observer(newState: any) {
         if (currentState === newState) {
-            // Do nothing because the selected state has not changed
+            // Do nothing because the selected state is up-to-date
         }
         else {
             reRender();
@@ -56,7 +56,7 @@ function useGlobalStateReducer<T=any>(
             unsubscribe();
             isMounted.current = false;
         }
-    }, [])
+    }, [currentState, globalState])
 
     function dispatch(action: any) {
         const newState = reducer(currentState, action);
