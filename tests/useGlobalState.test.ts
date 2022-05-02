@@ -9,7 +9,7 @@ test('should update count', () => {
     const { result } = renderHook(() => useGlobalState(count))
 
     act(() => {
-        result.current[2](count => ++count)
+        result.current[1](count => ++count)
     })
 
     expect(result.current[0]).toStrictEqual(1)
@@ -37,7 +37,7 @@ test('should update name', () => {
     const { result } = renderHook(() => useGlobalState(user, { selector, patcher }))
 
     act(() => {
-        result.current[2]((name) => "Yezy Ilomo")
+        result.current[1]((name) => "Yezy Ilomo")
     })
 
     expect(result.current[0]).toStrictEqual("Yezy Ilomo")
