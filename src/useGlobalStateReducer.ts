@@ -60,7 +60,7 @@ function useGlobalStateReducer<T=any>(
 
     function dispatch(action: any) {
         const newState = reducer(currentState, action);
-        globalState.updateValue(oldState => newState, config);
+        globalState.setValue(newState, config);
     }
 
     return [currentState, dispatch]
