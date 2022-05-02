@@ -14,9 +14,9 @@ type Config<T> = {
 
 type PersistenceConfig = {
     saveState: (key: string, state: any, isInitialSet?: boolean) => void,
-    loadState: (key: string) => any,
+    loadState: (key: string, noState) => any,
     removeState?: (key: string) => void,
-    clearStorage?: () => void,
+    clear?: () => void,
     PERSIST_ENTIRE_STORE?: boolean
 }
 
@@ -26,22 +26,20 @@ const notImplementedErrorMsg = [
     'to save state to your preffered storage. E.g \n',
     'store.persist({ \n',
     '    saveState: function(key, state, isInitialSet){/*logics to save state to storage*/}, \n',
-    '    loadState: function(key){/*logics to load state from storage*/} \n',
+    '    loadState: function(key, noState){/*logics to load state from storage*/} \n',
     '}) \n'
 ].join("");
 
+
+class Empty {}  // Class for empty state/value
+const EMPTY =  new Empty();
 
 class PersistentStorage {
     // Persist all states in a store unless parsist = false is passed
     SHOULD_PERSIST_BY_DEFAULT: boolean = false;
 
-    loadState(key: string) {
-        // The `if` is for tricking TS into thinking
-        // this function can return some value
-        if (true)
-            throw TypeError(notImplementedErrorMsg);
-        else
-            return null;
+    loadState(key: string, noState: Empty): any {
+        throw TypeError(notImplementedErrorMsg);
     }
 
     saveState(key: string, state: any, isInitialSet?: boolean) {
@@ -50,7 +48,7 @@ class PersistentStorage {
 
     removeState: (key: string) => void
 
-    clearStorage: () => void
+    clear: () => void
 }
 
 class Store {
@@ -95,6 +93,9 @@ class Store {
         if (config.removeState) {
             PersistentStorage.prototype.removeState = config.removeState;
         }
+        if (config.clear) {
+            PersistentStorage.prototype.clear = config.clear;
+        }
         if (config.PERSIST_ENTIRE_STORE) {
             PersistentStorage.prototype.SHOULD_PERSIST_BY_DEFAULT = config.PERSIST_ENTIRE_STORE;
         }
@@ -111,9 +112,9 @@ class Store {
 
         if (shouldPersist) {
             // Load state from localStorage
-            const savedState = this.persistentStorage.loadState(key);
+            const savedState = this.persistentStorage.loadState(key, EMPTY);
 
-            if (savedState !== undefined) {
+            if (savedState !== EMPTY) {
                 // Use savedState as the initialValue
                 initialValue = savedState;
             }
@@ -146,12 +147,12 @@ class Store {
 
     getState<T>(
         key: string,
-        config: { default?: T, persist?: boolean } = { }
+        config: { default?: T | Empty, persist?: boolean } = { default: EMPTY }
     ): GlobalState<any> {
         const defaultValue: any = config.default;
         // Get key based global state
         if (!this.value.has(key)) {  // Global state is not found
-            if (defaultValue !== undefined) {  // Default value is found
+            if (defaultValue !== EMPTY) {  // Default value is found
                 // Create a global state and use defaultValue as the initial value
                 this.setState<T>(key, defaultValue, { persist: config.persist });
             }
@@ -174,8 +175,8 @@ class Store {
 
         // Clear store
         this.value = new Map();
-        if (this.persistentStorage.clearStorage) {
-            this.persistentStorage.clearStorage()
+        if (this.persistentStorage.clear) {
+            this.persistentStorage.clear()
         }
 
         if (fn) {
@@ -210,7 +211,11 @@ class Store {
 
             // Remove global state from a store
             this.value.delete(key);
-            if (this.persistentStorage.removeState && globalStatesToRemove.get(key).persist) {
+            if (
+                globalStatesToRemove.get(key).persist &&  // Is state persisted
+                this.persistentStorage.removeState &&  // Is removeState Implemented
+                this.persistentStorage.loadState(key, EMPTY) !== EMPTY  // Is state to remove available
+            ) {
                 this.persistentStorage.removeState(key)
             }
         });
@@ -245,7 +250,7 @@ class Store {
 
 
 function createStore(): Store {
-    // Create store for key based global state
+    // Create a store for key based global state
     return new Store();
 }
 
