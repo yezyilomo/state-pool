@@ -10,7 +10,7 @@ test('should clear the entire global state and initialize `count` with 5', () =>
     const hook1 = renderHook(() => store.useState("count"))
 
     act(() => {
-        hook1.result.current[2](count => 1)
+        hook1.result.current[1](count => 1)
     })
 
     act(() => {
@@ -28,7 +28,7 @@ test('should clear the entire global state and initialize `age` with 18', () => 
     const hook2 = renderHook(() => store2.useState("age", {default: 18}));
 
     act(() => {
-        hook2.result.current[2](age => age + 2)
+        hook2.result.current[1](age => age + 2)
     })
 
     act(() => {

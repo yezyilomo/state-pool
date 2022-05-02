@@ -19,7 +19,7 @@ test('should update testVal1 & testVal2 through subscribers', () => {
         store.getState("count").subscribe((value) => {
             testVal2 = 2
         })
-        result.current[2](count => 1)
+        result.current[1](count => 1)
     })
 
     expect(testVal1).toStrictEqual(1);
