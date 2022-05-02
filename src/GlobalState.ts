@@ -1,11 +1,12 @@
-import produce from "immer";
+import produce, { nothing } from "immer";
 
 
 type Observer = (value: any) => void
 type Selector<T> = (state: any) => T
 type Patcher = (state: any, selectedStateValue: any) => any
-type Config = {patcher?: Patcher, selector?: Selector<any>}
-type Updater = (state: any) => any
+type Config = { patcher?: Patcher, selector?: Selector<any> }
+type Updater = (state: any) => void
+type stateUpdater = (state: any) => any
 
 type Subscription = {
     observer: Observer,
@@ -40,7 +41,39 @@ class GlobalState<T> {
         });
     }
 
+    setValue(newValue: T | stateUpdater, config: Config = {}) {
+        if (newValue === undefined) {
+            this.__updateValue(
+                (draftVal) => nothing,
+                config
+            )
+        }
+        else if (Object.prototype.toString.call(newValue) === '[object Function]') {
+            const reducer = newValue as stateUpdater
+
+            this.setValue(
+                reducer(this.getValue(config.selector)), config
+            )
+        }
+        else {
+            this.__updateValue(
+                (draftVal) => newValue,
+                config
+            )
+        }
+    }
+
     updateValue(updater: Updater, config: Config = {}): void {
+        const updaterWrap = function(draftState){
+            // This wrap is for disabling setting returned value
+            // We don't allow returned value to be set(just return undefined)
+            updater(draftState)
+        }
+
+        this.__updateValue(updaterWrap, config)
+    }
+
+    private __updateValue(updater: stateUpdater, config: Config = {}): void {
         const selector = config.selector;
         const patcher = config.patcher;
 
@@ -53,10 +86,8 @@ class GlobalState<T> {
             newState = produce(
                 oldState,
                 (draftCurrentState) => {
-                    const val = patcher(draftCurrentState, nodeValue);
-                    if (val !== undefined) {
-                        return val
-                    }
+                    // Avoid setting returns
+                    patcher(draftCurrentState, nodeValue);
                 }
             )
         }
