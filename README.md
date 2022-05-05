@@ -1,4 +1,4 @@
-# State Pool
+# [State Pool](yezyilomo.github.io/state-pool/)
 
 ![Build Status](https://github.com/yezyilomo/state-pool/actions/workflows/node.js.yml/badge.svg?branch=master)
 [![Build Size](https://img.shields.io/bundlephobia/minzip/state-pool?label=bundle-size&style=flat)](https://bundlephobia.com/result?p=state-pool)
@@ -19,6 +19,11 @@ React state management library based on global variables and react hooks.
 - Doesn't wrap your app in context providers
 - Very organized API, You can do almost everything with a single import
 
+Want to see how this library is making all that possible?
+
+Check out full documentation at [yezyilomo.github.io/state-pool](yezyilomo.github.io/state-pool/)
+
+You can also try live examples [Here](https://yezyilomo.github.io/state-pool-examples)
 <br/>
 
 ## Architectural Diagram
@@ -60,7 +65,7 @@ These three steps summarises pretty much everything you need to use **state-pool
 
 Below are few examples showing how to use **state-pool** to manage global states.
 
-```js
+```jsx
 // Example 1.
 import React from 'react';
 import { createStore } from 'state-pool';
@@ -91,7 +96,7 @@ ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 
 <br/>
 
-```js
+```jsx
 // Example 2.
 import React from 'react';
 import { createStore } from 'state-pool';
@@ -123,5 +128,15 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 
 <br/>
 
-
 Pretty cool, right?
+
+
+## [Documentation 📝](yezyilomo.github.io/state-pool/)
+Full documentation for this project is available at [yezyilomo.github.io/state-pool/](yezyilomo.github.io/state-pool/), you are advised to read it inorder to utilize this library to the fullest. You can also try live examples [here](https://yezyilomo.github.io/state-pool-examples).
+
+
+## Running Tests
+
+```sh
+npm test
+```
