@@ -1,4 +1,4 @@
-# [State Pool](yezyilomo.github.io/state-pool/)
+# [State Pool](https://yezyilomo.github.io/state-pool/)
 
 ![Build Status](https://github.com/yezyilomo/state-pool/actions/workflows/node.js.yml/badge.svg?branch=master)
 [![Build Size](https://img.shields.io/bundlephobia/minzip/state-pool?label=bundle-size&style=flat)](https://bundlephobia.com/result?p=state-pool)
@@ -14,24 +14,18 @@ React state management library based on global variables and react hooks.
 - Support selecting deeply nested state
 - Support creating global state dynamically
 - Can be used outside react components
-- Support both key based and non-key based global state
 - States are stored as global variables(Can be used anywhere)
 - Doesn't wrap your app in context providers
 - Very organized API, You can do almost everything with a single import
 
 Want to see how this library is making all that possible?
 
-Check out full documentation at [yezyilomo.github.io/state-pool](yezyilomo.github.io/state-pool/)
+Check out the full documentation at [yezyilomo.github.io/state-pool](https://yezyilomo.github.io/state-pool/)
 
 You can also try live examples [Here](https://yezyilomo.github.io/state-pool-examples)
 <br/>
 
-## Architectural Diagram
-![Architecture Diagram](https://raw.githubusercontent.com/yezyilomo/state-pool/master/docs/images/architecture_diagram.png)
-
-<br/>
-
-### State Flow
+## How it Works
 1. Create a global state
 
 2. Subscribe a component(s) to a created global state
@@ -43,13 +37,13 @@ You can also try live examples [Here](https://yezyilomo.github.io/state-pool-exa
 <br/>
 
 ## Installation
-```
+```sh
 yarn add state-pool
 ```
 
 Or 
 
-```
+```sh
 npm install state-pool
 ```
 
@@ -131,11 +125,12 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 Pretty cool, right?
 
 
-## [Documentation 📝](yezyilomo.github.io/state-pool/)
-Full documentation for this project is available at [yezyilomo.github.io/state-pool/](yezyilomo.github.io/state-pool/), you are advised to read it inorder to utilize this library to the fullest. You can also try live examples [here](https://yezyilomo.github.io/state-pool-examples).
+## [Documentation 📝](https://yezyilomo.github.io/state-pool/)
+Full documentation for this project is available at [yezyilomo.github.io/state-pool](https://yezyilomo.github.io/state-pool/), you are advised to read it inorder to utilize this library to the fullest. You can also try live examples [here](https://yezyilomo.github.io/state-pool-examples).
 
 
 ## Running Tests
+If you've folked this library and you want to run tests use the following command
 
 ```sh
 npm test
