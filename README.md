@@ -130,7 +130,7 @@ Full documentation for this project is available at [yezyilomo.github.io/state-p
 
 
 ## Running Tests
-If you've folked this library and you want to run tests use the following command
+If you've forked this library and you want to run tests use the following command
 
 ```sh
 npm test
