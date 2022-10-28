@@ -10,7 +10,7 @@ The way to implement these is by calling `store.persist` and pass them as shown 
 ```js
 store.persist({
     saveState: function(key, value, isInitialSet){/*your code to save state */},
-    loadState: function(key){/*your code to load state */},
+    loadState: function(key, noState){/*your code to load state */},
     removeState: function(key){/*your code to remove state */},
     clear: function(){/*your code to clear storage */}
 })
@@ -83,12 +83,12 @@ store.persist({
             timerId = setTimeout(doStateSaving, DEBOUNCE_TIME);
         }
     },
-    loadState: function(key){
+    loadState: function(key, noState){
         try {
             const serializedState = window.localStorage.getItem(key);
             if (serializedState === null) {
                 // No state saved
-                return undefined
+                return noState
             }
             return JSON.parse(serializedState);
         } catch (err) {
