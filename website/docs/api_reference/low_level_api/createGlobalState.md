@@ -18,7 +18,7 @@ import { createGlobalState } from 'state-pool';
 const userName = createGlobalState("Yezy");
 ```
 
-Some of the methods available in global state object are `getValue`, `updateValue` and `subscribe`
+Some of the methods available in a global state object are `getValue`, `updateValue` and `subscribe`
 
 - `getValue`: This is used to get the value of a global state
   ```js

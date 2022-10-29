@@ -23,7 +23,7 @@ const count = store.setState("count", 0);
 
 function ClicksCounter(props){
     // Use count global state
-    const [count, setCount] = useGlobalState(count);
+    const [count, setCount] = store.useState("count");
 
     const incrementCount = (e) => {
         setCount(count+1);

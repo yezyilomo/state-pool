@@ -3,7 +3,7 @@ sidebar_position: 9
 ---
 
 # store.persist
-Sometimes you might want to save your global states in a permanent storage probably because you might not want to lose them when the application is closed(i.e you want to retain them when your application starts).
+Sometimes you might want to save your global states in a permanent storage probably because you might not want to lose them when your application is closed(i.e you want to retain them when your application starts).
 
 **State pool** makes it very easy to save your global states in your preferred permanent storage, all you need to do is:
 

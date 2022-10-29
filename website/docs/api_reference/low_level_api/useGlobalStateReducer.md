@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 
 # useGlobalStateReducer
-This is an alternative to `useGlobalState`, it works just like `React.useReducer` hook((If you’re familiar with `React.useReducer`, you already know how this works). It accepts a reducer and a global state object as parameters, it returns the current state paired with a dispatch method. In addition to the two parameters it also accept another optinal perameter which is the configuration object, available configurations are `selector` and `patcher` they work exactly the same just like in `useGlobalState`.
+This is an alternative to `useGlobalState`, it works just like `React.useReducer` hook(If you’re familiar with `React.useReducer`, you already know how this works). It accepts a reducer and a global state object as parameters, it returns the current state paired with a dispatch method. In addition to the two parameters it also accept another optinal perameter which is the configuration object, available configurations are `selector` and `patcher` they work exactly the same just like in `useGlobalState`.
 
 
 ```js
