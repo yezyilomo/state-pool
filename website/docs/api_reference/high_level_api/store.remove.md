@@ -3,7 +3,7 @@ sidebar_position: 7
 ---
 
 # store.remove
-This is used to remove a global state from a store if you don't need it anymore or you want to reload/reset it. It accepts a key of a global state or a list of keys to remove and a function to run after a removal.
+This is used to remove a global state from a store if you don't need it anymore or you want to reload/reset it. It accepts a key for a global state or a list of keys to remove and a function to run after removal.
 
 :::important
 

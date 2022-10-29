@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 
 # store.useState
-`store.useState` is a hook that used to get a global state from a store, it's a way for a component to subscribe to a global state from a store. `store.useState` works just like `React.useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it also accept another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
+`store.useState` is a hook that's used to get a global state from a store, it's a way for a component to subscribe to a global state from a store. `store.useState` works just like `React.useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it also accept another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
 
 ```js
 // Signature
@@ -66,12 +66,12 @@ As stated earlier `store.useState` takes a second optional parameter which is a 
 
   This piece of code means, get the global state for the key "user" if it's not available in a store, create one and assign it the value `null`.
 
-- Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state in your preferred storage or not. Here persist configuration is only used if `store.useState` is going to create global state dynamically.
+- Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state in your preferred storage or not. Here `persist` configuration is only used if `store.useState` is going to create global state dynamically(by using `default` config).
 <br/>
 
 Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
 
-- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state.
+- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state or derived state.
 
 - `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
 
@@ -92,7 +92,7 @@ Other allowed configurations are `selector` & `patcher`. These are used for spec
   
       const [name, setName] = store.useState("user", {selector: selector, patcher: patcher});
   
-      let handleNameChange = (e) => {
+      const handleNameChange = (e) => {
           setName(e.target.value);
       }
   
