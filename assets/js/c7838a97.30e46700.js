@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkwebsite=self.webpackChunkwebsite||[]).push([[4475],{1444:function(a){a.exports=JSON.parse('{"allTagsPath":"/state-pool/blog/tags","slug":"/state-pool/blog/tags/hola","name":"hola","count":1,"permalink":"/state-pool/blog/tags/hola"}')}}]);
