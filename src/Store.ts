@@ -13,8 +13,8 @@ type Config<T> = {
 }
 
 type PersistenceConfig = {
-    saveState: (key: string, state: any, isInitialSet?: boolean) => void,
-    loadState: (key: string, noState) => any,
+    saveState: (key: string, state: any, isInitialSet: boolean) => void,
+    loadState: (key: string, noState: Empty) => any,
     removeState?: (key: string) => void,
     clear?: () => void,
     PERSIST_ENTIRE_STORE?: boolean
@@ -35,7 +35,6 @@ class Empty {}  // Class for empty state/value
 const EMPTY =  new Empty();
 
 class PersistentStorage {
-    // Persist all states in a store unless parsist = false is passed
     SHOULD_PERSIST_BY_DEFAULT: boolean = false;
 
     loadState(key: string, noState: Empty): any {
@@ -85,19 +84,19 @@ class Store {
 
     persist(config: PersistenceConfig): void {
         if (config.saveState) {
-            PersistentStorage.prototype.saveState = config.saveState;
+            this.persistentStorage.saveState = config.saveState;
         }
         if (config.loadState) {
-            PersistentStorage.prototype.loadState = config.loadState;
+            this.persistentStorage.loadState = config.loadState;
         }
         if (config.removeState) {
-            PersistentStorage.prototype.removeState = config.removeState;
+            this.persistentStorage.removeState = config.removeState;
         }
         if (config.clear) {
-            PersistentStorage.prototype.clear = config.clear;
+            this.persistentStorage.clear = config.clear;
         }
         if (config.PERSIST_ENTIRE_STORE) {
-            PersistentStorage.prototype.SHOULD_PERSIST_BY_DEFAULT = config.PERSIST_ENTIRE_STORE;
+            this.persistentStorage.SHOULD_PERSIST_BY_DEFAULT = config.PERSIST_ENTIRE_STORE;
         }
     }
 
