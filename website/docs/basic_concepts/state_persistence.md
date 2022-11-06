@@ -54,12 +54,18 @@ import { createStore } from 'state-pool';
 
 const store = createStore();
 
-let timerId: any = null
-const DEBOUNCE_TIME = 1000  // In milliseconds
+function debounce(func, timeout) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => { func.apply(this, args); }, timeout);
+    };
+}
 
 store.persist({
     PERSIST_ENTIRE_STORE: true,  // Use this only if you want to persist the entire store
-    saveState: function(key, value, isInitialSet){
+    saveState: function (key, value, isInitialSet) {
+        
         const doStateSaving = () => {
             try {
                 const serializedState = JSON.stringify(value);
@@ -69,8 +75,8 @@ store.persist({
             }
         }
 
-        if(isInitialSet){
-            // We don't debounce saving state since it's the initial set
+        if (isInitialSet) {
+            // Here we don't debounce saving state since it's the initial set
             // so it's called only once and we need our storage to be updated
             // right away
             doStateSaving();
@@ -79,16 +85,18 @@ store.persist({
             // Here we debounce saving state because it's the update and this function
             // is called every time the store state changes. However, it should not
             // be called too often because it triggers the expensive `JSON.stringify` operation.
-            clearTimeout(timerId);
-            timerId = setTimeout(doStateSaving, DEBOUNCE_TIME);
+            const DEBOUNCE_TIME = 1000 // In milliseconds
+             // Debounce doStateSaving before calling it
+            const processStateSaving = debounce(doStateSaving, DEBOUNCE_TIME);
+            processStateSaving()  // save State
         }
     },
-    loadState: function(key, noState){
+    loadState: function (key, noState) {
         try {
             const serializedState = window.localStorage.getItem(key);
             if (serializedState === null) {
                 // No state saved
-                return noState
+                return noState;
             }
             return JSON.parse(serializedState);
         } catch (err) {
@@ -96,10 +104,10 @@ store.persist({
             return undefined
         }
     },
-    removeState: function(key){
+    removeState: function (key) {
         window.localStorage.removeItem(key);
     },
-    clear: function(){
+    clear: function () {
         window.localStorage.clear();
     }
 })
