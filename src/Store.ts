@@ -175,7 +175,7 @@ class Store {
                 throw Error(errorMsg.join(""));
             }
         }
-        return this.states.get(key);
+        return this.states.get(key).state;
     }
 
     clear(fn?: () => void): void {
