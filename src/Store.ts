@@ -198,11 +198,11 @@ class Store {
             oldState.unsubscribe()
             // Notify subscribers to a store that a global state has been removed
             if (this.states.has(key)) {
-                const newGlobalState = this.getState(key);
+                const newGlobalState = this.getState(key).state;
                 this.onStoreUpdate(key, newGlobalState.getValue());
             }
             // Rerender all components using this global state
-            oldState.refresh();
+            oldState.state.refresh();
         })
     }
 
@@ -241,12 +241,12 @@ class Store {
             oldState.unsubscribe()
             // Notify subscribers to a store that a global state has been removed
             if (this.states.has(key)) {
-                const newGlobalState = this.getState(key);
+                const newGlobalState = this.getState(key).state;
                 this.onStoreUpdate(key, newGlobalState.getValue());
             }
 
             // Rerender all components depending on this global state
-            oldState.refresh();
+            oldState.state.refresh();
         })
     }
 
