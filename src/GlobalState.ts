@@ -3,10 +3,10 @@ import produce, { nothing } from "immer";
 
 type Observer = (value: any) => void
 type Selector<T> = (state: any) => T
-type Patcher = (state: any, selectedStateValue: any) => any
+type Patcher = (state: any, selectedStateValue: any) => void
 type Config = { patcher?: Patcher, selector?: Selector<any> }
 type Updater = (state: any) => void
-type stateUpdater = (state: any) => any
+type StateUpdater = (state: any) => any
 
 type Subscription = {
     observer: Observer,
@@ -41,7 +41,7 @@ class GlobalState<T> {
         });
     }
 
-    setValue(newValue: T | stateUpdater, config: Config = {}) {
+    setValue(newValue: T | StateUpdater, config: Config = {}) {
         if (newValue === undefined) {
             this.__updateValue(
                 (draftVal) => nothing,
@@ -49,7 +49,7 @@ class GlobalState<T> {
             )
         }
         else if (Object.prototype.toString.call(newValue) === '[object Function]') {
-            const reducer = newValue as stateUpdater
+            const reducer = newValue as StateUpdater
 
             this.setValue(
                 reducer(this.getValue(config.selector)), config
@@ -64,16 +64,16 @@ class GlobalState<T> {
     }
 
     updateValue(updater: Updater, config: Config = {}): void {
-        const updaterWrap = function(draftState){
-            // This wrap is for disabling setting returned value
+        const updaterWrapper = function(draftState){
+            // This wrapper is for disabling setting returned value
             // We don't allow returned value to be set(just return undefined)
             updater(draftState)
         }
 
-        this.__updateValue(updaterWrap, config)
+        this.__updateValue(updaterWrapper, config)
     }
 
-    private __updateValue(updater: stateUpdater, config: Config = {}): void {
+    private __updateValue(updater: StateUpdater, config: Config = {}): void {
         const selector = config.selector;
         const patcher = config.patcher;
 
