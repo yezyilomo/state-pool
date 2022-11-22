@@ -198,7 +198,7 @@ class Store {
             oldState.unsubscribe()
             // Notify subscribers to a store that a global state has been removed
             if (this.states.has(key)) {
-                const newGlobalState = this.getState(key).state;
+                const newGlobalState = this.getState(key);
                 this.onStoreUpdate(key, newGlobalState.getValue());
             }
             // Rerender all components using this global state
@@ -218,7 +218,7 @@ class Store {
         const globalStatesToRemove: Map<string, State<any>> = new Map();
         keys.forEach(key => {
             // Copy global state to remove from a store
-            globalStatesToRemove.set(key, this.getState(key));
+            globalStatesToRemove.set(key, this.states.get(key));
 
             // Remove global state from a store
             this.states.delete(key);
@@ -241,7 +241,7 @@ class Store {
             oldState.unsubscribe()
             // Notify subscribers to a store that a global state has been removed
             if (this.states.has(key)) {
-                const newGlobalState = this.getState(key).state;
+                const newGlobalState = this.getState(key);
                 this.onStoreUpdate(key, newGlobalState.getValue());
             }
 
