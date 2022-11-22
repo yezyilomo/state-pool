@@ -18,12 +18,10 @@ type Subscription = {
 class GlobalState<T> {
     value: T;
     subscriptions: Array<Subscription>;
-    persist: boolean;
 
     constructor(initialValue: T) {
         this.value = initialValue;
         this.subscriptions = [];
-        this.persist = false;
     }
 
     getValue<ST>(selector?: Selector<ST>): T | ST {
