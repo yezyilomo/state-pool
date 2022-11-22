@@ -8,7 +8,7 @@ type Observer = (key: string, value: any) => void
 type Config<T> = {
     default?: T,
     selector?: (state: any) => any,
-    patcher?: (state: any, selectedStateValue: any) => any,
+    patcher?: (state: any, selectedStateValue: any) => void,
     persist?: boolean
 }
 
@@ -124,7 +124,7 @@ class Store {
         }
 
         const onGlobalStateChange = (newValue: any) => {
-            // Note key, persist & timerId variables depends on the scope
+            // Note key & persist variables depends on scope
 
             this.onStoreUpdate(key, newValue);
 
