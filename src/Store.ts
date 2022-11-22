@@ -20,6 +20,12 @@ type PersistenceConfig = {
     PERSIST_ENTIRE_STORE?: boolean
 }
 
+type State<T> = {
+    state: GlobalState<T>,
+    unsubscribe: () => void,
+    persist: boolean
+}
+
 
 const notImplementedErrorMsg = [
     `You must implement 'loadState' and 'saveState' to be able `,
@@ -51,12 +57,12 @@ class PersistentStorage {
 }
 
 class Store {
-    value: Map<string, GlobalState<any>>;
+    states: Map<string, State<any>>;
     subscriptions: Array<Observer>;
     persistentStorage: PersistentStorage;
 
     constructor() {
-        this.value = new Map();
+        this.states = new Map();
         this.subscriptions = [];
         this.persistentStorage = new PersistentStorage();
     }
@@ -135,13 +141,17 @@ class Store {
 
         // Create global state
         const globalState: GlobalState<T> = createGlobalstate<T>(initialValue);
-        globalState.persist = shouldPersist;
-        globalState.subscribe({
+        const unsubscribe = globalState.subscribe({
             observer: onGlobalStateChange,
             selector: (state) => state
         });
+        const state = {
+            "state": globalState,
+            "unsubscribe": unsubscribe,
+            "persist": shouldPersist
+        }
         // Add global state to the store
-        this.value.set(key, globalState);
+        this.states.set(key, state);
     }
 
     getState<T>(
@@ -150,7 +160,7 @@ class Store {
     ): GlobalState<any> {
         const defaultValue: any = config.default;
         // Get key based global state
-        if (!this.value.has(key)) {  // Global state is not found
+        if (!this.states.has(key)) {  // Global state is not found
             if (defaultValue !== EMPTY) {  // Default value is found
                 // Create a global state and use defaultValue as the initial value
                 this.setState<T>(key, defaultValue, { persist: config.persist });
@@ -165,15 +175,15 @@ class Store {
                 throw Error(errorMsg.join(""));
             }
         }
-        return this.value.get(key);
+        return this.states.get(key);
     }
 
     clear(fn?: () => void): void {
         // Copy store
-        const storeCopy = this.value;
+        const storeCopy = this.states;
 
         // Clear store
-        this.value = new Map();
+        this.states = new Map();
         if (this.persistentStorage.clear) {
             this.persistentStorage.clear()
         }
@@ -184,8 +194,10 @@ class Store {
         }
 
         storeCopy.forEach((oldState, key) => {
+            // Unsubscribe from an old state 
+            oldState.unsubscribe()
             // Notify subscribers to a store that a global state has been removed
-            if (this.value.has(key)) {
+            if (this.states.has(key)) {
                 const newGlobalState = this.getState(key);
                 this.onStoreUpdate(key, newGlobalState.getValue());
             }
@@ -203,13 +215,13 @@ class Store {
             keys = globalStatekey;
         }
 
-        const globalStatesToRemove: Map<string, GlobalState<any>> = new Map();
+        const globalStatesToRemove: Map<string, State<any>> = new Map();
         keys.forEach(key => {
             // Copy global state to remove from a store
             globalStatesToRemove.set(key, this.getState(key));
 
             // Remove global state from a store
-            this.value.delete(key);
+            this.states.delete(key);
             if (
                 globalStatesToRemove.get(key).persist &&  // Is state persisted
                 this.persistentStorage.removeState &&  // Is removeState Implemented
@@ -225,8 +237,10 @@ class Store {
         }
 
         globalStatesToRemove.forEach((oldState, key) => {
+            // Unsubscribe from an old state 
+            oldState.unsubscribe()
             // Notify subscribers to a store that a global state has been removed
-            if (this.value.has(key)) {
+            if (this.states.has(key)) {
                 const newGlobalState = this.getState(key);
                 this.onStoreUpdate(key, newGlobalState.getValue());
             }
