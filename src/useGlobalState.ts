@@ -1,13 +1,9 @@
 import { GlobalState } from './GlobalState';
+import { HookConfig } from './types';
 import { useGlobalStateReducer } from './useGlobalStateReducer';
 
 
-type Config = {
-    selector?: (state: any) => any,
-    patcher?: (state: any, selectedStateValue: any) => any
-}
-
-type ReturnType<T> = [
+type HookReturnType<T> = [
     state: T,
     setState: (state: any) => any,
     updateState: (
@@ -17,8 +13,8 @@ type ReturnType<T> = [
 
 function useGlobalState<T>(
     globalState: GlobalState<any>,
-    config: Config = {},
-): ReturnType<T> {
+    config: HookConfig = {},
+): HookReturnType<T> {
     function reducer(currentState: any, newState: any) {
         return newState;
     }
