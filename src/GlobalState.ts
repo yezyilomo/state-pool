@@ -1,27 +1,26 @@
 import produce, { nothing } from "immer";
+import { Selector, HookConfig, Unsubscribe } from './types';
 
 
 type Observer = (value: any) => void
-type Selector<T> = (state: any) => T
-type Patcher = (state: any, selectedStateValue: any) => void
-type Config = { patcher?: Patcher, selector?: Selector<any> }
 type Updater = (state: any) => void
 type StateUpdater = (state: any) => any
+type Refresh = () => void
 
-type Subscription = {
+type Subscriber = {
     observer: Observer,
     selector: Selector<any>,
-    reRender?: () => void
+    refresh?: Refresh
 }
 
 
 class GlobalState<T> {
-    value: T;
-    subscriptions: Array<Subscription>;
+    private value: T;
+    private subscribers: Array<Subscriber>;
 
     constructor(initialValue: T) {
         this.value = initialValue;
-        this.subscriptions = [];
+        this.subscribers = [];
     }
 
     getValue<ST>(selector?: Selector<ST>): T | ST {
@@ -32,14 +31,14 @@ class GlobalState<T> {
     }
 
     refresh(): void {
-        this.subscriptions.forEach(subscription => {
-            if (subscription.reRender) {
-                subscription.reRender();
+        this.subscribers.forEach(subscriber => {
+            if (subscriber.refresh) {
+                subscriber.refresh();
             }
         });
     }
 
-    setValue(newValue: T | StateUpdater, config: Config = {}) {
+    setValue(newValue: T | StateUpdater, config: HookConfig = {}) {
         if (newValue === undefined) {
             this.__updateValue(
                 (draftVal) => nothing,
@@ -61,8 +60,8 @@ class GlobalState<T> {
         }
     }
 
-    updateValue(updater: Updater, config: Config = {}): void {
-        const updaterWrapper = function(draftState){
+    updateValue(updater: Updater, config: HookConfig = {}): void {
+        const updaterWrapper = function (draftState) {
             // This wrapper is for disabling setting returned value
             // We don't allow returned value to be set(just return undefined)
             updater(draftState)
@@ -71,7 +70,7 @@ class GlobalState<T> {
         this.__updateValue(updaterWrapper, config)
     }
 
-    private __updateValue(updater: StateUpdater, config: Config = {}): void {
+    private __updateValue(updater: StateUpdater, config: HookConfig = {}): void {
         const selector = config.selector;
         const patcher = config.patcher;
 
@@ -97,19 +96,19 @@ class GlobalState<T> {
 
         if (newState !== oldState) {
             // There's a new update
-            this.subscriptions.forEach(subscription => {
-                if (subscription.selector(newState) !== subscription.selector(oldState)) {
+            this.subscribers.forEach(subscriber => {
+                if (subscriber.selector(newState) !== subscriber.selector(oldState)) {
                     // Node value has changed
-                    subscription.observer(
-                        subscription.selector(newState)
+                    subscriber.observer(
+                        subscriber.selector(newState)
                     );
                 }
             });
         }
     }
 
-    subscribe(itemToSubscribe: Subscription | Observer): () => void {
-        let _itemToSubscribe: Subscription;
+    subscribe(itemToSubscribe: Subscriber | Observer): Unsubscribe {
+        let _itemToSubscribe: Subscriber;
         if (Object.prototype.toString.call(itemToSubscribe) === '[object Function]') {
             _itemToSubscribe = {
                 observer: itemToSubscribe as Observer,
@@ -117,22 +116,56 @@ class GlobalState<T> {
             }
         }
         else {
-            _itemToSubscribe = itemToSubscribe as Subscription;
+            _itemToSubscribe = itemToSubscribe as Subscriber;
         }
 
-        if (this.subscriptions.indexOf(_itemToSubscribe) === -1) {
+        if (this.subscribers.indexOf(_itemToSubscribe) === -1) {
             // Subscribe a component to this global state
-            this.subscriptions.push(_itemToSubscribe);
+            this.subscribers.push(_itemToSubscribe);
         };
 
         const unsubscribe = () => {
-            this.subscriptions = this.subscriptions.filter(
-                subscription => (subscription !== _itemToSubscribe)
+            this.subscribers = this.subscribers.filter(
+                subscriber => (subscriber !== _itemToSubscribe)
             );
         }
 
         return unsubscribe;
     }
+
+    select<T>(selector: Selector<T>): DerivedGlobalState<T> {
+        return createDerivedGlobalstate(this, selector);
+    }
+}
+
+
+class DerivedGlobalState<T> {
+    globalState: GlobalState<any>;
+    selector: Selector<T>;
+
+    constructor(globalState: GlobalState<any>, selector: Selector<T>) {
+        this.globalState = globalState;
+        this.selector = selector;
+    }
+
+    getValue(): T {
+        return this.globalState.getValue(this.selector)
+    }
+
+    subscribe(observer?: Observer, refresh?: Refresh): Unsubscribe {
+        const itemToSubscribe: Subscriber = {
+            observer: observer,
+            selector: this.selector,
+            refresh: refresh
+        }
+
+        return this.globalState.subscribe(itemToSubscribe);
+    }
+}
+
+
+function createDerivedGlobalstate<T>(globalState: GlobalState<any>, selector: Selector<T>): DerivedGlobalState<T> {
+    return new DerivedGlobalState<T>(globalState, selector);
 }
 
 
@@ -140,4 +173,4 @@ function createGlobalstate<T>(initialValue: T): GlobalState<T> {
     return new GlobalState<T>(initialValue);
 }
 
-export { GlobalState, createGlobalstate };
+export { GlobalState, DerivedGlobalState, createGlobalstate };
