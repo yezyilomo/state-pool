@@ -1,14 +1,14 @@
 import { GlobalState, createGlobalstate } from './GlobalState';
+import { Patcher, Selector, Unsubscribe, Reducer } from './types';
 import { useGlobalState } from './useGlobalState';
 import { useGlobalStateReducer } from './useGlobalStateReducer';
 
 
-type Reducer = (state: any, action: any) => any
-type Observer = (key: string, value: any) => void
-type Config<T> = {
+type StoreObserver = (key: string, value: any) => void
+type StoreHookConfig<T> = {
     default?: T,
-    selector?: (state: any) => any,
-    patcher?: (state: any, selectedStateValue: any) => void,
+    selector?: Selector<any>,
+    patcher?: Patcher,
     persist?: boolean
 }
 
@@ -22,7 +22,7 @@ type PersistenceConfig = {
 
 type State<T> = {
     state: GlobalState<T>,
-    unsubscribe: () => void,
+    unsubscribe: Unsubscribe,
     persist: boolean
 }
 
@@ -37,8 +37,8 @@ const notImplementedErrorMsg = [
 ].join("");
 
 
-class Empty {}  // Class for empty state/value
-const EMPTY =  new Empty();
+class Empty { }  // Class for empty state/value
+const EMPTY = new Empty();
 
 class PersistentStorage {
     SHOULD_PERSIST_BY_DEFAULT: boolean = false;
@@ -57,24 +57,24 @@ class PersistentStorage {
 }
 
 class Store {
-    states: Map<string, State<any>>;
-    subscriptions: Array<Observer>;
-    persistentStorage: PersistentStorage;
+    private states: Map<string, State<any>>;
+    private subscribers: Array<StoreObserver>;
+    private persistentStorage: PersistentStorage;
 
     constructor() {
         this.states = new Map();
-        this.subscriptions = [];
+        this.subscribers = [];
         this.persistentStorage = new PersistentStorage();
     }
 
-    subscribe(observer: Observer): () => void {
-        if (this.subscriptions.indexOf(observer) === -1) {
+    subscribe(observer: StoreObserver): () => void {
+        if (this.subscribers.indexOf(observer) === -1) {
             // Subscribe a component to this store
-            this.subscriptions.push(observer);
+            this.subscribers.push(observer);
         }
 
         const unsubscribe = () => {
-            this.subscriptions = this.subscriptions.filter(
+            this.subscribers = this.subscribers.filter(
                 subscriber => subscriber !== observer
             );
         }
@@ -82,9 +82,9 @@ class Store {
         return unsubscribe
     }
 
-    onStoreUpdate(key: string, value: any): void {
-        this.subscriptions.forEach(subscription => {
-            subscription(key, value);
+    private onStoreUpdate(key: string, value: any): void {
+        this.subscribers.forEach(subscriber => {
+            subscriber(key, value);
         });
     }
 
@@ -109,7 +109,7 @@ class Store {
     setState<T>(
         key: string,
         initialValue: T,
-        { persist }: { persist?: boolean } = { }
+        { persist }: { persist?: boolean } = {}
     ): void {
 
         const shouldPersist: boolean = persist === undefined ?
@@ -250,12 +250,12 @@ class Store {
         })
     }
 
-    useState<ST=any, T=any>(key: string, config: Config<T> = {}) {
+    useState<ST = any, T = any>(key: string, config: StoreHookConfig<T> = {}) {
         const globalState: GlobalState<T> = this.getState<T>(key, config);
         return useGlobalState<ST>(globalState, config);
     }
 
-    useReducer<ST=any, T=any>(reducer: Reducer, key: string, config: Config<T> = {}) {
+    useReducer<ST = any, T = any>(reducer: Reducer, key: string, config: StoreHookConfig<T> = {}) {
         const globalState: GlobalState<T> = this.getState<T>(key, config);
         return useGlobalStateReducer<ST>(reducer, globalState, config);
     }

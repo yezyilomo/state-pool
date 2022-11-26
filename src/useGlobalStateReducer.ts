@@ -1,24 +1,18 @@
 import { useState, useEffect, useRef } from 'react';
 import { GlobalState } from './GlobalState';
+import { HookConfig, Reducer } from './types';
 
 
-type Reducer = (state: any, action: any) => any
-
-type Config = {
-    selector?: (state: any) => any,
-    patcher?: (state: any, selectedStateValue: any) => any
-}
-
-type ReturnType<T> = [
+type HookReturnType<T> = [
     state: T,
     dispatch: (action: any) => any
 ]
 
-function useGlobalStateReducer<T=any>(
+function useGlobalStateReducer<T = any>(
     reducer: Reducer,
     globalState: GlobalState<any>,
-    config: Config = {}
-): ReturnType<T> {
+    config: HookConfig = {}
+): HookReturnType<T> {
     const [, setState] = useState(null);
     const isMounted = useRef(false);
 
@@ -45,7 +39,7 @@ function useGlobalStateReducer<T=any>(
         selector: config.selector ?
             config.selector :
             (state) => state,  // Select the whole global state if selector is not specified
-        reRender: reRender
+        refresh: reRender
     }
 
     useEffect(() => {
