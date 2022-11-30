@@ -141,7 +141,7 @@ function ClicksCounter(props){
         <div>
             Count: {count}
             <br/>
-            <button onClick={count => ++count}>Increment</button>
+            <button onClick={e => setCount(++count)}>Increment</button>
         </div>
     );
 }
