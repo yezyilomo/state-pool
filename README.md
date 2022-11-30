@@ -61,7 +61,6 @@ Below are few examples showing how to use **state-pool** to manage global states
 
 ```jsx
 // Example 1.
-import React from 'react';
 import { createStore } from 'state-pool';
 
 
@@ -72,27 +71,20 @@ function ClicksCounter(props){
     // Use "count" global state
     const [count, setCount] = store.useState("count");
 
-    const incrementCount = (e) => {
-        setCount(count+1)
-    }
-
     return (
         <div>
             Count: {count}
             <br/>
-            <button onClick={incrementCount}>Click</button>
+            <button onClick={e => setCount(++count)}>Click</button>
         </div>
     );
 }
-
-ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 ```
 
 <br/>
 
 ```jsx
 // Example 2.
-import React from 'react';
 import { createStore } from 'state-pool';
 
 
@@ -116,8 +108,6 @@ function UserInfo(props){
         </div>
     );
 }
-
-ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
 
 <br/>
