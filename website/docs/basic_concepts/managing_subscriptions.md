@@ -40,4 +40,14 @@ store.getState(key).subscribe({
     })
 })
 ```
-With this, observer function will only be called when the selected state changes
+With this, observer function will only be called when the selected state changes.
+
+
+Another way to subscribe to nested state or derived state is to call `select` on a global state then subscribe to it as
+
+```js
+store.getState(key).select(state => selected_state).subscribe(value =>{
+        // Do your thing here
+    }
+)
+```
