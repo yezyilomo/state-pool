@@ -40,6 +40,16 @@ Some of the methods available in a global state object are `getValue`, `updateVa
   // Signature
   globalState.subscribe(observer: Function | Subscription: {observer, selector});
   ```
+- `select`: This is used to derive another state or select a deeply nested state
+  ```js
+  // Signature
+  globalState.select(selector: Function);
+  ```
+  This returns `DerivedGlobalState` that you can subscribe to by calling `subscribe` on it as
+  ```js
+  // Signature
+  globalState.select(selector: Function).subscribe(observer: Function);
+  ```
 
 Below is an example showing all of them in action
 ```js
@@ -51,12 +61,19 @@ count.getValue()  // This will give 0
 
 count.setValue(1)  // This set the value of count to 1
 
-count.updateValue(val => val+1)  // This will increment the value of count
-
 // This will print whenever count change
 const unsubscribe = count.subscribe(val => console.log(val)) 
 
 unsubscribe()  // This will unsubscribe the observer above
+
+// An example for nested state
+const user = createGlobalState({name: "Yezy", weight: 65});
+
+user.updateValue(user => {user.weight += 1})  // This will increment the weight
+
+// Select user name and subscribe to it,
+// this will be printing whenever user name changes
+user.select(user => user.name).subscribe(name => console.log(name));
 ```
 
 

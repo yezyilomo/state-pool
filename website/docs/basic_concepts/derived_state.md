@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 
 # Derived & Nested State
-With state pool you can subscribe to deeply nested global state or a derived state. Both `store.useState` and `store.useReducer` accepts an optional configuration parameter with which you can pass `selector` & `patcher` options that are used to derive and update state.
+With state pool you can subscribe to deeply nested or derived state. Both `store.useState` and `store.useReducer` accepts an optional configuration parameter with which you can pass `selector` & `patcher` options that are used to derive and update state.
 
 Here is a simple example showing how to use `selector` & `Patcher` options
 
