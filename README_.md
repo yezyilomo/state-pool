@@ -217,7 +217,7 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 
 With `React.useState` you would need to recreate `user` object when updating `user.name`, but with `StatePool.useState` you don't need that, you just update the value right away. 
 
-That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through our [documentation 📝](https://yezyilomo.github.io/state-pool/).
+That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through our [**documentation**📝](https://yezyilomo.github.io/state-pool/).
 
 
 
