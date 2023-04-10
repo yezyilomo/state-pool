@@ -180,7 +180,9 @@ function ClicksCounter(props){
 ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 ```
 
-### Isn't `StatePool.useState` the same thing as `React.useState`?
+<br/>
+
+## Isn't `StatePool.useState` the same thing as `React.useState`?
 **definitely. not!...**
 
 They're both used to manage local state but `StatePool.useState` offers more features, for one it offers a simple way to update nested data unlike `React.useState`,
