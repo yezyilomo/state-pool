@@ -1,30 +1,29 @@
-import { GlobalState, createGlobalstate } from './GlobalState';
-import { Patcher, Selector, Unsubscribe, Reducer } from './types';
-import { useGlobalState } from './useGlobalState';
-import { useGlobalStateReducer } from './useGlobalStateReducer';
+import State, { createState } from './State';
+import {
+    StateInitializer, Selector, Patcher,
+    Reducer, SetState, Unsubscribe, UpdateState
+} from './types';
 
 
-type StoreObserver = (key: string, value: any) => void
-type StoreHookConfig<T> = {
-    default?: T,
-    selector?: Selector<any>,
-    patcher?: Patcher,
-    persist?: boolean
-}
+
+// Observer function for a store
+type StoreObserver = (key: string, value: unknown) => void
 
 type PersistenceConfig = {
-    saveState: (key: string, state: any, isInitialSet: boolean) => void,
-    loadState: (key: string, noState: Empty) => any,
+    saveState: (key: string, state: unknown, isInitialSet: boolean) => void,
+    loadState: (key: string, noState: Empty) => unknown,
     removeState?: (key: string) => void,
     clear?: () => void,
     PERSIST_ENTIRE_STORE?: boolean
 }
 
-type State<T> = {
-    state: GlobalState<T>,
+type StoreState<T> = {
+    state: State<T>,
     unsubscribe: Unsubscribe,
     persist: boolean
 }
+
+type StoreInitializer = { [key: string]: unknown } | (() => { [key: string]: unknown });
 
 
 const notImplementedErrorMsg = [
@@ -43,11 +42,11 @@ const EMPTY = new Empty();
 class PersistentStorage {
     SHOULD_PERSIST_BY_DEFAULT: boolean = false;
 
-    loadState(key: string, noState: Empty): any {
+    loadState(key: string, noState: Empty): unknown {
         throw TypeError(notImplementedErrorMsg);
     }
 
-    saveState(key: string, state: any, isInitialSet?: boolean) {
+    saveState(key: string, state: unknown, isInitialSet?: boolean) {
         throw TypeError(notImplementedErrorMsg);
     }
 
@@ -56,15 +55,28 @@ class PersistentStorage {
     clear: () => void
 }
 
-class Store {
-    private states: Map<string, State<any>>;
+
+export default class Store {
+    private states: Map<string, StoreState<unknown>>;
     private subscribers: Array<StoreObserver>;
     private persistentStorage: PersistentStorage;
 
-    constructor() {
+    constructor(storeInitializer?: StoreInitializer) {
         this.states = new Map();
         this.subscribers = [];
         this.persistentStorage = new PersistentStorage();
+
+        if (storeInitializer) {
+            if (typeof storeInitializer === "function") {
+                storeInitializer = storeInitializer();
+            }
+
+            for (let key in storeInitializer) {
+                if (storeInitializer.hasOwnProperty(key)) {
+                    this.setState(key, storeInitializer[key]);
+                }
+            }
+        }
     }
 
     subscribe(observer: StoreObserver): () => void {
@@ -82,7 +94,7 @@ class Store {
         return unsubscribe
     }
 
-    private onStoreUpdate(key: string, value: any): void {
+    private onStoreUpdate(key: string, value: unknown): void {
         this.subscribers.forEach(subscriber => {
             subscriber(key, value);
         });
@@ -108,28 +120,32 @@ class Store {
 
     setState<T>(
         key: string,
-        initialValue: T,
+        initialValue: StateInitializer<T> | T,
         { persist }: { persist?: boolean } = {}
     ): void {
 
         const shouldPersist: boolean = persist === undefined ?
             this.persistentStorage.SHOULD_PERSIST_BY_DEFAULT : persist;
 
+        let shouldSaveToPersistentStorage = false;
+
         if (shouldPersist) {
-            // Load state from localStorage
+            // Try to load state from persistent storage
             const savedState = this.persistentStorage.loadState(key, EMPTY);
 
             if (savedState !== EMPTY) {
-                // Use savedState as the initialValue
-                initialValue = savedState;
+                // We have a saved state, so we use it as the initialValue
+                initialValue = savedState as T;
             }
             else {
-                // This is the initial set
-                this.persistentStorage.saveState(key, initialValue, true);
+                // We don't have a saved state so we have to set/save it
+                // Here we set this flag to true but we'll save later after creating a state successfully
+                shouldSaveToPersistentStorage = true;
             }
         }
 
-        const onGlobalStateChange = (newValue: any) => {
+
+        const onStateChange = (newValue: unknown) => {
             // Note key & persist variables depends on scope
 
             this.onStoreUpdate(key, newValue);
@@ -139,43 +155,79 @@ class Store {
             }
         }
 
-        // Create global state
-        const globalState: GlobalState<T> = createGlobalstate<T>(initialValue);
-        const unsubscribe = globalState.subscribe({
-            observer: onGlobalStateChange,
-            selector: (state) => state
+        // Create a state
+        const state: State<T> = createState<T>(initialValue);
+        const unsubscribe = state.subscribe({
+            observer: onStateChange,
+            selector: (st) => st
         });
-        const state = {
-            "state": globalState,
+        const storeState = {
+            "state": state,
             "unsubscribe": unsubscribe,
             "persist": shouldPersist
         }
-        // Add global state to the store
-        this.states.set(key, state);
+        // Add state to the store
+        this.states.set(key, storeState);
+
+        if (shouldSaveToPersistentStorage) {
+            // Saving state to persistent storage after we've created it successfully
+            this.persistentStorage.saveState(key, state.getValue(), true);
+        }
     }
 
     getState<T>(
         key: string,
-        config: { default?: T | Empty, persist?: boolean } = { default: EMPTY }
-    ): GlobalState<any> {
-        const defaultValue: any = config.default;
-        // Get key based global state
-        if (!this.states.has(key)) {  // Global state is not found
+        config: { default?: StateInitializer<T> | T, persist?: boolean } = {}
+    ): State<T> {
+        let defaultValue;
+        if (config.hasOwnProperty('default')) {
+            // Use has set default explicitly
+            defaultValue = config.default
+        }
+        else {
+            // No default value
+            defaultValue = EMPTY;
+        }
+
+        // Get key based state
+        if (!this.has(key)) {  // state is not found
             if (defaultValue !== EMPTY) {  // Default value is found
-                // Create a global state and use defaultValue as the initial value
-                this.setState<T>(key, defaultValue, { persist: config.persist });
+                // Create a state and use defaultValue as the initial value
+                this.setState<T>(
+                    key,
+                    defaultValue as (StateInitializer<T> | T),  // Make sure we don't pass EMPTY value
+                    { persist: config.persist }
+                );
             }
             else {
-                // Global state is not found and the default value is not specified
+                // state is not found and the default value is not specified
                 const errorMsg = [
-                    `There is no global state with the key '${key}', `,
-                    `You are either trying to access a global `,
-                    `state which was not created or it was deleted.`
+                    `There is no state with the key '${key}', `,
+                    `You are either trying to access a `,
+                    `state that doesn't exist or it was deleted.`
                 ];
                 throw Error(errorMsg.join(""));
             }
         }
-        return this.states.get(key).state;
+        return this.states.get(key).state as State<T>;
+    }
+
+    has(key: string) {
+        // Check if we have a state in a store
+        return this.states.has(key);
+    }
+
+    items(): Array<[key: string, state: unknown, persist: boolean]> {
+        const storeItems = [];
+        this.states.forEach((storeState, key) => {
+            storeItems.push([key, storeState.state.getValue(), storeState.persist]);
+        })
+        return storeItems;
+    }
+
+    getStateValue<ST, T = unknown>(key: string, config?): T | ST {
+        const state = this.getState<T>(key, config);
+        return state.getValue<ST>(config.selector);
     }
 
     clear(fn?: () => void): void {
@@ -196,34 +248,34 @@ class Store {
         storeCopy.forEach((oldState, key) => {
             // Unsubscribe from an old state 
             oldState.unsubscribe()
-            // Notify subscribers to a store that a global state has been removed
-            if (this.states.has(key)) {
-                const newGlobalState = this.getState(key);
-                this.onStoreUpdate(key, newGlobalState.getValue());
+            // Notify subscribers to a store that a state has been removed
+            if (this.has(key)) {
+                const newState = this.getState(key);
+                this.onStoreUpdate(key, newState.getValue());
             }
-            // Rerender all components using this global state
+            // Rerender all components using this state
             oldState.state.refresh();
         })
     }
 
-    remove(globalStatekey: string | string[], fn?: () => void): void {
+    remove(Statekey: string | string[], fn?: () => void): void {
         let keys: string[] = [];
-        if (typeof globalStatekey === 'string') {
-            keys = [globalStatekey];
+        if (typeof Statekey === 'string') {
+            keys = [Statekey];
         }
         else {
-            keys = globalStatekey;
+            keys = Statekey;
         }
 
-        const globalStatesToRemove: Map<string, State<any>> = new Map();
+        const StatesToRemove: Map<string, StoreState<unknown>> = new Map();
         keys.forEach(key => {
-            // Copy global state to remove from a store
-            globalStatesToRemove.set(key, this.states.get(key));
+            // Copy state to remove from a store
+            StatesToRemove.set(key, this.states.get(key));
 
-            // Remove global state from a store
+            // Remove state from a store
             this.states.delete(key);
             if (
-                globalStatesToRemove.get(key).persist &&  // Is state persisted
+                StatesToRemove.get(key).persist &&  // Is state persisted
                 this.persistentStorage.removeState &&  // Is removeState Implemented
                 this.persistentStorage.loadState(key, EMPTY) !== EMPTY  // Is state to remove available
             ) {
@@ -232,39 +284,113 @@ class Store {
         });
 
         if (fn) {
-            // Run global state re-initialization
+            // Run state re-initialization
             fn();
         }
 
-        globalStatesToRemove.forEach((oldState, key) => {
+        StatesToRemove.forEach((oldState, key) => {
             // Unsubscribe from an old state 
             oldState.unsubscribe()
-            // Notify subscribers to a store that a global state has been removed
-            if (this.states.has(key)) {
-                const newGlobalState = this.getState(key);
-                this.onStoreUpdate(key, newGlobalState.getValue());
+            // Notify subscribers to a store that a state has been removed
+            if (this.has(key)) {
+                const newState = this.getState(key);
+                this.onStoreUpdate(key, newState.getValue());
             }
 
-            // Rerender all components depending on this global state
+            // Rerender all components depending on this state
             oldState.state.refresh();
         })
     }
 
-    useState<ST = any, T = any>(key: string, config: StoreHookConfig<T> = {}) {
-        const globalState: GlobalState<T> = this.getState<T>(key, config);
-        return useGlobalState<ST>(globalState, config);
+
+    useState<T>(
+        key: string,
+        config?: { default?: StateInitializer<T> | T, persist?: boolean }
+    ): [
+            state: T,
+            setState: SetState<T>,
+            updateState: UpdateState<T>
+        ];
+
+    useState<ST, T>(
+        key: string,
+        config: { selector: Selector<ST>, default?: StateInitializer<T> | T, persist?: boolean },
+    ): [
+            state: ST,
+            setState: SetState<T>,
+            updateState: UpdateState<T>
+        ];
+
+    useState<ST, T>(
+        key: string,
+        config: { selector: Selector<ST>, patcher: Patcher<ST>, default?: StateInitializer<T> | T, persist?: boolean },
+    ): [
+            state: ST,
+            setState: SetState<ST>,
+            updateState: UpdateState<ST>
+        ]
+
+    useState(
+        key: string,
+        config: { selector?: Selector<unknown>, patcher?: Patcher<unknown>, default?: unknown, persist?: boolean } = {}
+    ): [
+            state: unknown,
+            setState: SetState<unknown>,
+            updateState: UpdateState<unknown>
+        ] {
+        const storeStateConfig = config as { default?, persist?};
+        const stateConfig = config as { selector?, patcher?};
+
+        const state = this.getState(key, storeStateConfig);
+        return state.useState(stateConfig);
     }
 
-    useReducer<ST = any, T = any>(reducer: Reducer, key: string, config: StoreHookConfig<T> = {}) {
-        const globalState: GlobalState<T> = this.getState<T>(key, config);
-        return useGlobalStateReducer<ST>(reducer, globalState, config);
+
+    useReducer<T, A>(
+        reducer: Reducer<T, A>,
+        key: string,
+        config?: { default?: StateInitializer<T> | T, persist?: boolean }
+    ): [
+            state: T,
+            dispatch: (action: A) => void
+        ];
+
+    useReducer<ST, A, T = unknown>(
+        reducer: Reducer<ST, A>,
+        key: string,
+        config: { selector?: Selector<ST>, default?: StateInitializer<T> | T | never, persist?: boolean }
+    ): [
+            state: ST,
+            dispatch: (action: A) => void
+        ];
+
+    useReducer<ST, A, T = unknown>(
+        reducer: Reducer<ST, A>,
+        key: string,
+        config: { selector?: Selector<ST>, patcher?: Patcher<ST>, default?: StateInitializer<T> | T | never, persist?: boolean }
+    ): [
+            state: ST,
+            dispatch: (action: A) => void
+        ]
+
+    useReducer(
+        reducer: Reducer<unknown, unknown>,
+        key: string,
+        config: { selector?: Selector<unknown>, patcher?: Patcher<unknown>, default?: unknown, persist?: boolean } = {}
+    ): [
+            state: unknown,
+            dispatch: unknown
+        ] {
+        const storeStateConfig = config as { default?, persist?};
+        const stateConfig = config as { selector?, patcher?};
+
+        const state = this.getState(key, storeStateConfig);
+        return state.useReducer(reducer, stateConfig);
     }
 }
 
 
-function createStore(): Store {
-    // Create a store for key based global state
-    return new Store();
+export function createStore(storeInitializer?: StoreInitializer): Store {
+    // Create a store for key based state
+    return new Store(storeInitializer);
 }
-
-export { Store, createStore };
