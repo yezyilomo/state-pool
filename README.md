@@ -68,7 +68,7 @@ const count = createState(0);  // Create "count" state and initialize it with 0
 
 function ClicksCounter(props){
     // Use "count" state
-    const [count, setCount] = count.useState("count");
+    const [count, setCount] = count.useState();
 
     const incrementCount = (e) => {
         setCount(count+1)
