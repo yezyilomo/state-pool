@@ -217,7 +217,7 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 
 With `React.useState` you would need to recreate `user` object when updating `user.name`, but with `StatePool.useState` you don't need that, you just update the value right away. 
 
-That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through our [documentation 📝](https://yezyilomo.github.io/state-pool/).
+That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through our [**documentation**📝](https://yezyilomo.github.io/state-pool/).
 
 
 
@@ -286,30 +286,8 @@ function UserInfo(props){
 
 <br/>
 
-**State-pool** doesn't enforce storing your states in a store, If you don't like using the architecture of store you can still use **state-pool** without it. In **state-pool** store is just a container for global states, so you can still use your global states without it, in fact **state-pool** doesn’t care where you store your global states as long as you can access them,
+**State-pool** doesn't enforce storing your states in a store, If you don't like using the architecture of store you can still use **state-pool** without it. In **state-pool** store is just a container for global states, so you can still use your global states without it, in fact **state-pool** doesn’t care where you store your global states as long as you can access them
 
-Here is an example of how to use state-pool without a store
-
-```js
-import { createGlobalState, useGlobalState } from 'state-pool';
-
-
-// Create count global state and initialize it with 0
-const count = createGlobalState(0);
-
-function ClicksCounter(props){
-    // Use count global state
-    const [count, setCount] = useGlobalState(count);
-
-    return (
-        <div>
-            Count: {count}
-            <br/>
-            <button onClick={e => setCount(++count)}>Increment</button>
-        </div>
-    );
-}
-```
 <br/>
 
 Pretty cool, right?
