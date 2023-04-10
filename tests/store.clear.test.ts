@@ -6,7 +6,7 @@ import { createStore } from '../src/';
 const store = createStore();
 store.setState("count", 0);
 
-test('should clear the entire global state and initialize `count` with 5', () => {
+test('should clear the entire store and initialize `count` with 5', () => {
     const hook1 = renderHook(() => store.useState("count"))
 
     act(() => {
@@ -24,7 +24,7 @@ test('should clear the entire global state and initialize `count` with 5', () =>
 const store2 = createStore();
 store2.setState("count", 0);
 
-test('should clear the entire global state and initialize `age` with 18', () => {
+test('should clear the entire store and initialize `age` with 18', () => {
     const hook2 = renderHook(() => store2.useState("age", {default: 18}));
 
     act(() => {
