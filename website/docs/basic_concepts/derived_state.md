@@ -35,6 +35,6 @@ function UserName(props){
 ```
 Here `selector` & `patcher` are used for specifying a way to select deeply nested state(derive new state) and update it.
 
-- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested or derived state.
+- `selector` should be a function which takes one parameter which is the state and returns a selected value. The purpose of this is to subscribe to a deeply nested or derived state.
 
-- `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
+- `patcher` should be a function which takes two parameters, the first is the state and the second is the selected value. The purpose of this is to merge back the selected value to the state once it's updated.

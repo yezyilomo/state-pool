@@ -3,7 +3,7 @@ sidebar_position: 2
 ---
 
 # store.setState
-This is used to create a global state and map it to a key so that you won't need to use it directly, instead you use a key to get it. `store.setState` takes two required parameters, a key(string) to map to a global state object and the initial value, In addition to those two parameters it takes a third optional parameter which is the configuration object. `persist` is the only available config which is the flag to determine whether to save/persist state in a permanent storage or not.
+This is used to create a state and map it to a key so that you won't need to use it directly, instead you use a key to get it. `store.setState` takes two required parameters, a key(string) to map to a state object and the initial value, In addition to those two parameters it takes a third optional parameter which is the configuration object. `persist` is the only available config which is the flag to determine whether to save/persist state in a permanent storage or not.
 
 ```js
 // Signature
