@@ -5,16 +5,15 @@
 [![Version](https://img.shields.io/npm/v/state-pool?style=flat)](https://www.npmjs.com/package/state-pool)
 [![Downloads](https://img.shields.io/npm/dt/state-pool.svg?style=flat)](https://www.npmjs.com/package/state-pool)
 
-React state management library based on global variables and react hooks.
+Transform your React app with our state management library! Declare global and local states like variables, powered by the magic of React hooks 🪄✨
 
 ## Features & Advantages
 - Simple, familiar, flexible and very minimal core API but powerful
 - Built-in support for state persistence
 - Very easy to learn because its API is very similar to react state hook's API
 - Support selecting deeply nested state
-- Support creating global state dynamically
+- Support creating state dynamically
 - Can be used outside react components
-- States are stored as global variables(Can be used anywhere)
 - Doesn't wrap your app in context providers
 - Very organized API, You can do almost everything with a single import
 
@@ -26,13 +25,13 @@ You can also try live examples [Here](https://yezyilomo.github.io/state-pool-exa
 <br/>
 
 ## How it Works
-1. Create a global state
+1. Create a state
 
-2. Subscribe a component(s) to a created global state
+2. Subscribe a component(s) to the state created
 
-3. If a component wants to update a global state, it sends update request
+3. If a component wants to update the state, it sends update request
 
-4. When a global state receives update request, it performs the update and send signal to all components subscribed to it for them to update themselves(re-render)
+4. When a state receives update request, it performs the update and send signal to all components subscribed to it for them to update themselves(re-render)
 
 <br/>
 
@@ -50,14 +49,189 @@ npm install state-pool
 <br/>
 
 ## Getting Started
-Using **state-pool** to manage global state is very simple, all you need to do is
-1. Create a store(which is basically a container for your global state)
-1. Create and initialize a global state by using `store.setState`
-2. Use your global state in your component through `store.useState` hooks
+Using **state-pool** to manage state is very simple, all you need to do is
+1. Create and initialize a state by using `createState`
+2. Use your state in your component through `useState` hooks
 
-These three steps summarises pretty much everything you need to use **state-pool**.
+These two steps summarises pretty much everything you need to use **state-pool**.
 
-Below are few examples showing how to use **state-pool** to manage global states.
+Below are few examples showing how to use **state-pool** to manage states.
+
+```jsx
+// Example 1.
+import React from 'react';
+import { createState } from 'state-pool';
+
+
+const count = createState(0);  // Create "count" state and initialize it with 0
+
+
+function ClicksCounter(props){
+    // Use "count" state
+    const [count, setCount] = count.useState("count");
+
+    const incrementCount = (e) => {
+        setCount(count+1)
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+
+<br/>
+
+The other way to do it is using `useState` from `state-pool`
+```jsx
+// Example 2.
+import React from 'react';
+import { createState, useState } from 'state-pool';
+
+
+const count = createState(0);  // Create "count" state and initialize it with 0
+
+
+function ClicksCounter(props){
+    // Use "count" state
+    const [count, setCount] = useState(count);
+
+    const incrementCount = (e) => {
+        setCount(count+1)
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+
+<br/>
+
+## What about local state?
+With **state-pool**, state are just like variables, if declared on a global scope, it’s a global state and if declared on local scope it’s a local state, so the difference between global state and local state in **state-pool** is where you declare them just like variables.
+
+Here is an example for local state management
+```jsx
+// Example 1.
+import React from 'react';
+import { useState } from 'state-pool';
+
+
+function ClicksCounter(props){
+    // Here `useState` hook will create "count" state and initialize it with 0
+    const [count, setCount] = useState(0);
+
+    const incrementCount = (e) => {
+        setCount(count+1)
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+<br/>
+
+If you don't want **state-pool's** `useState` to collide with **React's** `useState` you can import `StatePool` and use the hook from there,
+
+Here is an example
+```jsx
+// Example 2.
+import React from 'react';
+import StatePool from 'state-pool';
+
+
+function ClicksCounter(props){
+    // Here `useState` hook will create "count" state and initialize it with 0
+    const [count, setCount] = StatePool.useState(0);
+
+    const incrementCount = (e) => {
+        setCount(count+1)
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+
+### Isn't `StatePool.useState` the same thing as `React.useState`?
+**definitely. not!...**
+
+They're both used to manage local state but `StatePool.useState` offers more features, for one it offers a simple way to update nested data unlike `React.useState`,
+
+Here is an example
+```jsx
+// Example 2.
+import React from 'react';
+import StatePool from 'state-pool';
+
+
+const user = StatePool.createState({name: "Yezy", age: 25});
+
+function UserInfo(props){
+    const [user, setUser, updateUser] = StatePool.useState(user);
+
+    const updateName = (e) => {
+        updateUser(user => {
+            user.name = e.target.value;
+        });
+    }
+
+    return (
+        <div>
+            Name: {user.name}
+            <br/>
+            <input type="text" value={user.name} onChange={updateName}/>
+        </div>
+    );
+}
+
+ReactDOM.render(UserInfo, document.querySelector("#root"));
+```
+
+With `React.useState` you would need to recreate `user` object when updating `user.name`, but with `StatePool.useState` you don't need that, you just update the value right away. 
+
+That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through our [documentation 📝](https://yezyilomo.github.io/state-pool/).
+
+
+
+## Store based example
+If you have many states and you would like to organize them into a store, **state-pool** allows you to do that too and provides a tone of features on top of it.
+
+Here are steps for managing state with a store
+1. Create a store(which is basically a container for your state)
+1. Create and initialize a state by using `store.setState`
+2. Use your state in your component through `store.useState` hooks
+
+These three steps summarises pretty much everything you need to manage state with a store.
+
+Below are few examples of store in action
 
 ```jsx
 // Example 1.
@@ -65,11 +239,11 @@ import React from 'react';
 import { createStore } from 'state-pool';
 
 
-const store = createStore();  // Create store for storing our global state
-store.setState("count", 0);  // Create "count" global state and add it to the store
+const store = createStore();  // Create store for storing our state
+store.setState("count", 0);  // Create "count" state and add it to the store
 
 function ClicksCounter(props){
-    // Use "count" global state
+    // Use "count" state
     const [count, setCount] = store.useState("count");
 
     const incrementCount = (e) => {
@@ -96,7 +270,7 @@ import React from 'react';
 import { createStore } from 'state-pool';
 
 
-const store = createStore();  // Create store for storing our global state
+const store = createStore();  // Create store for storing our state
 store.setState("user", {name: "Yezy", age: 25});
 
 function UserInfo(props){
