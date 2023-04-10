@@ -3,7 +3,7 @@ sidebar_position: 3
 ---
 
 # store.useState
-`store.useState` is a hook that's used to get a global state from a store, it's a way for a component to subscribe to a global state from a store. `store.useState` works just like `React.useState` hook but it accepts a key for the global state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it also accept another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
+`store.useState` is a hook that's used to get a state from a store, it's a way for a component to subscribe to a state from a store. `store.useState` works just like `React.useState` hook but it accepts a key for the state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it also accept another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
 
 ```js
 // Signature
@@ -16,13 +16,13 @@ store.useState(
 Below is an example showing how to use `store.useState` hook
 
 ```js
-const initialGlobalState = {
+const initialState = {
     name: "Yezy",
     age: 25,
     email: "yezy@me.com"
 }
 
-store.setState("user", initialGlobalState);
+store.setState("user", initialState);
 
 function Component(props){
     const [user, setUser, updateUser] = store.useState("user");
@@ -58,32 +58,32 @@ setUser(function(user){
 ```
 
 As stated earlier `store.useState` takes a second optional parameter which is a configuration object, available configurations are:
-- `default` - This is used to specify the default value if you want `store.useState` to create a global state if it doesn't find the one for the key specified in the first argument. For example
+- `default` - This is used to specify the default value if you want `store.useState` to create a state if it doesn't find the one for the key specified in the first argument. For example
 
   ```js
   const [user, setUser, updateUser] = store.useState("user", {default: null});
   ```
 
-  This piece of code means, get the global state for the key "user" if it's not available in a store, create one and assign it the value `null`.
+  This piece of code means, get the state for the key "user" if it's not available in a store, create one and assign it the value `null`.
 
-- Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist global state in your preferred storage or not. Here `persist` configuration is only used if `store.useState` is going to create global state dynamically(by using `default` config).
+- Also in addition to `default` configuration there is `persist` configuration which is the flag to determine whether to save/persist state in your preferred storage or not. Here `persist` configuration is only used if `store.useState` is going to create state dynamically(by using `default` config).
 <br/>
 
 Other allowed configurations are `selector` & `patcher`. These are used for specifying a way to select deeply nested state and update it.
 
-- `selector` should be a function which takes one parameter which is the global state and returns a selected value. The purpose of this is to subscribe to a deeply nested state or derived state.
+- `selector` should be a function which takes one parameter which is the state and returns a selected value. The purpose of this is to subscribe to a deeply nested state or derived state.
 
-- `patcher` should be a function which takes two parameters, the first is the global state and the second is the selected value. The purpose of this is to merge back the selected value to the global state once it's updated.
+- `patcher` should be a function which takes two parameters, the first is the state and the second is the selected value. The purpose of this is to merge back the selected value to the state once it's updated.
 
   Example.
   ```jsx
-  const initialGlobalState = {
+  const initialState = {
       name: "Yezy",
       age: 25,
       email: "yezy@me.com"
   }
   
-  store.setState("user", initialGlobalState);
+  store.setState("user", initialState);
   
   
   function UserName(props){

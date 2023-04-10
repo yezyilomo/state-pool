@@ -40,7 +40,7 @@ test('should update count', () => {
 })
 
 
-test('should create `age` global state with the given default value', () => {
+test('should create `age` state with the given default value', () => {
     const { result } = renderHook(() => store.useState("age", {default: 18, persist: true}));
 
     // age state will be saved to a store
@@ -140,7 +140,7 @@ test('should not save weight to storage2', () => {
 })
 
 
-test('should create `age` global state with the given default value', () => {
+test('should create `age` state with the given default value', () => {
     const { result } = renderHook(() => store2.useState("age", {default: 18}));
 
     // age state will be saved to a store2

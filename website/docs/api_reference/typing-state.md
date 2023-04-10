@@ -14,11 +14,11 @@ store.useState<number>('count');
 store.useReducer<number>(reducer, 'count');
 
 // For none key based
-const count = createGlobalState<number>(0);
+const count = createState<number>(0);
 
-useGlobalState<number>(count);
+useState<number>(count);
 
-useGlobalStateReducer<number>(reducer, count);
+useReducer<number>(reducer, count);
 
 
 // Typing with selector
@@ -31,11 +31,11 @@ store.useReducer<string>(reducer, 'user', {selector: user => user.name});
 store.useReducer<number>(reducer, 'user', {selector: user => user.age});
 
 // For none key based
-const user = createGlobalState<{name: string, age: number}>({name: 'Yezy', age: 25});
+const user = createState<{name: string, age: number}>({name: 'Yezy', age: 25});
 
-useGlobalState<string>(user, {selector: user => user.name});
-useGlobalState<number>(user, {selector: user => user.age});
+useState<string>(user, {selector: user => user.name});
+useState<number>(user, {selector: user => user.age});
 
-useGlobalStateReducer<string>(reducer, user, {selector: user => user.name});
-useGlobalStateReducer<number>(reducer, user, {selector: user => user.age});
+useReducer<string>(reducer, user, {selector: user => user.name});
+useReducer<number>(reducer, user, {selector: user => user.age});
 ```

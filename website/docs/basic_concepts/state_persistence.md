@@ -3,7 +3,7 @@ sidebar_position: 5
 ---
 
 # State Persistence
-State pool has a built in support for state persistence, it makes saving your global states in your preferred permanent storage very easy, all you need to do is tell state pool how to save, load, clear and remove your global state from your preferred storage by using `store.persist` API.
+State pool has a built in support for state persistence, it makes saving your states in your preferred permanent storage very easy, all you need to do is tell state pool how to save, load, clear and remove your state from your preferred storage by using `store.persist` API.
 
 The way to implement these is by calling `store.persist` and pass them as shown below 
 
@@ -18,7 +18,7 @@ store.persist({
 
 After implementing these four functions you're good to go, you won’t need to worry about calling them, **state-pool** will be doing that for you automatically so that you can focus on using your states.
 
-Both `store.setState`, `store.useState` and `store.useReducer` accepts an optional configuration parameter, `persist`, this is the one which is used to tell **state-pool** whether to save your global state to a permanent storage or not. i.e
+Both `store.setState`, `store.useState` and `store.useReducer` accepts an optional configuration parameter, `persist`, this is the one which is used to tell **state-pool** whether to save your state to a permanent storage or not. i.e
 
 ```js
 store.setState(
@@ -43,7 +43,7 @@ store.useReducer(
 )
 ```
 
-By default the value of `persist` in all cases is `false`(which means it doesn't save global states to a permanent storage), so if you want to activate it, you have to set it to be true.
+By default the value of `persist` in all cases is `false`(which means it doesn't save states to a permanent storage), so if you want to activate it, you have to set it to be true.
 
 What's even better about **state-pool** is that you get the freedom to choose what to save in your permanent storage, so you don't need to save the whole store in your permanent storage, but if you want to save the whole store you can use `PERSIST_ENTIRE_STORE` configuration.
 
@@ -115,6 +115,6 @@ store.persist({
 
 :::important
 
-When you set `PERSIST_ENTIRE_STORE = true`, **state-pool** will be persisting all your global states to the permanent storage by default unless you explicitly specify `persist = false` when initializing your global state.
+When you set `PERSIST_ENTIRE_STORE = true`, **state-pool** will be persisting all your states to the permanent storage by default unless you explicitly specify `persist = false` when initializing your state.
 
 :::

@@ -1,10 +1,19 @@
-import { GlobalState, DerivedGlobalState, createGlobalstate } from './GlobalState';
-import { Store, createStore } from './Store';
-import { useGlobalStateReducer } from './useGlobalStateReducer'
-import { useGlobalState } from './useGlobalState'
+import State, { createState, DerivedState, createDerivedState } from './State';
+import Store, { createStore } from './Store';
+import useReducer from './useReducer';
+import useState from './useState';
 
 
 export {
-    GlobalState, DerivedGlobalState, createGlobalstate, Store,
-    createStore, useGlobalStateReducer, useGlobalState
+    State, createState,
+    Store, createStore,
+    useState, useReducer,
+    DerivedState, createDerivedState,
+};
+
+export default {
+    State, createState,
+    Store, createStore,
+    useState, useReducer,
+    DerivedState, createDerivedState,
 };

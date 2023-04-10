@@ -3,11 +3,11 @@ sidebar_position: 8
 ---
 
 # store.clear
-This is used to clear an entire store if you don't need all global states in it anymore or you want to reload/reset all global states. It accepts a function to run after clearing the store. 
+This is used to clear an entire store if you don't need all states in it anymore or you want to reload/reset all states. It accepts a function to run after clearing the store. 
 
 :::important
 
- The function runs before components subscribed to all global states in a store rerenders.
+ The function runs before components subscribed to all states in a store rerenders.
 
 :::
 
@@ -71,7 +71,7 @@ function UserInfo(props){
 
 ReactDOM.render(UserInfo, document.querySelector("#root"));
 ```
-From the code above, when you click `Reset Store` button `store.clear` will remove all global states from the store and create them again by executing `initializeStore`. This might come in handy when you need to clear all data when user logs out of your application.
+From the code above, when you click `Reset Store` button `store.clear` will remove all states from the store and create them again by executing `initializeStore`. This might come in handy when you need to clear all data when user logs out of your application.
 
 
-**NOTE:** both `store.remove` and `store.clear` when executed causes all components subscribed to global states which are removed to rerender.
+**NOTE:** both `store.remove` and `store.clear` when executed causes all components subscribed to states which are removed to rerender.

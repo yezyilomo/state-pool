@@ -19,8 +19,8 @@ test('should update count', () => {
 })
 
 
-test('should create `age` global state with the given default value', () => {
-    const reducer = (state, newState) => newState;
+test('should create `age` state with the given default value', () => {
+    const reducer = (state: number, newState: number): number => newState;
 
     const { result } = renderHook(() => store.useReducer(reducer, "age", {default: 18}));
 

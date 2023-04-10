@@ -1,14 +1,14 @@
 import React from 'react';
 import { renderHook, act } from '@testing-library/react-hooks';
-import { createGlobalstate, useGlobalState, createStore } from '../src/';
+import { createState, useState, createStore } from '../src/';
 
 
-const count = createGlobalstate(0);
+const count = createState(0);
 
 let testVal1 = 0;
 
 test('should update testVal1 through a subscriber', () => {
-    const { result } = renderHook(() => useGlobalState(count))
+    const { result } = renderHook(() => useState(count))
 
     act(() => {
         count.subscribe((value) => {
@@ -21,12 +21,12 @@ test('should update testVal1 through a subscriber', () => {
 })
 
 
-const user = createGlobalstate({ name: "Yezy", weight: 65 });
+const user = createState({ name: "Yezy", weight: 65 });
 
 let testVal2 = 0;
 
 test('should increment testVal2 twice through subscribers', () => {
-    const { result } = renderHook(() => useGlobalState(user))
+    const { result } = renderHook(() => useState(user))
 
     act(() => {
         user.select(user => user.weight).subscribe((value) => {
