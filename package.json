@@ -49,7 +49,7 @@
         "@babel/preset-react": "latest",
         "@testing-library/react-hooks": "latest",
         "@types/jest": "latest",
-        "babel-eslint": "latest",
+        "@babel/eslint-parser": "latest",
         "babel-jest": "latest",
         "jest": "latest",
         "json": "latest",
