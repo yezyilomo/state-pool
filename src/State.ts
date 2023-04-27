@@ -1,4 +1,4 @@
-import produce, { nothing } from "immer";
+import { produce, nothing } from "immer";
 import {
     StateInitializer, Selector, Patcher,
     Reducer, Unsubscribe, StateModifier,
