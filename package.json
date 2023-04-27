@@ -39,7 +39,7 @@
         }
     },
     "dependencies": {
-        "immer": ">=6.0.3"
+        "immer": ">=10.0.0"
     },
     "peerDependencies": {
         "react": ">=16.8.3"
