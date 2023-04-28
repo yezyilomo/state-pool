@@ -108,3 +108,15 @@ test('Test local state with state initializer: should update count', () => {
     expect(result.current[0]).toStrictEqual(1)
 })
 
+
+test('Should return state object as the last item in array', () => {
+    const { result } = renderHook(() => useState(0))
+
+    act(() => {
+        result.current[1](count => ++count)
+    })
+
+    expect(result.current[3].getValue()).toStrictEqual(1)
+})
+
+
