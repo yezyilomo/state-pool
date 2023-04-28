@@ -309,7 +309,8 @@ export default class Store {
     ): [
             state: T,
             setState: SetState<T>,
-            updateState: UpdateState<T>
+            updateState: UpdateState<T>,
+            stateObject: State<T>
         ];
 
     useState<ST, T>(
@@ -318,7 +319,8 @@ export default class Store {
     ): [
             state: ST,
             setState: SetState<T>,
-            updateState: UpdateState<T>
+            updateState: UpdateState<T>,
+            stateObject: State<T>
         ];
 
     useState<ST, T>(
@@ -327,7 +329,8 @@ export default class Store {
     ): [
             state: ST,
             setState: SetState<ST>,
-            updateState: UpdateState<ST>
+            updateState: UpdateState<ST>,
+            stateObject: State<T>
         ]
 
     useState(
@@ -336,7 +339,8 @@ export default class Store {
     ): [
             state: unknown,
             setState: SetState<unknown>,
-            updateState: UpdateState<unknown>
+            updateState: UpdateState<unknown>,
+            stateObject: State<unknown>
         ] {
         const storeStateConfig = config as { default?, persist?};
         const stateConfig = config as { selector?, patcher?};
@@ -352,7 +356,8 @@ export default class Store {
         config?: { default?: StateInitializer<T> | T, persist?: boolean }
     ): [
             state: T,
-            dispatch: (action: A) => void
+            dispatch: (action: A) => void,
+            stateObject: State<T>
         ];
 
     useReducer<ST, A, T = unknown>(
@@ -361,7 +366,8 @@ export default class Store {
         config: { selector?: Selector<ST>, default?: StateInitializer<T> | T | never, persist?: boolean }
     ): [
             state: ST,
-            dispatch: (action: A) => void
+            dispatch: (action: A) => void,
+            stateObject: State<T>
         ];
 
     useReducer<ST, A, T = unknown>(
@@ -370,7 +376,8 @@ export default class Store {
         config: { selector?: Selector<ST>, patcher?: Patcher<ST>, default?: StateInitializer<T> | T | never, persist?: boolean }
     ): [
             state: ST,
-            dispatch: (action: A) => void
+            dispatch: (action: A) => void,
+            stateObject: State<T>
         ]
 
     useReducer(
@@ -379,7 +386,8 @@ export default class Store {
         config: { selector?: Selector<unknown>, patcher?: Patcher<unknown>, default?: unknown, persist?: boolean } = {}
     ): [
             state: unknown,
-            dispatch: unknown
+            dispatch: unknown,
+            stateObject: State<unknown>
         ] {
         const storeStateConfig = config as { default?, persist?};
         const stateConfig = config as { selector?, patcher?};
