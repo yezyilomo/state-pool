@@ -7,7 +7,7 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'State Pool',
-  tagline: 'React state management library based on global variables and react hooks',
+  tagline: 'Transform your React app with our state management library! Declare global and local states like variables, powered by the magic of React hooks 🪄✨',
   url: 'https://yezyilomo.github.io',
   baseUrl: '/state-pool/',
   onBrokenLinks: 'throw',
