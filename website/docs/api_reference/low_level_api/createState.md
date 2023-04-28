@@ -3,11 +3,15 @@ sidebar_position: 1
 ---
 
 # createState
-This is the basic unit of **state-pool**, it's a function which is used to create a state object, it accepts one parameter which is the initial value.
+This is the basic unit of **state-pool**, it's a function which is used to create a state object, it accepts one parameter which is the initial value or initializer function.
 
 ```js
 // Signature
 createState(initialValue: Any)
+
+// Or
+
+createState(initializer: () => Any)
 ```
 
 Here is how to use it
@@ -16,39 +20,59 @@ Here is how to use it
 import { createState } from 'state-pool';
 
 const userName = createState("Yezy");
+
+// Or if you have expensive computations during initialization you could use lazy initialization
+
+function lazyInitializer(){
+  // Perform expensive computation here
+  
+  return "Yezy";  // Return your initial state
+}
+
+const userName = createState(lazyInitializer);
 ```
 
-Some of the methods available in a state object are `getValue`, `updateValue` and `subscribe`
+Here are some of the mostly used methods available in a state object.
 
+- `useState`: This is used to subscribe a component to a state, it's a hook which should be used inside a react component.
+  ```js
+  // Signature
+  state.useState(config?: {selector: Function, patcher: Function});
+  ```
+- `useReducer`: This too is used to subscribe a component to a state, it's also a hook which should be used inside a react component.
+  ```js
+  // Signature
+  state.useReducer(reducer: Function, config?: {selector: Function, patcher: Function});
+  ```
 - `getValue`: This is used to get the value of a state
   ```js
   // Signature
-  State.getValue(selector?: Function);
+  state.getValue(selector?: Function);
   ```
 - `setValue`: This is used to set the value of a state
   ```js
   // Signature
-  State.setValue(value | stateUpdater: Any | Function, config?: {selector, patcher});
+  state.setValue(value | stateUpdater: Any | Function, config?: {selector, patcher});
   ```
 - `updateValue`: This is used to update the value of a state
   ```js
   // Signature
-  State.updateValue(updater: Function, config?: {selector, patcher});
+  state.updateValue(updater: Function, config?: {selector, patcher});
   ```
 - `subscribe`: This is used to listen to all changes from a state
   ```js
   // Signature
-  State.subscribe(observer: Function | Subscription: {observer, selector});
+  state.subscribe(observer: Function | Subscription: {observer, selector});
   ```
 - `select`: This is used to derive another state or select a deeply nested state
   ```js
   // Signature
-  State.select(selector: Function);
+  state.select(selector: Function);
   ```
   This returns `DerivedState` that you can subscribe to by calling `subscribe` on it as
   ```js
   // Signature
-  State.select(selector: Function).subscribe(observer: Function);
+  state.select(selector: Function).subscribe(observer: Function);
   ```
 
 Below is an example showing all of them in action
@@ -56,6 +80,8 @@ Below is an example showing all of them in action
 import { createState } from 'state-pool';
 
 const count = createState(0);
+
+count.useState()  // This subscribe its component to count state
 
 count.getValue()  // This will give 0
 

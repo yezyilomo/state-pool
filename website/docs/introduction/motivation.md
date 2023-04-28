@@ -22,10 +22,6 @@ Transform your React app with our state management library! Declare global and l
 - Very organized API, You can do almost everything with a single import
 
 
-## Architectural Diagram
-![Architecture Diagram](https://raw.githubusercontent.com/yezyilomo/state-pool/master/docs/images/architecture_diagram.png)
-
-
 ## State Flow
 1. Create a state
 
@@ -34,3 +30,5 @@ Transform your React app with our state management library! Declare global and l
 3. If a component wants to update the state, it sends update request
 
 4. When a state receives update request, it performs the update and send signal to all components subscribed to it for them to update themselves(re-render)
+
+You can try live examples [Here](https://yezyilomo.github.io/state-pool-examples)

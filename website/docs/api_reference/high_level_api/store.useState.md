@@ -3,13 +3,20 @@ sidebar_position: 3
 ---
 
 # store.useState
-`store.useState` is a hook that's used to get a state from a store, it's a way for a component to subscribe to a state from a store. `store.useState` works just like `React.useState` hook but it accepts a key for the state and returns an array of `[state, setState, updateState]` rather than `[state, setState]`. In addition to the key parameter it also accept another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
+`store.useState` is a hook that's used to get a state from a store, it's a way for a component to subscribe to a state from a store. `store.useState` works just like `React.useState` hook but it accepts a key for the state and returns an array of `[state, setState, updateState, stateObject]` rather than `[state, setState]`, In most cases you won't be using `stateObject` so you'll be okay with `[state, setState, updateState]`. In addition to the key parameter it also accept another optional parameter which is the config object, available configurations are `default`, `persist`, `selector` & `patcher`, these will be discussed in detail later.
 
 ```js
 // Signature
 store.useState(
     key: String,
     config?: {default: Any, persist: Boolean, selector: Function, patcher: Function}
+)
+
+// Or with lazy state initializer as 
+
+store.useState(
+    key: String,
+    config?: {default: () => Any, persist: Boolean, selector: Function, patcher: Function}
 )
 ```
 
@@ -62,6 +69,14 @@ As stated earlier `store.useState` takes a second optional parameter which is a 
 
   ```js
   const [user, setUser, updateUser] = store.useState("user", {default: null});
+
+  // You can also use lazy initialization on `default` option as
+    const [user, setUser, updateUser] = store.useState(
+        "user", 
+        {default: () => { 
+            // your expensive computation here
+            return null  // Return your initial state
+        }}); 
   ```
 
   This piece of code means, get the state for the key "user" if it's not available in a store, create one and assign it the value `null`.
