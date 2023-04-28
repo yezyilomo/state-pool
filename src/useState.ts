@@ -11,7 +11,8 @@ export default function useState<T>(
 ): [
         state: T,
         setState: SetState<T>,
-        updateState: UpdateState<T>
+        updateState: UpdateState<T>,
+        stateObject: State<T>
     ];
 
 export default function useState<ST, T = unknown>(
@@ -20,7 +21,8 @@ export default function useState<ST, T = unknown>(
 ): [
         state: ST,
         setState: SetState<T>,
-        updateState: UpdateState<T>
+        updateState: UpdateState<T>,
+        stateObject: State<T>
     ];
 
 export default function useState<ST, T = unknown>(
@@ -29,7 +31,8 @@ export default function useState<ST, T = unknown>(
 ): [
         state: ST,
         setState: SetState<ST>,
-        updateState: UpdateState<ST>
+        updateState: UpdateState<ST>,
+        stateObject: State<T>
     ];
 
 export default function useState(
@@ -38,39 +41,19 @@ export default function useState(
 ): [
         state: unknown,
         setState: SetState<unknown>,
-        updateState: UpdateState<unknown>
+        updateState: UpdateState<unknown>,
+        stateObject: State<unknown>
     ] {
 
     function reducer(currentState, newState) {
         return newState;
     }
 
-
-    // For locala state
-    const localStateRef = React.useMemo(() => {
-        if (state instanceof State) {
-            return null;
-        }
-        else {
-            return createState(state);  // Hold a reference to a local state
-        }
-    }, [])
-
-    let _state: State<unknown>;
-    if (localStateRef instanceof State) {
-        _state = localStateRef;
-    }
-    else {
-        _state = state as State<unknown>;
-    }
-    // End for local state
-
-
-    const [stateValue, setStateValue] = useReducer(reducer, _state, config);
+    const [stateValue, setStateValue, stateObject] = useReducer(reducer, state, config);
 
     function updateStateValue(updater): void {
-        _state.updateValue(updater, config);
+        stateObject.updateValue(updater, config);
     }
 
-    return [stateValue, setStateValue, updateStateValue];
+    return [stateValue, setStateValue, updateStateValue, stateObject];
 }

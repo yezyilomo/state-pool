@@ -4,13 +4,39 @@ import { Patcher, Reducer, Selector, StateInitializer } from './types';
 
 
 
+function useStateObject(state) {
+    // This is for internal use only
+    const localStateRef = React.useMemo(() => {
+        if (state instanceof State) {
+            // We have a global state, so we'll simply pass it out
+            return null;
+        }
+        else {
+            // We have a local state, so we create state obj and keep its ref for futer renders
+            return createState(state);
+        }
+    }, [])
+
+    let stateObject: State<unknown>;
+    if (localStateRef instanceof State) {
+        stateObject = localStateRef;
+    }
+    else {
+        stateObject = state as State<unknown>;
+    }
+
+    return stateObject;
+}
+
+
 export default function useReducer<T, A>(
     reducer: Reducer<T, A>,
     state: State<T> | StateInitializer<T> | T,
     config?: {}
 ): [
         state: T,
-        dispatch: (action: A) => void
+        dispatch: (action: A) => void,
+        stateObject: State<T>
     ];
 
 export default function useReducer<ST, A, T = unknown>(
@@ -19,7 +45,8 @@ export default function useReducer<ST, A, T = unknown>(
     config: { selector: Selector<ST> }
 ): [
         state: ST,
-        dispatch: (action: A) => void
+        dispatch: (action: A) => void,
+        stateObject: State<T>
     ];
 
 export default function useReducer<ST, A, T = unknown>(
@@ -28,7 +55,8 @@ export default function useReducer<ST, A, T = unknown>(
     config: { selector: Selector<ST>, patcher: Patcher<ST> }
 ): [
         state: ST,
-        dispatch: (action: A) => void
+        dispatch: (action: A) => void,
+        stateObject: State<T>
     ];
 
 export default function useReducer(
@@ -37,33 +65,15 @@ export default function useReducer(
     config: { selector?: Selector<unknown>, patcher?: Patcher<unknown> } = {}
 ): [
         state: unknown,
-        dispatch: unknown
+        dispatch: unknown,
+        stateObject: State<unknown>
     ] {
     const [, setState] = React.useState(null);
     const isMounted = React.useRef(false);
 
+    const stateObject = useStateObject(state);
 
-    // For locala state
-    const localStateRef = React.useMemo(() => {
-        if (state instanceof State) {
-            return null;
-        }
-        else {
-            return createState(state);  // Hold a reference to a local state
-        }
-    }, [])
-
-    let _state: State<unknown>;
-    if (localStateRef instanceof State) {
-        _state = localStateRef;
-    }
-    else {
-        _state = state as State<unknown>;
-    }
-    // End for local state
-
-
-    const currentState = _state.getValue(config.selector);
+    const currentState = stateObject.getValue(config.selector);
 
     function reRender() {
         // re-render if the component is mounted
@@ -90,7 +100,7 @@ export default function useReducer(
     }
 
     React.useEffect(() => {
-        const unsubscribe = _state.subscribe(subscription);
+        const unsubscribe = stateObject.subscribe(subscription);
         isMounted.current = true;
 
         return () => {
@@ -101,8 +111,8 @@ export default function useReducer(
 
     function dispatch(action: unknown) {
         const newState = reducer(currentState, action);
-        _state.setValue(newState, config);
+        stateObject.setValue(newState, config);
     }
 
-    return [currentState, dispatch]
+    return [currentState, dispatch, stateObject]
 }

@@ -193,7 +193,8 @@ export default class State<T> {
     useState(config?: {}): [
         state: T,
         setState: SetState<T>,
-        updateState: UpdateState<T>
+        updateState: UpdateState<T>,
+        stateObject: State<T>
     ];
 
     useState<ST>(
@@ -201,7 +202,8 @@ export default class State<T> {
     ): [
             state: ST,
             setState: SetState<T>,
-            updateState: UpdateState<T>
+            updateState: UpdateState<T>,
+            stateObject: State<T>
         ];
 
     useState<ST>(
@@ -209,7 +211,8 @@ export default class State<T> {
     ): [
             state: ST,
             setState: SetState<ST>,
-            updateState: UpdateState<ST>
+            updateState: UpdateState<ST>,
+            stateObject: State<T>
         ]
 
     useState<ST>(
@@ -217,7 +220,8 @@ export default class State<T> {
     ): [
             state: T | ST,
             setState: SetState<T | ST>,
-            updateState: UpdateState<T | ST>
+            updateState: UpdateState<T | ST>,
+            stateObject: State<T>
         ] {
         return _useState(this, config);
     }
@@ -228,7 +232,8 @@ export default class State<T> {
         config?: {}
     ): [
             state: _T,
-            dispatch: (action: A) => void
+            dispatch: (action: A) => void,
+            stateObject: State<_T>
         ];
 
     useReducer<ST, A>(
@@ -236,7 +241,8 @@ export default class State<T> {
         config: { selector: Selector<ST> }
     ): [
             state: ST,
-            dispatch: (action: A) => void
+            dispatch: (action: A) => void,
+            stateObject: State<T>
         ];
 
     useReducer<ST, A>(
@@ -244,7 +250,8 @@ export default class State<T> {
         config: { selector: Selector<ST>, patcher: Patcher<ST> }
     ): [
             state: ST,
-            dispatch: (action: A) => void
+            dispatch: (action: A) => void,
+            stateObject: State<T>
         ]
 
     useReducer(
@@ -252,7 +259,8 @@ export default class State<T> {
         config: { selector?: Selector<unknown>, patcher?: Patcher<unknown> } = {}
     ): [
             state: unknown,
-            dispatch: (action: unknown) => void
+            dispatch: (action: unknown) => void,
+            stateObject: State<unknown>
         ] {
         return _useReducer(reducer, this, config);
     }
