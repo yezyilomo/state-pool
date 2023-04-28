@@ -4,11 +4,11 @@ sidebar_position: 2
 
 # Installation
 ```bash
-npm add state-pool
+npm install state-pool
 ```
 
 Or 
 
 ```bash
-yarn install state-pool
+yarn add state-pool
 ```

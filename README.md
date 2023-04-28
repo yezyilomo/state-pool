@@ -37,13 +37,13 @@ You can also try live examples [Here](https://yezyilomo.github.io/state-pool-exa
 
 ## Installation
 ```sh
-yarn add state-pool
+npm install state-pool
 ```
 
 Or 
 
 ```sh
-npm install state-pool
+yarn add state-pool
 ```
 
 <br/>
