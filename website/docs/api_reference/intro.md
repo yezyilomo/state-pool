@@ -51,6 +51,36 @@ Here is the same example as the previous one re-written using low level API
 
 ```jsx
 import React from 'react';
+import { createState } from 'state-pool';
+
+
+// Create count state and initialize it with 0
+const count = createState(0);
+
+function ClicksCounter(props){
+    // Use count state
+    const [count, setCount] = count.useState();
+
+    const incrementCount = (e) => {
+        setCount(count+1);
+    }
+
+    return (
+        <div>
+            Count: {count}
+            <br/>
+            <button onClick={incrementCount}>Click</button>
+        </div>
+    );
+}
+
+ReactDOM.render(ClicksCounter, document.querySelector("#root"));
+```
+
+Or if you want to import `useState` from **state-pool**
+
+```jsx
+import React from 'react';
 import { createState, useState } from 'state-pool';
 
 

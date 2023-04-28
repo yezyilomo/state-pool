@@ -3,7 +3,7 @@ sidebar_position: 4
 ---
 
 # store.useReducer
-This is an alternative to `store.useState`, it works just like `React.useReducer` hook(If you’re familiar with `React.useReducer`, you already know how this works). It accepts a reducer and a key for the state as parameters, it returns the current state paired with a dispatch method. In addition to the two parameters it also accept another optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher` they work exactly the same just like in `store.useState`.
+This is an alternative to `store.useState`, it works just like `React.useReducer` hook(If you’re familiar with `React.useReducer`, you already know how this works). It accepts a reducer and a key for the state as parameters, it returns the current state paired with a dispatch method plus the state object, but in most cases you won't be using `stateObject` so you'll be okay with just `[state, dispatch]`.. In addition to the two parameters it also accept another optinal perameter which is the configuration object, available configurations are `default`, `persist`, `selector` & `patcher` they work exactly the same just like in `store.useState`.
 
 ```js
 // Signature

@@ -9,4 +9,8 @@ Store is a container for state, it comes with several methods which are used to 
 import { createStore } from 'state-pool';
 
 const store = createStore();
+
+// Or with initialization as 
+
+const store = createStore({"state1": value1, "state2": value2, ...});
 ```

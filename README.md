@@ -121,9 +121,9 @@ ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 <br/>
 
 ## What about local state?
-With **state-pool**, state are just like variables, if declared on a global scope, it’s a global state and if declared on local scope it’s a local state, so the difference between global state and local state in **state-pool** is where you declare them just like variables.
+With **state-pool**, state are just like variables, if declared on a global scope, it’s a global state and if declared on local scope it’s a local state, so the difference between global state and local state in **state-pool** lies where you declare them just like variables.
 
-Here is an example for local state management
+Here is an example for managing local state
 ```jsx
 // Example 1.
 import React from 'react';
@@ -132,6 +132,7 @@ import { useState } from 'state-pool';
 
 function ClicksCounter(props){
     // Here `useState` hook will create "count" state and initialize it with 0
+    // Note: the `useState` hook used here is impored from state-pool and not react
     const [count, setCount] = useState(0);
 
     const incrementCount = (e) => {
@@ -183,11 +184,11 @@ ReactDOM.render(ClicksCounter, document.querySelector("#root"));
 <br/>
 
 ## Isn't `StatePool.useState` the same thing as `React.useState`?
-**definitely. not!...**
+**Definitely. not!...**
 
-They're both used to manage local state but `StatePool.useState` offers more features, for one it offers a simple way to update nested data unlike `React.useState`,
+Both can be used to manage local state, and that's where the similarity ends. `StatePool.useState` offers more features, for one it offers a simple way to update nested data unlike `React.useState`, it's also flexible as it's used to manage both global state and local state. So you could say `React.useState` is a subset of `StatePool.useState`.
 
-Here is an example
+Here is an example of `StatePool.useState` in action, updating nested data
 ```jsx
 // Example 2.
 import React from 'react';
@@ -219,7 +220,7 @@ ReactDOM.render(UserInfo, document.querySelector("#root"));
 
 With `React.useState` you would need to recreate `user` object when updating `user.name`, but with `StatePool.useState` you don't need that, you just update the value right away. 
 
-That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through our [**documentation**📝](https://yezyilomo.github.io/state-pool/).
+That's one advantage of using `StatePool.useState` but there are many more, you'll learn when going through [**documentation**📝](https://yezyilomo.github.io/state-pool/).
 
 
 
@@ -264,8 +265,10 @@ function ClicksCounter(props){
 import { createStore } from 'state-pool';
 
 
-const store = createStore();  // Create store for storing our state
-store.setState("user", {name: "Yezy", age: 25});
+// Instead of using createStore and store.setState,
+// you can combine store creation and initialization as follows
+
+const store = createStore({"user", {name: "Yezy", age: 25}});  // create store and initialize it with user
 
 function UserInfo(props){
     const [user, setUser, updateUser] = store.useState("user");
@@ -288,7 +291,7 @@ function UserInfo(props){
 
 <br/>
 
-**State-pool** doesn't enforce storing your states in a store, If you don't like using the architecture of store you can still use **state-pool** without it. In **state-pool** store is just a container for global states, so you can still use your global states without it, in fact **state-pool** doesn’t care where you store your global states as long as you can access them
+**State-pool** doesn't enforce storing your states in a store, If you don't like using the architecture of store you can still use **state-pool** without it. In **state-pool**, store is just a container for states, so you can still use your states without it, in fact **state-pool** doesn’t care where you store your states as long as you can access them you're good to go.
 
 <br/>
 

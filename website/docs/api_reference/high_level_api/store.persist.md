@@ -7,7 +7,7 @@ Sometimes you might want to save your states in a permanent storage probably bec
 
 **State pool** makes it very easy to save your states in your preferred permanent storage, all you need to do is:
 
-1. Tell state-pool how to save your state by using `store.persist`
+1. Tell **state-pool** how to save your state by using `store.persist`
 2. Use `persist` configuration to tell state-pool to save your state in your preferred storage when creating your state.
 
 When telling **state-pool**  how to save state to a permanent storage we need to implement four functions which are 

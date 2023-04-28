@@ -3,7 +3,7 @@ sidebar_position: 5
 ---
 
 # State Persistence
-State pool has a built in support for state persistence, it makes saving your states in your preferred permanent storage very easy, all you need to do is tell state pool how to save, load, clear and remove your state from your preferred storage by using `store.persist` API.
+State pool has a built in support for state persistence through store API, it makes saving your states in your preferred permanent storage very easy, all you need to do is tell state pool how to save, load, clear and remove your state from your preferred storage by using `store.persist` API.
 
 The way to implement these is by calling `store.persist` and pass them as shown below 
 

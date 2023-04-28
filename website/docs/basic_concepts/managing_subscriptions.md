@@ -3,7 +3,48 @@ sidebar_position: 4
 ---
 
 # Managing Subscriptions
-If you want to listen to changes in a store you can subscribe to it by using `store.subscribe`. it accepts an observer function. For example
+If you want to listen to changes from a state you can subscribe to it by using `state.subscribe`. it accepts an observer function. For example
+
+
+```js
+const state = createState(value);
+
+
+// Subscribe to state changes
+const unsubscribe = state.subscribe(function(value){
+    // value is the new value of a state
+})
+
+// You can unsubscribe by calling the result
+unsubscribe();
+```
+
+You can even subscribe to a deeply nested state by using a selector as 
+
+```js
+state.subscribe({
+    observer:  function(value){
+        // value is the new value of a state 
+    },
+    selector: function(value){
+        return  selected_state
+    }
+})
+```
+With this, observer function will only be called when the selected state changes.
+
+
+Another way to subscribe to nested state or derived state is to call `select` on a state then subscribe to it as
+
+```js
+state.select(state => selected_state).subscribe(value =>{
+        // Do your thing here
+    }
+)
+```
+
+# Subscriptions in a store
+If you want to listen to changes in an entire store you can subscribe to it by using `store.subscribe`. it accepts an observer function. For example
 
 ```js
 // Subscribe to store changes

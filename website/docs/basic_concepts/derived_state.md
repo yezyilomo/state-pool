@@ -8,6 +8,37 @@ With state pool you can subscribe to deeply nested or derived state. Both `store
 Here is a simple example showing how to use `selector` & `Patcher` options
 
 ```jsx
+// With store API
+const user = createState({
+    name: "Yezy",
+    age: 25,
+    email: "yezy@me.com"
+});
+
+
+function UserName(props){
+    const selector = (user) => user.name;  // Subscribe to user.name only
+    const patcher = (user, name) => {user.name = name};  // Update user.name
+
+    const [name, setName] = user.useState({selector: selector, patcher: patcher});
+
+    const handleNameChange = (e) => {
+        setName(e.target.value);
+    }
+
+    return (
+        <div>
+            Name: {name} <br/>
+            <input type="text" value={name} onChange={handleNameChange}/>
+        </div>
+    );
+}
+```
+
+Or with store API
+
+```jsx
+// With store API
 store.setState("user", {
     name: "Yezy",
     age: 25,
