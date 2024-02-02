@@ -225,9 +225,9 @@ export default class Store {
         return storeItems;
     }
 
-    getStateValue<ST, T = unknown>(key: string, config?): T | ST {
-        const state = this.getState<T>(key, config);
-        return state.getValue<ST>(config.selector);
+    getStateValue<ST, T = unknown>(key: string, selector?): T | ST {
+        const state = this.getState<T>(key);
+        return state.getValue<ST>(selector);
     }
 
     clear(fn?: () => void): void {
