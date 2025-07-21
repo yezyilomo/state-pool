@@ -1,7 +1,7 @@
 {
     "name": "state-pool",
     "private": true,
-    "version": "0.10.1",
+    "version": "0.10.2",
     "description": "Transform your React app with our state management library! Declare global and local states like variables, powered by the magic of React hooks 🪄✨",
     "license": "MIT",
     "homepage": "https://github.com/yezyilomo/state-pool/blob/master/README.md",
