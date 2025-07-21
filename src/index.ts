@@ -11,9 +11,12 @@ export {
     DerivedState, createDerivedState,
 };
 
-export default {
+
+const StatePool = {
     State, createState,
     Store, createStore,
     useState, useReducer,
     DerivedState, createDerivedState,
-};
+}
+
+export default StatePool;

@@ -30,8 +30,8 @@ const notImplementedErrorMsg = [
     `You must implement 'loadState' and 'saveState' to be able `,
     'to save state to your preffered storage. E.g \n',
     'store.persist({ \n',
-    '    saveState: function(key, state, isInitialSet){/*logics to save state to storage*/}, \n',
-    '    loadState: function(key, noState){/*logics to load state from storage*/} \n',
+    '    saveState: function(key, state, isInitialSet){/*Code to save state to your storage*/}, \n',
+    '    loadState: function(key, noState){/*Code to load state from your storage*/} \n',
     '}) \n'
 ].join("");
 
@@ -237,7 +237,11 @@ export default class Store {
         // Clear store
         this.states = new Map();
         if (this.persistentStorage.clear) {
-            this.persistentStorage.clear()
+            try {
+                this.persistentStorage.clear()
+            } catch (error) {
+                // Ignore errors in clearing states
+            }
         }
 
         if (fn) {
@@ -276,10 +280,13 @@ export default class Store {
             this.states.delete(key);
             if (
                 StatesToRemove.get(key).persist &&  // Is state persisted
-                this.persistentStorage.removeState &&  // Is removeState Implemented
-                this.persistentStorage.loadState(key, EMPTY) !== EMPTY  // Is state to remove available
+                this.persistentStorage.removeState  // Is removeState Implemented
             ) {
-                this.persistentStorage.removeState(key)
+                try {
+                    this.persistentStorage.removeState(key);
+                } catch (error) {
+                    // Ignore error in removing state
+                }
             }
         });
 
