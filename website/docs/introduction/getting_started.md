@@ -179,7 +179,7 @@ That's one advantage of using `StatePool.useState` but there are many more, you'
 
 
 # Store based example
-If you have many states and you would like to organize them into a store, **state-pool** allows you to do that too and provides a tone of features on top of it.
+If you have many states and you would like to organize them into a store, **state-pool** allows you to do that too and provides a ton of features on top of it.
 
 Here are steps for managing state with a store
 1. Create a store(which is basically a container for your state)
